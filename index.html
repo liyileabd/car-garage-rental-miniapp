@@ -5235,6 +5235,39 @@
       background: var(--primary);
     }
 
+    .invoice-type-tabs {
+      display: flex;
+      gap: 8px;
+      margin: -2px 0 12px;
+      padding: 0 2px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .invoice-type-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .invoice-type-tab {
+      flex: 0 0 auto;
+      height: 32px;
+      padding: 0 13px;
+      border: 1px solid #e3eaf3;
+      border-radius: 16px;
+      color: #748298;
+      background: #fff;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .invoice-type-tab.is-active {
+      border-color: rgba(47, 124, 246, 0.2);
+      color: var(--primary);
+      background: #edf5ff;
+    }
+
     .invoice-record-list {
       display: grid;
       gap: 10px;
@@ -6923,6 +6956,11 @@
               <button class="invoice-tab" type="button" data-invoice-filter="processing">处理中</button>
               <button class="invoice-tab" type="button" data-invoice-filter="done">已完成</button>
             </nav>
+            <nav class="invoice-type-tabs" aria-label="票据类型筛选">
+              <button class="invoice-type-tab is-active" type="button" data-invoice-type-filter="all">全部</button>
+              <button class="invoice-type-tab" type="button" data-invoice-type-filter="nontax">非税票据</button>
+              <button class="invoice-type-tab" type="button" data-invoice-type-filter="vat">增值税发票</button>
+            </nav>
             <div class="invoice-record-list" data-invoice-record-list></div>
             <div class="invoice-empty" data-invoice-empty>暂无开票记录</div>
           </div>
@@ -7326,6 +7364,7 @@
     const invoiceListBackButtons = document.querySelectorAll("[data-invoice-list-back]");
     const invoiceResultBackButtons = document.querySelectorAll("[data-invoice-result-back]");
     const invoiceFilterButtons = document.querySelectorAll("[data-invoice-filter]");
+    const invoiceTypeFilterButtons = document.querySelectorAll("[data-invoice-type-filter]");
     const invoiceRecordList = document.querySelector("[data-invoice-record-list]");
     const invoiceListScreen = document.querySelector(".invoice-list-page");
     const invoiceResultDetail = document.querySelector("[data-invoice-result-detail]");
@@ -7471,6 +7510,7 @@
       refundReason: "不再使用月租",
       invoiceType: "personal",
       invoiceFilter: "all",
+      invoiceTypeFilter: "all",
       invoiceListReturnScreen: "personal",
       invoiceResultReturnScreen: "invoiceList",
       moreId: "",
@@ -9097,8 +9137,10 @@
 
     function invoiceMatchesFilter(order) {
       if (order.invoiceStatus === "未申请") return false;
-      if (orderState.invoiceFilter === "processing") return order.invoiceStatus === "申请中";
-      if (orderState.invoiceFilter === "done") return order.invoiceStatus === "已完成";
+      if (orderState.invoiceFilter === "processing" && order.invoiceStatus !== "申请中") return false;
+      if (orderState.invoiceFilter === "done" && order.invoiceStatus !== "已完成") return false;
+      if (orderState.invoiceTypeFilter === "nontax") return invoiceVoucherFor(order) === "非税票据";
+      if (orderState.invoiceTypeFilter === "vat") return invoiceVoucherFor(order) === "增值税发票";
       return true;
     }
 
@@ -9282,7 +9324,9 @@
       if (!ensureAuthenticated()) return;
       orderState.invoiceListReturnScreen = returnScreen;
       orderState.invoiceFilter = "all";
+      orderState.invoiceTypeFilter = "all";
       invoiceFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.invoiceFilter === "all"));
+      invoiceTypeFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.invoiceTypeFilter === "all"));
       renderInvoiceList();
       showTab("invoiceList");
     }
@@ -9555,6 +9599,14 @@
       button.addEventListener("click", () => {
         orderState.invoiceFilter = button.dataset.invoiceFilter || "all";
         invoiceFilterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+        renderInvoiceList();
+      });
+    });
+
+    invoiceTypeFilterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        orderState.invoiceTypeFilter = button.dataset.invoiceTypeFilter || "all";
+        invoiceTypeFilterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
         renderInvoiceList();
       });
     });
