@@ -7498,6 +7498,7 @@
     const searchResults = document.querySelectorAll("[data-search-result]");
     const garageSelectActions = document.querySelectorAll("[data-select-garage]");
     const garageMoreActions = document.querySelectorAll("[data-garage-more]");
+    const homeGarageList = document.querySelector(".home-garage-list");
     const fullGarageList = document.querySelector("[data-full-garage-list]");
     const rentGarageList = document.querySelector("[data-rent-garage-list]");
     const garageListPage = document.querySelector(".garage-list-page");
@@ -7623,32 +7624,56 @@
       selectedProjectName: "",
       selectedProjectType: "",
     };
-    const communityProjectCatalog = {
-      "湖里安商房小区": { id: "COMMUNITY-001", projectName: "湖里安商房项目", projectType: "公司自营项目" },
-      "思明保障房小区": { id: "COMMUNITY-002", projectName: "思明保障房项目", projectType: "区财政代管项目" },
-      "海沧安商房小区": { id: "COMMUNITY-003", projectName: "海沧安商房项目", projectType: "公司自营项目" },
-      "同安城北安居小区": { id: "COMMUNITY-004", projectName: "同安城北安居项目", projectType: "区财政代管项目" },
-      "集美安置房小区": { id: "COMMUNITY-005", projectName: "集美安置房项目", projectType: "公司自营项目" },
-      "翔安新店保障房": { id: "COMMUNITY-006", projectName: "翔安新店保障房项目", projectType: "区财政代管项目" },
-      "杏林湾安置房小区": { id: "COMMUNITY-007", projectName: "杏林湾安置房项目", projectType: "公司自营项目" },
-      "灌口安置房小区": { id: "COMMUNITY-008", projectName: "灌口安置房项目", projectType: "区财政代管项目" },
-      "五缘湾保障房小区": { id: "COMMUNITY-009", projectName: "五缘湾保障房项目", projectType: "公司自营项目" },
-      "马銮湾安置房小区": { id: "COMMUNITY-010", projectName: "马銮湾安置房项目", projectType: "区财政代管项目" },
-      "软件园三期保障房": { id: "COMMUNITY-011", projectName: "软件园三期保障房项目", projectType: "区财政代管项目" },
-    };
-    const garageStreetByCommunity = {
-      "湖里安商房小区": "江头街道",
-      "思明保障房小区": "莲前街道",
-      "海沧安商房小区": "新阳街道",
-      "同安城北安居小区": "大同街道",
-      "集美安置房小区": "侨英街道",
-      "翔安新店保障房": "新店街道",
-      "杏林湾安置房小区": "杏林街道",
-      "灌口安置房小区": "灌口街道",
-      "五缘湾保障房小区": "禾山街道",
-      "马銮湾安置房小区": "马銮街道",
-      "软件园三期保障房": "后溪街道",
-    };
+    const communityCatalog = [
+      {
+        id: "COMMUNITY-001",
+        communityName: "银霞花园一期",
+        projectName: "美仑花园安置房一期（银霞花园一期）",
+        projectType: "公司自营项目",
+        district: "湖里区",
+        street: "湖里街道",
+        garageName: "地下停车场",
+        distance: 1.2,
+        totalSpaces: 120,
+        rentedSpaces: 92,
+        monthlyPrice: 300,
+      },
+      {
+        id: "COMMUNITY-002",
+        communityName: "金林湾花园B区",
+        projectName: "金林湾花园B区1-07地块安置房（金林湾花园B区）",
+        projectType: "区财政代管项目",
+        district: "湖里区",
+        street: "金山街道",
+        garageName: "地下停车场",
+        distance: 3.6,
+        totalSpaces: 96,
+        rentedSpaces: 71,
+        monthlyPrice: 320,
+      },
+      {
+        id: "COMMUNITY-003",
+        communityName: "湖边御景D区",
+        projectName: "下湖安置型商品房一期（湖边御景D区）",
+        projectType: "公司自营项目",
+        district: "思明区",
+        street: "莲前街道",
+        garageName: "地下停车场",
+        distance: 5.2,
+        totalSpaces: 110,
+        rentedSpaces: 89,
+        monthlyPrice: 280,
+      },
+    ];
+    const communityProjectCatalog = Object.fromEntries(
+      communityCatalog.map((community) => [community.communityName, community]),
+    );
+    const communityById = Object.fromEntries(
+      communityCatalog.map((community) => [community.id, community]),
+    );
+    const garageStreetByCommunity = Object.fromEntries(
+      communityCatalog.map((community) => [community.communityName, community.street]),
+    );
     const rentVehicleState = {
       plate: "",
       color: "",
@@ -7990,6 +8015,240 @@
         },
       ],
     };
+
+    function createDemoOrder(seed) {
+      const community = communityById[seed.communityId];
+      const invoice = seed.invoice || {};
+      const hasInvoiceApplication = invoice.status && invoice.status !== "未申请";
+      return {
+        id: seed.orderNo,
+        orderNo: seed.orderNo,
+        type: seed.type,
+        communityId: community.id,
+        community: community.communityName,
+        garage: community.garageName,
+        location: `${community.district} · ${community.street} · ${community.garageName}`,
+        projectName: community.projectName,
+        projectType: community.projectType,
+        vehicleId: `VEHICLE-${seed.plate.replace(/\s+/g, "")}`,
+        plate: seed.plate,
+        start: seed.start,
+        end: seed.end,
+        months: seed.months,
+        amount: community.monthlyPrice * seed.months,
+        createdAt: seed.createdAt,
+        paymentAt: seed.paymentAt,
+        rentalStatus: seed.rentalStatus,
+        passStatus: seed.passStatus || (seed.refundStatus === "审批中"
+          ? "已暂停"
+          : ["有效", "待生效"].includes(seed.rentalStatus) ? "已开通" : "已结束"),
+        refundStatus: seed.refundStatus || "未申请",
+        invoiceStatus: invoice.status || "未申请",
+        invoiceRequestNo: hasInvoiceApplication ? invoice.requestNo : undefined,
+        invoiceNumber: invoice.number,
+        invoiceAppliedAt: hasInvoiceApplication ? invoice.appliedAt : undefined,
+        invoiceCompletedAt: invoice.completedAt,
+        invoiceType: invoice.type,
+        invoiceTitle: invoice.title,
+        ownerNameSnapshot: "张先生",
+        ownerPhoneSnapshot: "13800006688",
+      };
+    }
+
+    function buildDemoOrderRecords() {
+      return [
+        {
+          orderNo: "AS202608170023",
+          type: "新办",
+          communityId: "COMMUNITY-001",
+          plate: "闽D 12345",
+          start: "2026-08-07",
+          end: "2026-09-06",
+          months: 1,
+          createdAt: "2026-08-07 10:21",
+          paymentAt: "2026-08-07 10:24",
+          rentalStatus: "有效",
+          invoice: { status: "申请中", requestNo: "KP202608170023", appliedAt: "2026-08-25 10:42", type: "增值税普通发票", title: "张先生" },
+        },
+        {
+          orderNo: "AS202608100018",
+          type: "新办",
+          communityId: "COMMUNITY-002",
+          plate: "闽D A24680",
+          start: "2026-08-01",
+          end: "2027-01-31",
+          months: 6,
+          createdAt: "2026-08-01 09:12",
+          paymentAt: "2026-08-01 09:16",
+          rentalStatus: "有效",
+        },
+        {
+          orderNo: "AS202608070015",
+          type: "新办",
+          communityId: "COMMUNITY-003",
+          plate: "闽D 67890",
+          start: "2026-08-07",
+          end: "2026-09-06",
+          months: 1,
+          createdAt: "2026-08-07 15:02",
+          paymentAt: "2026-08-07 15:05",
+          rentalStatus: "有效",
+        },
+        {
+          orderNo: "AS202608250016",
+          type: "续费",
+          communityId: "COMMUNITY-003",
+          plate: "闽D 67890",
+          start: "2026-09-07",
+          end: "2026-12-06",
+          months: 3,
+          createdAt: "2026-08-25 10:22",
+          paymentAt: "2026-08-25 10:25",
+          rentalStatus: "待生效",
+        },
+        {
+          orderNo: "AS202607010004",
+          type: "新办",
+          communityId: "COMMUNITY-002",
+          plate: "闽D 13579",
+          start: "2026-07-01",
+          end: "2026-07-31",
+          months: 1,
+          createdAt: "2026-07-01 11:28",
+          paymentAt: "2026-07-01 11:32",
+          rentalStatus: "过期",
+          invoice: { status: "已完成", requestNo: "KP202607010004", number: "厦非税电202607010004", appliedAt: "2026-07-01 11:34", completedAt: "2026-07-03 15:20", type: "非税电子票据", title: "张先生" },
+        },
+        {
+          orderNo: "AS202606180046",
+          type: "新办",
+          communityId: "COMMUNITY-001",
+          plate: "闽D 13579",
+          start: "2026-06-18",
+          end: "2026-12-17",
+          months: 6,
+          createdAt: "2026-06-18 09:28",
+          paymentAt: "2026-06-18 09:31",
+          rentalStatus: "终止",
+          refundStatus: "已通过",
+          invoice: { status: "已完成", requestNo: "KP202606180046", number: "厦税电开202606180046", appliedAt: "2026-06-18 09:33", completedAt: "2026-06-19 15:20", type: "增值税专用发票", title: "厦门湖里国投物业管理有限公司" },
+        },
+        {
+          orderNo: "AS202605160032",
+          type: "新办",
+          communityId: "COMMUNITY-003",
+          plate: "闽D 12345",
+          start: "2026-05-16",
+          end: "2026-08-15",
+          months: 3,
+          createdAt: "2026-05-16 14:06",
+          paymentAt: "2026-05-16 14:10",
+          rentalStatus: "过期",
+          refundStatus: "未通过",
+          invoice: { status: "申请中", requestNo: "KP202605160032", appliedAt: "2026-08-18 09:16", type: "增值税普通发票", title: "张先生" },
+        },
+        {
+          orderNo: "AS202604050028",
+          type: "续费",
+          communityId: "COMMUNITY-002",
+          plate: "闽D A24680",
+          start: "2026-04-05",
+          end: "2026-07-04",
+          months: 3,
+          createdAt: "2026-04-05 14:22",
+          paymentAt: "2026-04-05 14:25",
+          rentalStatus: "过期",
+          refundStatus: "审批中",
+          invoice: { status: "申请中", requestNo: "KP202604050028", appliedAt: "2026-08-19 16:14", type: "非税电子票据", title: "张先生" },
+        },
+        {
+          orderNo: "AS202603160007",
+          type: "新办",
+          communityId: "COMMUNITY-001",
+          plate: "闽D 67890",
+          start: "2026-02-16",
+          end: "2026-08-15",
+          months: 6,
+          createdAt: "2026-03-16 10:08",
+          paymentAt: "2026-03-16 10:11",
+          rentalStatus: "过期",
+          invoice: { status: "已完成", requestNo: "KP202603160007", number: "厦税电开202603160007", appliedAt: "2026-03-16 10:13", completedAt: "2026-03-18 14:36", type: "增值税普通发票", title: "张先生" },
+        },
+        {
+          orderNo: "AS202602180012",
+          type: "新办",
+          communityId: "COMMUNITY-002",
+          plate: "闽D 13579",
+          start: "2026-02-18",
+          end: "2026-05-17",
+          months: 3,
+          createdAt: "2026-02-18 09:42",
+          paymentAt: "2026-02-18 09:45",
+          rentalStatus: "过期",
+        },
+      ].map(createDemoOrder);
+    }
+
+    function createDemoRefund(orderNo, seed) {
+      const order = orderState.records.find((item) => item.orderNo === orderNo);
+      return {
+        id: seed.requestNo,
+        requestNo: seed.requestNo,
+        orderNo: order.orderNo,
+        community: order.community,
+        garage: order.garage,
+        plate: order.plate,
+        originalPaidAmount: order.amount,
+        start: order.start,
+        end: order.end,
+        remainingTerm: seed.remainingTerm,
+        estimatedAmount: seed.estimatedAmount,
+        approvedAmount: seed.approvedAmount ?? null,
+        status: seed.status,
+        reason: seed.reason,
+        note: seed.note || "",
+        submittedAt: seed.submittedAt,
+        approvedAt: seed.approvedAt || "--",
+        hasCompletedInvoice: order.invoiceStatus === "已完成",
+      };
+    }
+
+    orderState.records = buildDemoOrderRecords();
+    orderState.activeId = orderState.records[0].id;
+    refundState.records = [
+      createDemoRefund("AS202606180046", {
+        requestNo: "TK202607120021",
+        status: "已通过",
+        reason: "搬离小区",
+        remainingTerm: "42 天",
+        estimatedAmount: 1260,
+        approvedAmount: 1200,
+        note: "已完成退款审核。",
+        submittedAt: "2026-07-12 09:42",
+        approvedAt: "2026-07-14 16:20",
+      }),
+      createDemoRefund("AS202605160032", {
+        requestNo: "TK202606050009",
+        status: "未通过",
+        reason: "重复办理",
+        remainingTerm: "--",
+        estimatedAmount: 560,
+        note: "该订单不存在重复缴费，退款申请未通过。",
+        submittedAt: "2026-06-05 11:08",
+        approvedAt: "2026-06-06 15:16",
+      }),
+      createDemoRefund("AS202604050028", {
+        requestNo: "TK202604180013",
+        status: "审批中",
+        reason: "不再使用月租",
+        remainingTerm: "以审批测算为准",
+        estimatedAmount: 768,
+        note: "车辆已出售，申请提前结束月租。",
+        submittedAt: "2026-04-18 14:36",
+      }),
+    ];
+    refundState.activeId = refundState.records[0].id;
+
     const accountState = {
       current: "wechat",
       profiles: {
@@ -8296,6 +8555,28 @@
         const clonedCard = card.cloneNode(true);
         fullGarageList.appendChild(clonedCard);
       });
+    }
+
+    function renderCommunityCatalog() {
+      if (!homeGarageList) return;
+      homeGarageList.innerHTML = communityCatalog.map((community) => {
+        const availableSpaces = community.totalSpaces - community.rentedSpaces;
+        return `
+          <section class="card garage-card" data-community-id="${community.id}" data-project-name="${community.projectName}" data-project-type="${community.projectType}">
+            <div>
+              <div class="garage-name"><svg class="icon sm"><use href="#i-parking"></use></svg>${community.communityName}</div>
+              <div class="garage-sub" data-distance="${community.distance}">${community.garageName}</div>
+              <div class="garage-stats">
+                <div class="garage-stat-row"><span>${community.district}</span><span>总车位 ${community.totalSpaces}</span><span>已租 ${community.rentedSpaces}</span><span>可办 ${availableSpaces}</span></div>
+                <div class="garage-status-row"><span class="tag">可办理</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="price">${community.monthlyPrice}<small>元/月</small></div>
+              <div class="rent-button">租</div>
+            </div>
+          </section>`;
+      }).join("");
     }
 
     function applyCommunityProjectMetadata() {
@@ -10786,6 +11067,7 @@
     document.body.dataset.account = accountState.current;
     buildPlateKeyboard();
     syncPlateInput();
+    renderCommunityCatalog();
     applyCommunityProjectMetadata();
     syncFullGarageList();
     syncRentGarageList();
