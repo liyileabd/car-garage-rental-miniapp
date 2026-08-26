@@ -182,13 +182,15 @@
                   <div class="metric"><b data-home-rent-end>2026-09-06</b><span>月租截止</span></div>
                 </div>
               </div>
-              <div class="home-rent-empty" data-home-rent-empty hidden>
-                <div>
-                  <b>暂未月租</b>
-                  <span>还没有正在生效的月租车位</span>
-                </div>
-                <button class="small-btn" type="button" data-rent-flow-action>去办理</button>
-              </div>
+              <button class="home-rent-empty" type="button" data-home-rent-empty data-rent-flow-action hidden aria-label="办理月租车位">
+                <span class="home-rent-empty-icon"><svg class="icon"><use href="#i-parking"></use></svg></span>
+                <span class="home-rent-empty-copy">
+                  <span class="home-rent-empty-kicker">我的月租</span>
+                  <b>还没有月租车位</b>
+                  <span class="home-rent-empty-desc">选择小区后即可办理</span>
+                </span>
+                <span class="home-rent-empty-chevron" aria-hidden="true">›</span>
+              </button>
             </section>
 
             <section class="card service-card">
