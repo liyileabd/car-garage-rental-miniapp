@@ -4261,7 +4261,7 @@
         <section class="order-detail-section">
           <h3>退款原因</h3>
           <div class="order-detail-row"><span>退款原因</span><strong>${record.reason}</strong></div>
-          <div class="order-detail-row"><span>补充说明</span><strong>${escapeHtml(record.note || "--")}</strong></div>
+          <div class="order-detail-row refund-note-row"><span>补充说明</span><strong class="refund-note-value">${escapeHtml(record.note || "--")}</strong></div>
         </section>`;
       if (refundDetailFooter) {
         refundDetailFooter.hidden = record.status !== "审批中";

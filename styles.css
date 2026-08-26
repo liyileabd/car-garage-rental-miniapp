@@ -5016,6 +5016,19 @@
       white-space: normal;
     }
 
+    .order-detail-row.refund-note-row {
+      align-items: flex-start;
+      padding-top: 3px;
+    }
+
+    .order-detail-row .refund-note-value {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
     .order-detail-row .amount {
       color: #dc6047;
       font-size: 17px;
