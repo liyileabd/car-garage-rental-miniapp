@@ -4929,17 +4929,22 @@
       background: #fff9f5;
     }
 
-    .order-inline-action[data-order-inline-action="invoice"],
-    .order-inline-action[data-order-inline-action="viewInvoice"] {
+    .order-inline-action[data-order-inline-action="invoice"] {
       color: #168452;
       border-color: #c8e8d7;
       background: #f4fbf7;
     }
 
     .order-inline-action[data-order-inline-action="invoiceProgress"] {
-      color: #637a99;
-      border-color: #d8e3f0;
-      background: #f7faff;
+      color: #2f72d6;
+      border-color: #c5dcff;
+      background: #f3f8ff;
+    }
+
+    .order-inline-action[data-order-inline-action="viewInvoice"] {
+      color: #596879;
+      border-color: #dce3eb;
+      background: #f7f9fb;
     }
 
     .order-inline-action.is-danger {
