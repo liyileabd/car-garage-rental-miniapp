@@ -986,9 +986,7 @@
     }
 
     .garage-sub {
-      color: #637289;
-      font-size: 12.5px;
-      line-height: 1.3;
+      display: none;
     }
 
     .garage-location-row {
@@ -5825,7 +5823,7 @@
             <section class="hero-banner">
               <div>
                 <h2>月租车位线上办理</h2>
-                <p>选择小区车库，微信支付后开通通行。</p>
+                <p>选择办理小区，微信支付后开通通行。</p>
               </div>
               <svg viewBox="0 0 160 100" aria-hidden="true">
                 <rect x="76" y="12" width="48" height="58" rx="8" fill="#fff" stroke="#9BC5FF" stroke-width="2"></rect>
@@ -5857,7 +5855,7 @@
               <div class="plate-row">
                 <div>
                   <div class="plate" data-home-rent-plate>闽D 12345</div>
-                  <div class="rent-place" data-home-rent-place>湖里安商房小区 · 地下停车场 A 区</div>
+<div class="rent-place" data-home-rent-place>湖里安商房小区</div>
                 </div>
                 <button class="small-btn" type="button" data-order-open-id="AS202608170023" data-home-rent-order>查看订单</button>
               </div>
@@ -6082,12 +6080,12 @@
           <div class="content">
             <section class="card rent-flow-summary">
               <div class="card-head">
-                <h3>先选择车库</h3>
+                <h3>先选择小区</h3>
                 <span class="tag">第一步</span>
               </div>
-              <p>请选择一个可办理车库，再继续填写车辆信息和缴费。</p>
+              <p>请选择一个可办理小区，再继续填写车辆信息和缴费。</p>
               <div class="rent-flow-stepper" aria-label="办理步骤">
-                <span class="rent-flow-step active"><i>1</i><b>选择车库</b></span>
+                <span class="rent-flow-step active"><i>1</i><b>选择小区</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
                 <span class="rent-flow-step"><i>2</i><b>车辆与租期</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
@@ -6095,13 +6093,13 @@
               </div>
             </section>
 
-            <div class="rent-garage-tools" aria-label="搜索和筛选车库">
+            <div class="rent-garage-tools" aria-label="搜索和筛选小区">
               <label class="garage-search-input rent-garage-search">
                 <svg class="icon sm"><use href="#i-search"></use></svg>
-                <input type="search" data-rent-garage-query placeholder="搜索小区或车库" aria-label="搜索小区或车库">
+                <input type="search" data-rent-garage-query placeholder="搜索小区" aria-label="搜索小区">
               </label>
             </div>
-            <div class="garage-list-tools rent-garage-filter-tools" aria-label="按地理位置筛选办理车库">
+            <div class="garage-list-tools rent-garage-filter-tools" aria-label="按地理位置筛选办理小区">
               <div class="garage-tool-row" role="group" aria-label="选择区域">
                 <span class="tool-label">区域</span>
                 <button class="garage-tool-btn is-active" type="button" data-rent-area="all">全部</button>
@@ -6110,7 +6108,7 @@
               </div>
             </div>
             <div class="garage-list" data-rent-garage-list></div>
-            <div class="rent-garage-empty">没有找到相关车库</div>
+            <div class="rent-garage-empty">没有找到相关小区</div>
           </div>
         </article>
       </div>
@@ -6119,7 +6117,7 @@
         <div class="screen-label">个人信息</div>
         <article class="phone garage-list-page rent-owner" aria-label="补齐个人信息界面">
           <header class="subpage-titlebar">
-            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择车库">‹</button>
+            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择小区">‹</button>
             个人信息
           </header>
 
@@ -6133,8 +6131,7 @@
               <div class="rent-owner-garage">
                 <span class="icon-tile"><svg class="icon sm"><use href="#i-parking"></use></svg></span>
                 <div class="rent-selected-copy">
-                  <strong data-rent-owner-garage-name>请先选择车库</strong>
-                  <span data-rent-owner-garage-meta>办理信息将关联当前账号本人</span>
+                  <strong data-rent-owner-garage-name>请先选择小区</strong>
                 </div>
               </div>
             </section>
@@ -6167,7 +6164,7 @@
         <div class="screen-label">车辆信息</div>
         <article class="phone garage-list-page rent-vehicle" aria-label="填写车辆信息界面">
           <header class="subpage-titlebar">
-            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择车库">‹</button>
+            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择小区">‹</button>
             选择车辆
           </header>
 
@@ -6179,7 +6176,7 @@
               </div>
               <p>选择本次办理车辆，并填写月租开始日期和租赁月数。</p>
               <div class="rent-flow-stepper" aria-label="办理步骤">
-                <span class="rent-flow-step"><i>1</i><b>选择车库</b></span>
+                <span class="rent-flow-step"><i>1</i><b>选择小区</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
                 <span class="rent-flow-step active"><i>2</i><b>车辆与租期</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
@@ -6188,8 +6185,7 @@
               <div class="rent-selected-garage">
                 <span class="icon-tile"><svg class="icon sm"><use href="#i-parking"></use></svg></span>
                 <div class="rent-selected-copy">
-                  <strong data-rent-selected-name>请先选择车库</strong>
-                  <span data-rent-selected-meta>选择后显示车库和月租价格</span>
+                  <strong data-rent-selected-name>请先选择小区</strong>
                   <span class="rent-selected-price"><strong data-rent-selected-price>--</strong> 元/月</span>
                 </div>
               </div>
@@ -6325,7 +6321,7 @@
             <section class="notice-rule-list" aria-label="月租办理规则">
               <article class="notice-rule">
                 <h4>办理方式</h4>
-                <p>本次办理的是小区车库月租名额，不分配固定车位，也不展示车位编号。</p>
+                <p>本次办理的是小区月租名额，不分配固定车位，也不展示车位编号。</p>
               </article>
               <article class="notice-rule">
                 <h4>车辆通行</h4>
@@ -6362,7 +6358,7 @@
                 <span class="tag">确认支付</span>
               </div>
               <div class="rent-flow-stepper" aria-label="办理步骤">
-                <span class="rent-flow-step"><i>1</i><b>选择车库</b></span>
+                <span class="rent-flow-step"><i>1</i><b>选择小区</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
                 <span class="rent-flow-step"><i>2</i><b>车辆与租期</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
@@ -6372,12 +6368,8 @@
 
             <section class="card rent-form-card">
               <div class="list-row">
-                <span class="list-label">办理车库</span>
+                <span class="list-label">办理小区</span>
                 <strong data-confirm-garage>--</strong>
-              </div>
-              <div class="list-row confirm-location-row">
-                <span class="list-label">车库位置</span>
-                <strong data-confirm-location>--</strong>
               </div>
               <div class="list-row">
                 <span class="list-label">车牌号码</span>
@@ -6832,7 +6824,7 @@
           <div class="content">
             <section class="order-workflow-summary">
               <h2>续费信息</h2>
-              <p>沿用原订单的小区车库和车辆，支付成功后自动延长月租有效期。</p>
+              <p>沿用原订单的小区和车辆，支付成功后自动延长月租有效期。</p>
               <div class="order-workflow-plate"><span data-renew-community>--</span><strong data-renew-plate>--</strong></div>
             </section>
 
@@ -7264,15 +7256,12 @@
     const homeRentRemaining = document.querySelector("[data-home-rent-remaining]");
     const homeRentEnd = document.querySelector("[data-home-rent-end]");
     const rentSelectedName = document.querySelector("[data-rent-selected-name]");
-    const rentSelectedMeta = document.querySelector("[data-rent-selected-meta]");
     const rentSelectedPrice = document.querySelector("[data-rent-selected-price]");
     const rentCurrentPlate = document.querySelector("[data-rent-current-plate]");
     const rentCurrentMeta = document.querySelector("[data-rent-current-meta]");
     const getRentVehicleOptions = () => Array.from(document.querySelectorAll("[data-rent-vehicle-option]"));
     const rentOwnerGarageName = document.querySelector("[data-rent-owner-garage-name]");
-    const rentOwnerGarageMeta = document.querySelector("[data-rent-owner-garage-meta]");
     const confirmGarage = document.querySelector("[data-confirm-garage]");
-    const confirmLocation = document.querySelector("[data-confirm-location]");
     const confirmPlate = document.querySelector("[data-confirm-plate]");
     const confirmColor = document.querySelector("[data-confirm-color]");
     const confirmStart = document.querySelector("[data-confirm-start]");
@@ -8278,10 +8267,8 @@
         if (btn) btn.textContent = active ? "已选" : "选择";
       });
       if (rentSelectedName) rentSelectedName.textContent = rentFlowState.selectedName;
-      if (rentSelectedMeta) rentSelectedMeta.textContent = garageMeta;
       if (rentSelectedPrice) rentSelectedPrice.textContent = garagePriceText;
       if (rentOwnerGarageName) rentOwnerGarageName.textContent = rentFlowState.selectedName;
-      if (rentOwnerGarageMeta) rentOwnerGarageMeta.textContent = garageMeta;
       rentTermState.noticeChecked = false;
       clearTimeout(rentNoticeTimer);
       const defaultVehicle = getRentVehicleOptions().find((option) => {
@@ -8304,7 +8291,6 @@
 
     function syncRentConfirm() {
       if (confirmGarage) confirmGarage.textContent = rentFlowState.selectedName || "--";
-      if (confirmLocation) confirmLocation.textContent = rentFlowState.selectedLocation || "--";
       if (confirmPlate) confirmPlate.textContent = rentVehicleState.plate || "--";
       if (confirmColor) confirmColor.textContent = rentVehicleState.color || "--";
       if (confirmStart) confirmStart.textContent = rentStartDateInput?.value || "--";
@@ -8375,7 +8361,7 @@
         homeRentStatus.classList.toggle("refund", hasRefundPending);
       }
       if (homeRentPlate) homeRentPlate.textContent = order.plate;
-      if (homeRentPlace) homeRentPlace.textContent = `${order.community} · ${order.garage}`;
+      if (homeRentPlace) homeRentPlace.textContent = order.community;
       if (homeRentOrder) homeRentOrder.dataset.orderOpenId = order.id;
       if (homeRentRemaining) homeRentRemaining.textContent = `${remainingMonthlyDays(order.end)} 天`;
       if (homeRentEnd) homeRentEnd.textContent = order.end;
@@ -9047,7 +9033,6 @@
               <span class="order-status ${status.className}">${status.label}</span>
             </div>
             <div class="order-card-plate">${order.plate}</div>
-            <div class="order-card-place">${order.garage}</div>
             <div class="order-card-meta">
               <span>${order.start} 至 ${order.end}</span>
               <strong>${amountLabel} ${formatOrderAmount(order.amount)}</strong>
@@ -9152,7 +9137,6 @@
         <section class="order-detail-section">
           <h3>月租信息</h3>
           <div class="order-detail-row"><span>小区</span><strong class="order-detail-location">${order.community}</strong></div>
-          <div class="order-detail-row"><span>车库</span><strong class="order-detail-location">${order.garage}</strong></div>
           <div class="order-detail-row"><span>办理车辆</span><strong>${order.plate}</strong></div>
           <div class="order-detail-row"><span>租期</span><strong>${order.start} 至 ${order.end}</strong></div>
           <div class="order-detail-row"><span>租赁月数</span><strong>${order.months} 个月</strong></div>
@@ -9198,7 +9182,7 @@
       const start = nextDate(order.end);
       const end = addOrderMonths(start, orderState.renewMonths);
       const monthlyRate = order.amount / Math.max(order.months, 1);
-      if (renewCommunity) renewCommunity.textContent = `${order.community} · ${order.garage}`;
+      if (renewCommunity) renewCommunity.textContent = order.community;
       if (renewPlate) renewPlate.textContent = order.plate;
       if (renewStart) renewStart.textContent = start;
       if (renewEnd) renewEnd.textContent = end;
@@ -9216,7 +9200,7 @@
     function renderRefund(order = getOrderById()) {
       const estimate = Math.round(order.amount * 0.8);
       const remaining = order.id === "AS202608170023" ? "13 天" : "以审批测算为准";
-      document.querySelector("[data-refund-community]").textContent = `${order.community} · ${order.garage}`;
+      document.querySelector("[data-refund-community]").textContent = order.community;
       document.querySelector("[data-refund-plate]").textContent = order.plate;
       document.querySelector("[data-refund-paid-amount]").textContent = String(order.amount);
       document.querySelector("[data-refund-remaining-term]").textContent = remaining;
@@ -9377,7 +9361,7 @@
             <span class="refund-record-plate">${record.plate}</span>
             <span class="refund-record-status ${status.className}">${record.status}</span>
           </div>
-          <div class="refund-record-place">${record.community} · ${record.garage}</div>
+          <div class="refund-record-place">${record.community}</div>
           <div class="refund-record-info"><span>${refundRecordAmountLabel(record)}</span><strong>${record.reason}</strong></div>
           <div class="refund-record-foot"><span>${record.submittedAt}</span><span>查看详情</span></div>`;
         refundRecordList.appendChild(card);
@@ -9408,7 +9392,7 @@
         </section>
         <section class="order-detail-section">
           <h3>原月租信息</h3>
-          <div class="order-detail-row"><span>小区车库</span><strong>${record.community} · ${record.garage}</strong></div>
+          <div class="order-detail-row"><span>小区</span><strong>${record.community}</strong></div>
           <div class="order-detail-row"><span>退款车辆</span><strong>${record.plate}</strong></div>
           <div class="order-detail-row"><span>原租期</span><strong>${record.start} 至 ${record.end}</strong></div>
         </section>
