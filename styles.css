@@ -5033,40 +5033,6 @@
       background: #f5f7fa;
     }
 
-    .order-workflow-summary {
-      padding: 15px 14px;
-      border-radius: 8px;
-      color: #244563;
-      background: #eaf4ff;
-    }
-
-    .order-workflow-summary h2 {
-      margin: 0;
-      color: #244563;
-      font-size: 18px;
-      font-weight: 850;
-    }
-
-    .order-workflow-summary p {
-      margin: 7px 0 0;
-      color: #58718d;
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .order-workflow-summary .order-workflow-plate {
-      margin-top: 13px;
-      padding-top: 11px;
-      border-top: 1px solid rgba(45, 124, 216, 0.16);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      color: #244563;
-      font-size: 14px;
-      font-weight: 800;
-    }
-
     .order-workflow-section {
       margin-top: 10px;
       padding: 14px;
@@ -5702,7 +5668,6 @@
     .personal-info-section,
     .order-card,
     .order-detail-section,
-    .order-workflow-summary,
     .order-workflow-section,
     .invoice-record-card,
     .refund-record-card,
