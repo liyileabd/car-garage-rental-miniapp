@@ -1000,6 +1000,14 @@
                   <button class="plate-number-slot" type="button" data-plate-character="letter" aria-label="选择地区字母"><span data-plate-character-value="letter">D</span></button>
                   <span class="plate-separator" aria-hidden="true">·</span>
                   <span class="plate-tail-field">
+                    <span class="plate-tail-cells" aria-hidden="true">
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell hidden></span>
+                    </span>
                     <input id="vehicle-plate-input" class="plate-tail-input" type="text" data-vehicle-plate-input placeholder="请输入后5位" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="none" readonly aria-label="输入车牌后续号码">
                   </span>
                 </div>
@@ -1643,6 +1651,7 @@
     const vehiclePlateShell = document.querySelector("[data-plate-input-shell]");
     const plateCharacterButtons = document.querySelectorAll("[data-plate-character]");
     const plateCharacterValues = document.querySelectorAll("[data-plate-character-value]");
+    const plateTailCells = document.querySelectorAll("[data-plate-tail-cell]");
     const plateKeyboard = document.querySelector(".plate-keyboard");
     const plateKeyboardKeys = document.querySelector("[data-plate-keyboard-keys]");
     const plateKeyboardTitle = document.querySelector("[data-plate-keyboard-title]");
@@ -3290,6 +3299,18 @@
         vehiclePlateInput.maxLength = limit;
         vehiclePlateInput.placeholder = vehicleFormState.plateColorCode === "26" ? "请输入后6位" : "请输入后5位";
       }
+      plateTailCells.forEach((cell, index) => {
+        const character = vehicleFormState.plateSuffix[index] || "";
+        const isVisible = index < limit;
+        const isActive = document.body.dataset.currentTab === "vehicleForm"
+          && vehicleFormState.activePlateSlot === "suffix"
+          && vehicleForm?.dataset.plateKeyboard === "open"
+          && index === Math.min(vehicleFormState.plateSuffix.length, limit - 1);
+        cell.hidden = !isVisible;
+        cell.textContent = character;
+        cell.classList.toggle("is-empty", !character);
+        cell.classList.toggle("is-active-cell", isActive);
+      });
       plateCharacterButtons.forEach((button) => {
         const slot = button.dataset.plateCharacter;
         const value = slot === "province"
