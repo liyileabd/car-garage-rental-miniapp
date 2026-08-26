@@ -5044,32 +5044,6 @@
       background: #f5f7fa;
     }
 
-    .order-workflow-current {
-      min-height: 38px;
-      padding: 0 2px 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #526176;
-      font-size: 15px;
-      font-weight: 750;
-    }
-
-    .order-workflow-current span {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .order-workflow-current strong {
-      flex: 0 0 auto;
-      color: #26354b;
-      font-size: 17px;
-      font-weight: 850;
-    }
-
     .order-workflow-summary {
       padding: 15px 14px;
       border-radius: 8px;
@@ -6955,10 +6929,11 @@
           </header>
 
           <div class="content">
-            <div class="order-workflow-current" aria-label="本次续费车辆">
-              <span data-renew-community>--</span>
-              <strong data-renew-plate>--</strong>
-            </div>
+            <section class="order-detail-section" aria-label="本次续费月租信息">
+              <h3>月租信息</h3>
+              <div class="order-detail-row"><span>小区</span><strong class="order-detail-location" data-renew-community>--</strong></div>
+              <div class="order-detail-row"><span>办理车辆</span><strong data-renew-plate>--</strong></div>
+            </section>
 
             <section class="order-workflow-section">
               <h3>选择续费期限</h3>
