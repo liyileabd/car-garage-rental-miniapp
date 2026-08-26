@@ -6897,13 +6897,11 @@
           </header>
 
           <div class="content">
-            <nav class="order-tabs" aria-label="订单状态筛选">
-              <button class="order-tab is-active" type="button" data-order-filter="all">全部</button>
-              <button class="order-tab" type="button" data-order-filter="pending">待支付</button>
-              <button class="order-tab" type="button" data-order-filter="active">进行中</button>
-              <button class="order-tab" type="button" data-order-filter="afterSales">售后</button>
-              <button class="order-tab" type="button" data-order-filter="cancelled">已取消</button>
-            </nav>
+<nav class="order-tabs" aria-label="订单状态筛选">
+<button class="order-tab is-active" type="button" data-order-filter="all">全部</button>
+<button class="order-tab" type="button" data-order-filter="active">进行中</button>
+<button class="order-tab" type="button" data-order-filter="afterSales">售后</button>
+</nav>
 
             <div class="order-list" data-order-list></div>
             <div class="order-empty" data-order-empty>暂无符合条件的订单</div>
@@ -7696,7 +7694,6 @@
           months: 1,
           amount: 300,
           createdAt: "2026-08-07 10:21",
-          paymentStatus: "支付成功",
           paymentAt: "2026-08-07 10:24",
           rentalStatus: "有效",
           passStatus: "已开通",
@@ -7706,46 +7703,6 @@
           invoiceRequestNo: "KP202608170023",
           invoiceAppliedAt: "2026-08-25 10:42",
           invoiceType: "增值税发票",
-        },
-        {
-          id: "AS202608240060",
-          orderNo: "AS202608240060",
-          type: "新办",
-          community: "海沧安商房小区",
-          garage: "北区地下车库",
-          plate: "闽D 67890",
-          start: "2026-08-25",
-          end: "2026-09-24",
-          months: 1,
-          amount: 280,
-          createdAt: "2026-08-24 16:38",
-          paymentStatus: "待支付",
-          paymentAt: "--",
-          rentalStatus: "未生效",
-          passStatus: "未开通",
-          refundStatus: "未申请",
-          invoiceStatus: "未申请",
-          projectType: "区财政代管项目",
-        },
-        {
-          id: "AS202608150031",
-          orderNo: "AS202608150031",
-          type: "新办",
-          community: "集美安商房小区",
-          garage: "地下停车场 2 区",
-          plate: "闽D B32716",
-          start: "2026-08-16",
-          end: "2026-09-15",
-          months: 1,
-          amount: 320,
-          createdAt: "2026-08-16 15:47",
-          paymentStatus: "已取消",
-          paymentAt: "--",
-          rentalStatus: "未生效",
-          passStatus: "未开通",
-          refundStatus: "未申请",
-          invoiceStatus: "未申请",
-          projectType: "公司自营项目",
         },
         {
           id: "AS202608080014",
@@ -7759,7 +7716,6 @@
           months: 3,
           amount: 960,
           createdAt: "2026-06-01 09:12",
-          paymentStatus: "支付成功",
           paymentAt: "2026-06-01 09:16",
           rentalStatus: "有效",
           passStatus: "已暂停",
@@ -7779,7 +7735,6 @@
           months: 1,
           amount: 260,
           createdAt: "2026-07-01 11:28",
-          paymentStatus: "支付成功",
           paymentAt: "2026-07-01 11:32",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7804,7 +7759,6 @@
           months: 3,
           amount: 900,
           createdAt: "2026-06-18 09:28",
-          paymentStatus: "支付成功",
           paymentAt: "2026-06-18 09:31",
           rentalStatus: "终止",
           passStatus: "已结束",
@@ -7829,7 +7783,6 @@
           months: 3,
           amount: 840,
           createdAt: "2026-05-16 14:06",
-          paymentStatus: "支付成功",
           paymentAt: "2026-05-16 14:10",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7852,7 +7805,6 @@
           months: 1,
           amount: 320,
           createdAt: "2026-05-08 08:46",
-          paymentStatus: "支付成功",
           paymentAt: "2026-05-08 08:49",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7875,7 +7827,6 @@
           months: 1,
           amount: 300,
           createdAt: "2026-04-12 11:16",
-          paymentStatus: "支付成功",
           paymentAt: "2026-04-12 11:19",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7898,7 +7849,6 @@
           months: 1,
           amount: 240,
           createdAt: "2026-04-05 14:22",
-          paymentStatus: "支付成功",
           paymentAt: "2026-04-05 14:25",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7921,7 +7871,6 @@
           months: 1,
           amount: 250,
           createdAt: "2026-03-16 10:08",
-          paymentStatus: "支付成功",
           paymentAt: "2026-03-16 10:11",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -7946,7 +7895,6 @@
           months: 1,
           amount: 260,
           createdAt: "2026-02-18 09:42",
-          paymentStatus: "支付成功",
           paymentAt: "2026-02-18 09:45",
           rentalStatus: "过期",
           passStatus: "已结束",
@@ -8602,8 +8550,7 @@
     }
 
     function isActiveMonthlyOrder(order) {
-      return order.paymentStatus === "支付成功"
-        && order.rentalStatus === "有效"
+      return order.rentalStatus === "有效"
         && order.refundStatus !== "已通过";
     }
 
@@ -8684,7 +8631,6 @@
         months: rentTermState.months,
         amount: Number(rentTermPrice?.textContent || rentFlowState.selectedPrice || 0),
         createdAt: "2026-08-25 10:15",
-        paymentStatus: "支付成功",
         paymentAt: "2026-08-25 10:18",
         rentalStatus: "有效",
         passStatus: "已开通",
@@ -9326,15 +9272,6 @@
       if (order.refundStatus === "已通过") {
         return { label: "已终止", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款已通过，月租服务已结束。" };
       }
-      if (order.paymentStatus === "待支付") {
-        return { label: "待支付", className: "pending", panelClass: "is-pending", icon: "i-info", description: "请在订单有效期内完成支付，支付成功后再开通月租通行权限。" };
-      }
-      if (order.paymentStatus === "支付失败") {
-        return { label: "支付失败", className: "failed", panelClass: "is-failed", icon: "i-info", description: "本次支付未完成，您可以重新支付或取消订单。" };
-      }
-      if (order.paymentStatus === "已取消") {
-        return { label: "已取消", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "订单已取消，未生成月租服务。" };
-      }
       if (order.passStatus === "未开通") {
         return { label: "开通中", className: "syncing", panelClass: "", icon: "i-info", description: "支付已完成，正在同步停车平台授权。" };
       }
@@ -9345,16 +9282,13 @@
     }
 
     function orderMatchesFilter(order) {
-      if (orderState.filter === "pending") return ["待支付", "支付失败"].includes(order.paymentStatus);
-      if (orderState.filter === "active") return order.paymentStatus === "支付成功" && order.rentalStatus === "有效" && order.refundStatus === "未申请";
+      if (orderState.filter === "active") return order.rentalStatus === "有效" && order.refundStatus === "未申请";
       if (orderState.filter === "afterSales") return order.refundStatus !== "未申请" || order.invoiceStatus !== "未申请";
-      if (orderState.filter === "cancelled") return order.paymentStatus === "已取消";
       return true;
     }
 
     function canApplyInvoice(order) {
-      return order.paymentStatus === "支付成功" &&
-        order.invoiceStatus === "未申请" &&
+      return order.invoiceStatus === "未申请" &&
         !["审批中", "已通过"].includes(order.refundStatus);
     }
 
@@ -9374,9 +9308,6 @@
         const actions = orderMoreItems(order).filter((item) => !item.unavailable);
         const card = document.createElement("section");
         card.className = "order-card";
-        const amountLabel = order.paymentStatus === "已取消"
-          ? "订单金额"
-          : ["待支付", "支付失败"].includes(order.paymentStatus) ? "应付" : "实付";
         card.innerHTML = `
           <button class="order-card-open" type="button" data-order-open-id="${order.id}" aria-label="查看${order.orderNo}订单详情">
             <div class="order-card-head">
@@ -9386,7 +9317,7 @@
             <div class="order-card-plate">${order.plate}</div>
             <div class="order-card-meta">
               <span>${order.start} 至 ${order.end}</span>
-              <strong>${amountLabel} ${formatOrderAmount(order.amount)}</strong>
+              <strong>实付 ${formatOrderAmount(order.amount)}</strong>
             </div>
           </button>
           <div class="order-card-actions"${actions.length ? "" : " hidden"}>
@@ -9399,27 +9330,22 @@
     }
 
     function orderMoreItems(order) {
-      const canRenew = order.paymentStatus === "支付成功" && order.rentalStatus !== "终止" && order.refundStatus === "未申请";
-      const canRefund = order.paymentStatus === "支付成功" && order.rentalStatus === "有效" && order.refundStatus === "未申请";
+      const canRenew = order.rentalStatus !== "终止" && order.refundStatus === "未申请";
+      const canRefund = order.rentalStatus === "有效" && order.refundStatus === "未申请";
       const invoiceAvailable = canApplyInvoice(order);
       const items = [];
 
-      if (["待支付", "支付失败"].includes(order.paymentStatus)) {
-        items.push({ action: "pay", label: "继续支付" });
-        items.push({ action: "cancel", label: "取消订单", danger: true });
-      } else {
-        if (canRenew) items.push({ action: "renew", label: "续费" });
-        if (canRefund) items.push({ action: "refund", label: "申请退款" });
-        if (order.refundStatus === "审批中") items.push({ label: "退款审批中", unavailable: true });
-        if (order.refundStatus === "已通过") items.push({ label: "退款已通过", unavailable: true });
+      if (canRenew) items.push({ action: "renew", label: "续费" });
+      if (canRefund) items.push({ action: "refund", label: "申请退款" });
+      if (order.refundStatus === "审批中") items.push({ label: "退款审批中", unavailable: true });
+      if (order.refundStatus === "已通过") items.push({ label: "退款已通过", unavailable: true });
 
-        if (order.invoiceStatus === "已完成") {
-          items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
-        } else if (order.invoiceStatus === "申请中") {
-          items.push({ action: "invoiceProgress", label: "查看开票进度" });
-        } else if (invoiceAvailable) {
-          items.push({ action: "invoice", label: "申请开票" });
-        }
+      if (order.invoiceStatus === "已完成") {
+        items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
+      } else if (order.invoiceStatus === "申请中") {
+        items.push({ action: "invoiceProgress", label: "查看开票进度" });
+      } else if (invoiceAvailable) {
+        items.push({ action: "invoice", label: "申请开票" });
       }
 
       return items;
@@ -9452,15 +9378,13 @@
           : order.refundStatus === "未通过"
             ? '<div class="order-detail-row"><span>退款申请</span><strong>未通过</strong></div>'
             : "";
-      const serviceSection = order.paymentStatus === "支付成功"
-        ? `<section class="order-detail-section">
+      const serviceSection = `<section class="order-detail-section">
           <h3>服务状态</h3>
           <div class="order-detail-row"><span>月租状态</span><strong>${monthlyStatus}</strong></div>
           ${accessExceptionRows}
           ${refundStatusRow}
           ${invoiceRecordRow}
-        </section>`
-        : "";
+        </section>`;
 
       orderDetailContent.innerHTML = `
         <section class="order-detail-section">
@@ -9474,7 +9398,6 @@
           <h3>订单信息</h3>
           <div class="order-detail-row"><span>订单金额</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
           <div class="order-detail-row"><span>支付方式</span><strong>微信支付</strong></div>
-          <div class="order-detail-row"><span>订单状态</span><strong>${order.paymentStatus}</strong></div>
           <div class="order-detail-row"><span>创建时间</span><strong>${order.createdAt || "--"}</strong></div>
           <div class="order-detail-row"><span>付款时间</span><strong>${order.paymentAt}</strong></div>
           <div class="order-detail-row"><span>订单号</span><strong>${order.orderNo}</strong></div>
@@ -9482,11 +9405,7 @@
         ${serviceSection}
         `;
 
-      if (["待支付", "支付失败"].includes(order.paymentStatus)) {
-        orderDetailFooter.innerHTML = '<div class="order-detail-actions is-dual"><button class="order-secondary-action" type="button" data-order-action="cancel">取消订单</button><button class="order-primary-action" type="button" data-order-action="pay">继续支付</button></div>';
-      } else {
-        orderDetailFooter.innerHTML = "";
-      }
+      orderDetailFooter.innerHTML = "";
     }
 
     function openOrderList(returnScreen = document.body.dataset.currentTab || "home") {
@@ -9840,15 +9759,6 @@
       if (action === "invoice") return openOrderInvoice();
       if (action === "viewInvoice") return openInvoiceResult(order.id, "orderDetail");
       if (action === "invoiceProgress") return openInvoiceResult(order.id, "orderDetail");
-      if (action === "pay") return showToast("正在调起微信支付");
-      if (action === "cancel") {
-        order.paymentStatus = "已取消";
-        order.rentalStatus = "未生效";
-        order.passStatus = "未开通";
-        renderOrderDetail(order.id);
-        renderOrderList();
-        showToast("订单已取消");
-      }
     }
 
     function submitRenewal() {
@@ -9868,20 +9778,19 @@
         months: orderState.renewMonths,
         amount: monthlyRate * orderState.renewMonths,
         createdAt: "2026-08-25 10:22",
-        paymentStatus: "待支付",
-        paymentAt: "--",
-        rentalStatus: "未生效",
-        passStatus: "未开通",
+        paymentAt: "2026-08-25 10:25",
+        rentalStatus: "有效",
+        passStatus: "已开通",
         refundStatus: "未申请",
         invoiceStatus: "未申请",
       });
-      orderState.filter = "pending";
-      orderFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.orderFilter === "pending"));
+      orderState.filter = "all";
+      orderFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.orderFilter === "all"));
       renderOrderList();
       syncVehicleMonthlyState();
       syncHomeMonthlyCard();
       showTab("orderList");
-      showToast("已生成续费订单，请完成支付");
+      showToast("续费成功，月租有效期已延长");
     }
 
     function submitRefund() {
