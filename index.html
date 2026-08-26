@@ -4144,12 +4144,14 @@
     }
 
     .about-page,
-    .settings-page {
+    .settings-page,
+    .account-manage-page {
       background: #f5f7fa;
     }
 
     .about-page .content,
-    .settings-page .content {
+    .settings-page .content,
+    .account-manage-page .content {
       top: 0;
       padding: 24px 14px 28px;
       background: #f5f7fa;
@@ -4217,6 +4219,87 @@
       font-size: 14px;
       font-weight: 700;
       text-align: left;
+    }
+
+    .account-delete-row {
+      color: #d84d57;
+    }
+
+    .account-delete-dialog {
+      position: absolute;
+      inset: 0;
+      z-index: 32;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, visibility 160ms ease;
+    }
+
+    .account-manage-page[data-account-delete-dialog="open"] .account-delete-dialog {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .account-delete-backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(20, 29, 43, 0.42);
+    }
+
+    .account-delete-panel {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+      border-radius: 14px 14px 0 0;
+      background: #fff;
+      box-shadow: 0 -12px 28px rgba(22, 37, 58, 0.16);
+    }
+
+    .account-delete-panel h3 {
+      margin: 0;
+      color: #172033;
+      font-size: 18px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .account-delete-panel p {
+      margin: 10px 8px 0;
+      color: #6f7d90;
+      font-size: 14px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .account-delete-actions {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .account-delete-actions button {
+      height: 44px;
+      border: 0;
+      border-radius: 7px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .account-delete-cancel {
+      color: #526176;
+      background: #f1f4f8;
+    }
+
+    .account-delete-confirm {
+      color: #fff;
+      background: #d84d57;
     }
 
     .about-row + .about-row,
@@ -7198,6 +7281,12 @@
             </section>
 
             <section class="settings-group">
+              <button class="settings-row" type="button" data-account-manage-action>
+                <span>账号管理</span><span class="chevron">›</span>
+              </button>
+            </section>
+
+            <section class="settings-group">
               <button class="settings-row" type="button" data-about-action>
                 <span>关于小程序</span><span class="chevron">›</span>
               </button>
@@ -7209,6 +7298,36 @@
 
             <p class="settings-version">当前已是最新版本</p>
           </div>
+        </article>
+      </div>
+
+      <div class="phone-block" data-screen="accountManage">
+        <div class="screen-label">账号管理</div>
+        <article class="phone garage-list-page account-manage-page" aria-label="账号管理界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-account-manage-back aria-label="返回设置">‹</button>
+            账号管理
+          </header>
+
+          <div class="content">
+            <section class="settings-group">
+              <button class="settings-row account-delete-row" type="button" data-account-delete-action>
+                <span>注销账号</span><span class="chevron">›</span>
+              </button>
+            </section>
+          </div>
+
+          <section class="account-delete-dialog" data-account-delete-dialog aria-hidden="true" aria-label="注销账号确认">
+            <button class="account-delete-backdrop" type="button" data-account-delete-close aria-label="关闭注销账号确认"></button>
+            <div class="account-delete-panel" role="dialog" aria-modal="true" aria-labelledby="account-delete-title">
+              <h3 id="account-delete-title">确认注销账号？</h3>
+              <p>注销后将无法使用当前账号办理月租、查询订单，且无法恢复。</p>
+              <div class="account-delete-actions">
+                <button class="account-delete-cancel" type="button" data-account-delete-close>取消</button>
+                <button class="account-delete-confirm" type="button" data-account-delete-confirm>确认注销</button>
+              </div>
+            </div>
+          </section>
         </article>
       </div>
     </section>
@@ -7227,8 +7346,14 @@
     const personalInfoBackButtons = document.querySelectorAll("[data-personal-info-back]");
     const aboutActions = document.querySelectorAll("[data-about-action]");
     const settingsActions = document.querySelectorAll("[data-settings-action]");
+    const accountManageActions = document.querySelectorAll("[data-account-manage-action]");
     const aboutBackButtons = document.querySelectorAll("[data-about-back]");
     const settingsBackButtons = document.querySelectorAll("[data-settings-back]");
+    const accountManageBackButtons = document.querySelectorAll("[data-account-manage-back]");
+    const accountManagePage = document.querySelector(".account-manage-page");
+    const accountDeleteAction = document.querySelector("[data-account-delete-action]");
+    const accountDeleteCloseActions = document.querySelectorAll("[data-account-delete-close]");
+    const accountDeleteConfirmAction = document.querySelector("[data-account-delete-confirm]");
     const policyActions = document.querySelectorAll("[data-policy-action]");
     const clearCacheAction = document.querySelector("[data-clear-cache]");
     const cacheSize = document.querySelector("[data-cache-size]");
@@ -10294,12 +10419,44 @@
       });
     });
 
+    accountManageActions.forEach((action) => {
+      action.addEventListener("click", () => {
+        if (!ensureAuthenticated()) return;
+        if (accountManagePage) accountManagePage.dataset.accountDeleteDialog = "closed";
+        showTab("accountManage");
+      });
+    });
+
     aboutBackButtons.forEach((button) => {
       button.addEventListener("click", () => showTab("personal"));
     });
 
     settingsBackButtons.forEach((button) => {
       button.addEventListener("click", () => showTab("personal"));
+    });
+
+    accountManageBackButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (accountManagePage) accountManagePage.dataset.accountDeleteDialog = "closed";
+        showTab("settings");
+      });
+    });
+
+    accountDeleteAction?.addEventListener("click", () => {
+      if (accountManagePage) accountManagePage.dataset.accountDeleteDialog = "open";
+    });
+
+    accountDeleteCloseActions.forEach((action) => {
+      action.addEventListener("click", () => {
+        if (accountManagePage) accountManagePage.dataset.accountDeleteDialog = "closed";
+      });
+    });
+
+    accountDeleteConfirmAction?.addEventListener("click", () => {
+      if (accountManagePage) accountManagePage.dataset.accountDeleteDialog = "closed";
+      document.body.dataset.auth = "guest";
+      showTab("home");
+      showToast("账号已注销");
     });
 
     policyActions.forEach((action) => {
