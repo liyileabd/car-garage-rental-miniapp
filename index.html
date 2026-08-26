@@ -664,32 +664,29 @@
       box-shadow: var(--shadow);
     }
 
-    .banner {
+    .hero-banner {
       height: 150px;
       padding: 20px 16px 16px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) 142px;
       gap: 8px;
       overflow: hidden;
-      border: 1px solid rgba(47, 124, 246, 0.1);
-      background:
-        linear-gradient(135deg, #ffffff 0%, #edf6ff 58%, #dceeff 100%);
     }
 
-    .banner h2 {
-      margin: 0 0 8px;
+    .hero-banner h2 {
+      margin: 0 0 10px;
       color: #10223c;
-      font-size: 20px;
+      font-size: 25px;
       line-height: 1.2;
-      font-weight: 800;
+      font-weight: 850;
       letter-spacing: 0;
     }
 
-    .banner p {
+    .hero-banner p {
       margin: 0;
       max-width: 180px;
       color: #5d6b80;
-      font-size: 13.5px;
+      font-size: 14px;
       line-height: 1.55;
     }
 
@@ -706,7 +703,7 @@
       font-weight: 700;
     }
 
-    .banner svg {
+    .hero-banner svg {
       width: 142px;
       height: 110px;
       align-self: end;
@@ -5797,13 +5794,8 @@
               <div class="battery"></div>
             </div>
           </div>
-          <header class="top-row">
-            <div class="location" data-city-action><svg class="icon sm"><use href="#i-pin"></use></svg><span data-current-city>厦门</span></div>
-            <div class="search-box" data-search-action><svg class="icon sm"><use href="#i-search"></use></svg>搜索功能</div>
-          </header>
-
           <div class="content">
-            <section class="card banner">
+            <section class="hero-banner">
               <div>
                 <h2>月租车位线上办理</h2>
                 <p>选择小区车库，微信支付后开通通行。</p>
@@ -8039,48 +8031,12 @@
       showTab("garageMap");
     }
 
-    function enhanceGarageLocationActions(root) {
-      if (!root) return;
-      root.querySelectorAll(".garage-card").forEach((card) => {
-        const sub = card.querySelector(".garage-sub");
-        if (!sub) return;
-
-        let row = card.querySelector(".garage-location-row");
-        if (!row) {
-          row = document.createElement("button");
-          row.type = "button";
-          row.className = "garage-location-row";
-          row.setAttribute("aria-label", "查看车库位置");
-          card.appendChild(row);
-          row.appendChild(sub);
-        }
-
-        card.appendChild(row);
-
-        if (!row.querySelector(".garage-location-pin")) {
-          row.insertAdjacentHTML("afterbegin", '<svg class="icon garage-location-pin" aria-hidden="true"><use href="#i-pin"></use></svg>');
-        }
-        if (!row.querySelector(".garage-location-action")) {
-          row.insertAdjacentHTML("beforeend", '<span class="garage-location-action">查看位置 <i class="chevron">›</i></span>');
-        }
-        if (row.dataset.locationBound === "true") return;
-
-        row.dataset.locationBound = "true";
-        row.addEventListener("click", (event) => {
-          event.stopPropagation();
-          openGarageMap(card);
-        });
-      });
-    }
-
     function syncFullGarageList() {
       if (!fullGarageList || fullGarageList.children.length) return;
       document.querySelectorAll(".home-garage-list .garage-card").forEach((card) => {
         const clonedCard = card.cloneNode(true);
-        clonedCard.querySelector(".garage-location-row")?.removeAttribute("data-location-bound");
         fullGarageList.appendChild(clonedCard);
       });
-      enhanceGarageLocationActions(fullGarageList);
     }
 
     function syncRentGarageList() {
@@ -8090,13 +8046,11 @@
 
         cards.forEach((card) => {
           const clonedCard = card.cloneNode(true);
-          clonedCard.querySelector(".garage-location-row")?.removeAttribute("data-location-bound");
           const btn = clonedCard.querySelector(".rent-button");
           if (btn) btn.textContent = "选择";
           clonedCard.addEventListener("click", () => selectRentGarage(clonedCard));
           rentGarageList.appendChild(clonedCard);
         });
-        enhanceGarageLocationActions(rentGarageList);
       }
 
       applyRentGarageControls();
@@ -10353,7 +10307,6 @@
     showLoginView("main");
     buildPlateKeyboard();
     syncPlateInput();
-    enhanceGarageLocationActions(document.querySelector(".home-garage-list"));
     syncFullGarageList();
     syncRentGarageList();
     applyGarageListControls();
