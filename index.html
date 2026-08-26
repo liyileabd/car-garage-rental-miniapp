@@ -4738,7 +4738,7 @@
 
     .order-tabs {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       min-height: 42px;
       margin: 0 -14px 12px;
       padding: 0 14px;
@@ -6924,6 +6924,7 @@
 <button class="order-tab is-active" type="button" data-order-filter="all">全部</button>
 <button class="order-tab" type="button" data-order-filter="active">进行中</button>
 <button class="order-tab" type="button" data-order-filter="afterSales">售后</button>
+<button class="order-tab" type="button" data-order-filter="completed">已结束</button>
 </nav>
 
             <div class="order-list" data-order-list></div>
@@ -8627,6 +8628,15 @@
       if (homeRentEmpty) homeRentEmpty.hidden = Boolean(order);
       if (!order) return;
 
+      const latestPeriod = orderState.records
+        .filter((candidate) => {
+          return candidate.plate === order.plate &&
+            candidate.community === order.community &&
+            ["有效", "待生效"].includes(candidate.rentalStatus) &&
+            candidate.refundStatus !== "已通过";
+        })
+        .sort((a, b) => String(b.end).localeCompare(String(a.end)))[0] || order;
+
       if (homeRentStatus) {
         const hasRefundPending = order.refundStatus === "审批中";
         homeRentStatus.textContent = hasRefundPending ? "退款审批中" : "月租有效";
@@ -8634,9 +8644,9 @@
       }
       if (homeRentPlate) homeRentPlate.textContent = order.plate;
       if (homeRentPlace) homeRentPlace.textContent = order.community;
-      if (homeRentRenew) homeRentRenew.dataset.orderRenewId = order.id;
-      if (homeRentRemaining) homeRentRemaining.textContent = `${remainingMonthlyDays(order.end)} 天`;
-      if (homeRentEnd) homeRentEnd.textContent = order.end;
+      if (homeRentRenew) homeRentRenew.dataset.orderRenewId = latestPeriod.id;
+      if (homeRentRemaining) homeRentRemaining.textContent = `${remainingMonthlyDays(latestPeriod.end)} 天`;
+      if (homeRentEnd) homeRentEnd.textContent = latestPeriod.end;
     }
 
     function createMonthlyRentOrder() {
@@ -9295,6 +9305,12 @@
       if (order.refundStatus === "已通过") {
         return { label: "已终止", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款已通过，月租服务已结束。" };
       }
+      if (order.refundStatus === "未通过") {
+        return { label: "退款未通过", className: "refund", panelClass: "is-refund", icon: "i-refund", description: "退款申请未通过，月租服务仍按当前租期执行。" };
+      }
+      if (order.rentalStatus === "待生效") {
+        return { label: "待生效", className: "syncing", panelClass: "is-pending", icon: "i-info", description: "续费已支付，将在当前租期结束后自动生效。" };
+      }
       if (order.passStatus === "未开通") {
         return { label: "开通中", className: "syncing", panelClass: "", icon: "i-info", description: "支付已完成，正在同步停车平台授权。" };
       }
@@ -9305,8 +9321,10 @@
     }
 
     function orderMatchesFilter(order) {
-      if (orderState.filter === "active") return order.rentalStatus === "有效" && order.refundStatus === "未申请";
-      if (orderState.filter === "afterSales") return order.refundStatus !== "未申请";
+      const isCompleted = ["过期", "终止"].includes(order.rentalStatus) || order.refundStatus === "已通过";
+      if (orderState.filter === "active") return ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
+      if (orderState.filter === "afterSales") return ["审批中", "未通过"].includes(order.refundStatus) && !isCompleted;
+      if (orderState.filter === "completed") return isCompleted;
       return true;
     }
 
@@ -9802,7 +9820,7 @@
         amount: monthlyRate * orderState.renewMonths,
         createdAt: "2026-08-25 10:22",
         paymentAt: "2026-08-25 10:25",
-        rentalStatus: "有效",
+        rentalStatus: "待生效",
         passStatus: "已开通",
         refundStatus: "未申请",
         invoiceStatus: "未申请",
