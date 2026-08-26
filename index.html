@@ -2093,6 +2093,13 @@
       margin-top: 10px;
     }
 
+    .vehicle-form-section-heading {
+      margin: 0 0 12px;
+      color: #344256;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
     .vehicle-field {
       display: grid;
       gap: 9px;
@@ -3710,6 +3717,10 @@
       cursor: not-allowed;
     }
 
+    [data-rent-prereq-footer] .rent-next-btn {
+      width: 100%;
+    }
+
     .rent-confirm-actions {
       margin-left: auto;
       display: flex;
@@ -4586,49 +4597,6 @@
     .rent-prerequisite-field em {
       color: #df6047;
       font-style: normal;
-    }
-
-    .rent-prerequisite-vehicle {
-      width: 100%;
-      min-height: 66px;
-      padding: 10px 14px 14px;
-      border: 0;
-      display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) 18px;
-      align-items: center;
-      gap: 10px;
-      color: #344256;
-      background: #fff;
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .rent-prerequisite-vehicle:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .rent-prerequisite-vehicle .icon-tile {
-      width: 34px;
-      height: 34px;
-    }
-
-    .rent-prerequisite-vehicle strong,
-    .rent-prerequisite-vehicle small {
-      display: block;
-    }
-
-    .rent-prerequisite-vehicle strong {
-      color: #344256;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .rent-prerequisite-vehicle small {
-      margin-top: 4px;
-      color: #8a96a8;
-      font-size: 12px;
     }
 
     .personal-info-footer {
@@ -6390,20 +6358,7 @@
               </label>
             </section>
 
-            <section class="rent-prerequisite-section" data-rent-prereq-vehicle>
-              <h3>绑定车辆</h3>
-              <button class="rent-prerequisite-vehicle" type="button" data-rent-prereq-vehicle-action>
-                <span class="icon-tile"><svg class="icon sm"><use href="#i-car"></use></svg></span>
-                <span>
-                  <strong>暂未绑定车辆</strong>
-                  <small data-rent-prereq-vehicle-copy>请先绑定本次办理月租的车辆</small>
-                </span>
-                <span class="chevron">›</span>
-              </button>
-            </section>
-
             <div class="rent-flow-bottom" data-rent-prereq-footer>
-              <div class="rent-flow-price">申请人：本人</div>
               <button class="rent-next-btn" type="button" data-rent-owner-next disabled>保存并继续</button>
             </div>
           </div>
@@ -6919,7 +6874,24 @@
           </header>
 
           <div class="content">
+            <section class="card vehicle-form-section vehicle-rent-profile-section" data-rent-vehicle-profile-section hidden>
+              <h3 class="vehicle-form-section-heading">个人信息</h3>
+              <label class="rent-prerequisite-field">
+                <span>真实姓名 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-name placeholder="请输入真实姓名" autocomplete="name">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>手机号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-phone placeholder="请输入手机号" inputmode="tel" maxlength="11" autocomplete="tel">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>身份证号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-id-card placeholder="请输入身份证号" maxlength="18" autocomplete="off">
+              </label>
+            </section>
+
             <section class="card vehicle-form-section">
+              <h3 class="vehicle-form-section-heading" data-rent-vehicle-bind-heading hidden>绑定车辆</h3>
               <div class="vehicle-field">
                 <label for="vehicle-plate-input">车牌号 <em>*</em></label>
                 <div class="plate-input-shell" data-plate-input-shell aria-label="车牌号码">
@@ -7522,9 +7494,6 @@
     const rentOwnerPhoneInput = document.querySelector("[data-rent-owner-phone]");
     const rentOwnerIdCardInput = document.querySelector("[data-rent-owner-id-card]");
     const rentPrereqPersonal = document.querySelector("[data-rent-prereq-personal]");
-    const rentPrereqVehicle = document.querySelector("[data-rent-prereq-vehicle]");
-    const rentPrereqVehicleAction = document.querySelector("[data-rent-prereq-vehicle-action]");
-    const rentPrereqVehicleCopy = document.querySelector("[data-rent-prereq-vehicle-copy]");
     const rentPrereqFooter = document.querySelector("[data-rent-prereq-footer]");
     const rentVehicleNextButton = document.querySelector("[data-rent-vehicle-next]");
     const rentVehiclePickerAction = document.querySelector("[data-open-rent-vehicle-picker]");
@@ -7596,6 +7565,11 @@
     const vehicleCountLabels = document.querySelectorAll("[data-vehicle-count]");
     const personalVehicleCount = document.querySelector("[data-personal-vehicle-count]");
     const vehicleForm = document.querySelector(".vehicle-form");
+    const rentVehicleProfileSection = document.querySelector("[data-rent-vehicle-profile-section]");
+    const rentVehicleProfileNameInput = document.querySelector("[data-rent-vehicle-profile-name]");
+    const rentVehicleProfilePhoneInput = document.querySelector("[data-rent-vehicle-profile-phone]");
+    const rentVehicleProfileIdCardInput = document.querySelector("[data-rent-vehicle-profile-id-card]");
+    const rentVehicleBindHeading = document.querySelector("[data-rent-vehicle-bind-heading]");
     const vehiclePlateInput = document.querySelector("[data-vehicle-plate-input]");
     const vehiclePlateShell = document.querySelector("[data-plate-input-shell]");
     const plateCharacterButtons = document.querySelectorAll("[data-plate-character]");
@@ -8168,6 +8142,7 @@
     let refreshTimer;
     let rentNoticeTimer;
     let vehicleFormReturnScreen = "vehicleManage";
+    let rentVehicleProfileRequired = false;
     let garageMapReturnScreen = "home";
     let suppressHistory = false;
 
@@ -8468,9 +8443,7 @@
 
     function prepareRentPrerequisite() {
       const profileMissing = !hasCompleteProfile();
-      const vehicleMissing = !hasBoundVehicle();
       if (rentPrereqPersonal) rentPrereqPersonal.hidden = !profileMissing;
-      if (rentPrereqVehicle) rentPrereqVehicle.hidden = !vehicleMissing;
       if (rentPrereqFooter) rentPrereqFooter.hidden = !profileMissing;
 
       if (profileMissing) {
@@ -8480,14 +8453,8 @@
         Object.assign(rentOwnerState, userProfileState);
       }
 
-      if (rentPrereqVehicleAction) rentPrereqVehicleAction.disabled = profileMissing;
-      if (rentPrereqVehicleCopy) {
-        rentPrereqVehicleCopy.textContent = profileMissing
-          ? "请先完成个人信息，再绑定车辆"
-          : "请先绑定本次办理月租的车辆";
-      }
       if (rentOwnerNextButton && profileMissing) {
-        rentOwnerNextButton.textContent = vehicleMissing ? "保存并绑定车辆" : "保存并继续";
+        rentOwnerNextButton.textContent = "保存并继续";
       }
       updateRentOwnerNextState();
     }
@@ -8512,8 +8479,7 @@
     function continueRentVehicleStep() {
       const vehicleOptions = getRentVehicleOptions();
       if (!vehicleOptions.length) {
-        prepareRentPrerequisite();
-        showTab("rentOwner");
+        openPrerequisiteVehicleForm(false);
         return;
       }
       const defaultVehicle = vehicleOptions.find((option) => {
@@ -8528,9 +8494,8 @@
       showTab("rentVehicle");
     }
 
-    function openPrerequisiteVehicleForm() {
-      if (!hasCompleteProfile()) return;
-      openVehicleForm(null, "rentOwner");
+    function openPrerequisiteVehicleForm(profileRequired) {
+      openVehicleForm(null, "rentFlow", { profileRequired });
     }
 
     function formatRentDate(date) {
@@ -8711,9 +8676,19 @@
       if (rentOwnerGarageName) rentOwnerGarageName.textContent = rentFlowState.selectedName;
       rentTermState.noticeChecked = false;
       clearTimeout(rentNoticeTimer);
-      if (!hasCompleteProfile() || !hasBoundVehicle()) {
+      const profileMissing = !hasCompleteProfile();
+      const vehicleMissing = !hasBoundVehicle();
+      if (profileMissing && vehicleMissing) {
+        openPrerequisiteVehicleForm(true);
+        return;
+      }
+      if (profileMissing) {
         prepareRentPrerequisite();
         showTab("rentOwner");
+        return;
+      }
+      if (vehicleMissing) {
+        openPrerequisiteVehicleForm(false);
         return;
       }
       continueRentVehicleStep();
@@ -9148,9 +9123,42 @@
       return plate.replace(/\s+/g, "").toUpperCase();
     }
 
-    function openVehicleForm(card, returnScreen = "vehicleManage") {
+    function syncRentVehicleFormMode() {
+      const isRentFlow = vehicleFormReturnScreen === "rentFlow";
+      if (rentVehicleProfileSection) rentVehicleProfileSection.hidden = !isRentFlow || !rentVehicleProfileRequired;
+      if (rentVehicleBindHeading) rentVehicleBindHeading.hidden = !isRentFlow;
+      if (!isRentFlow) return;
+
+      if (rentVehicleProfileRequired) {
+        if (rentVehicleProfileNameInput) rentVehicleProfileNameInput.value = userProfileState.name || "";
+        if (rentVehicleProfilePhoneInput) rentVehicleProfilePhoneInput.value = userProfileState.phone || "";
+        if (rentVehicleProfileIdCardInput) rentVehicleProfileIdCardInput.value = userProfileState.idCard || "";
+      }
+      if (vehicleFormTitle) vehicleFormTitle.textContent = rentVehicleProfileRequired ? "补全办理资料" : "绑定车辆";
+      if (vehicleSaveButton) vehicleSaveButton.textContent = "保存并继续";
+    }
+
+    function saveRentVehicleProfile() {
+      const profile = {
+        name: rentVehicleProfileNameInput?.value.trim() || "",
+        phone: rentVehicleProfilePhoneInput?.value.trim() || "",
+        idCard: rentVehicleProfileIdCardInput?.value.trim().toUpperCase() || "",
+      };
+      if (!hasCompleteProfile(profile)) {
+        showToast("请完整填写姓名、手机号和身份证号");
+        return false;
+      }
+      Object.assign(userProfileState, profile);
+      accountState.profiles[accountState.current] = { ...userProfileState };
+      Object.assign(rentOwnerState, profile);
+      syncPersonalProfile();
+      return true;
+    }
+
+    function openVehicleForm(card, returnScreen = "vehicleManage", options = {}) {
       if (!ensureAuthenticated()) return;
       vehicleFormReturnScreen = returnScreen;
+      rentVehicleProfileRequired = Boolean(options.profileRequired);
       resetVehicleForm();
       if (card) {
         if (vehicleForm) vehicleForm.dataset.editing = "true";
@@ -9169,6 +9177,7 @@
         if (vehicleSaveButton) vehicleSaveButton.textContent = "保存修改";
         syncVehicleChoiceState();
       }
+      syncRentVehicleFormMode();
       syncPlateInput();
       setVehicleFormLocked(Boolean(card && vehicleHasActiveMonthlyRental(card.dataset.plate || "")));
       showTab("vehicleForm");
@@ -9310,6 +9319,7 @@
         vehicleTypeCode: vehicleFormState.vehicleTypeCode,
         appearance,
       };
+      if (rentVehicleProfileRequired && !saveRentVehicleProfile()) return;
       if (editingCard) {
         editingCard.replaceWith(createVehicleCard(vehicle));
         const rentOption = getRentVehicleOptions().find((option) => {
@@ -9331,7 +9341,8 @@
       updateVehicleCollection();
       const nextScreen = vehicleFormReturnScreen;
       vehicleFormReturnScreen = "vehicleManage";
-      if (nextScreen === "rentOwner") {
+      rentVehicleProfileRequired = false;
+      if (nextScreen === "rentFlow") {
         continueRentVehicleStep();
       } else {
         showTab("vehicleManage");
@@ -10382,8 +10393,6 @@
       });
     }
 
-    rentPrereqVehicleAction?.addEventListener("click", openPrerequisiteVehicleForm);
-
     if (rentVehicleNextButton) {
       rentVehicleNextButton.addEventListener("click", () => {
         if (rentVehicleNextButton.disabled) return;
@@ -10450,9 +10459,9 @@
       button.addEventListener("click", () => {
         const returnScreen = vehicleFormReturnScreen;
         vehicleFormReturnScreen = "vehicleManage";
-        if (returnScreen === "rentOwner") {
-          prepareRentPrerequisite();
-          showTab("rentOwner");
+        rentVehicleProfileRequired = false;
+        if (returnScreen === "rentFlow") {
+          showTab("rentFlow");
           return;
         }
         showTab("vehicleManage");
