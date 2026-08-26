@@ -9303,7 +9303,7 @@
 
     function orderMatchesFilter(order) {
       if (orderState.filter === "active") return order.rentalStatus === "有效" && order.refundStatus === "未申请";
-      if (orderState.filter === "afterSales") return order.refundStatus !== "未申请" || order.invoiceStatus !== "未申请";
+      if (orderState.filter === "afterSales") return order.refundStatus !== "未申请";
       return true;
     }
 
