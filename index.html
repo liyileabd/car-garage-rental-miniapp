@@ -3922,7 +3922,7 @@
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
       } else if (order.invoiceStatus === "申请中") {
-        items.push({ action: "invoiceProgress", label: invoiceVoucherFor(order) === "非税票据" ? "查看票据进度" : "查看开票进度" });
+        items.push({ action: "invoiceProgress", label: "查看开票进度" });
       } else if (invoiceAvailable) {
         items.push({ action: "invoice", label: "申请开票" });
       }
@@ -3936,9 +3936,9 @@
       orderState.activeId = order.id;
 
       const invoiceRecordRow = order.invoiceStatus === "已完成"
-        ? `<div class="order-action-row"><span>电子票据</span><button type="button" data-order-action="viewInvoice">${invoiceViewLabel(order)}</button></div>`
+        ? `<div class="order-action-row"><span>开票信息</span><button type="button" data-order-action="viewInvoice">${invoiceViewLabel(order)}</button></div>`
         : order.invoiceStatus === "申请中"
-          ? `<div class="order-action-row"><span>${invoiceVoucherFor(order) === "非税票据" ? "票据申请" : "开票申请"}</span><strong>${invoiceProcessingLabel(order)}</strong></div>`
+          ? `<div class="order-action-row"><span>开票申请</span><strong>${invoiceProcessingLabel(order)}</strong></div>`
           : "";
       const monthlyStatus = order.refundStatus === "已通过" || order.rentalStatus === "终止"
         ? "已终止"
@@ -4051,8 +4051,8 @@
       return order.projectType === "公司自营项目" ? "增值税发票" : "非税票据";
     }
 
-    function invoiceViewLabel(order) {
-      return invoiceVoucherFor(order) === "增值税发票" ? "查看发票" : "查看票据";
+    function invoiceViewLabel() {
+      return "查看发票";
     }
 
     function invoiceProcessingLabel(order) {
