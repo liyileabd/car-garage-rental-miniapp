@@ -665,21 +665,20 @@
     }
 
     .hero-banner {
+      position: relative;
       height: 150px;
       padding: 20px 16px 16px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 142px;
-      gap: 8px;
       overflow: hidden;
     }
 
     .hero-banner h2 {
       margin: 0 0 10px;
       color: #10223c;
-      font-size: 25px;
+      font-size: 24px;
       line-height: 1.2;
       font-weight: 850;
       letter-spacing: 0;
+      white-space: nowrap;
     }
 
     .hero-banner p {
@@ -704,10 +703,11 @@
     }
 
     .hero-banner svg {
-      width: 142px;
-      height: 110px;
-      align-self: end;
-      justify-self: end;
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: 106px;
+      height: 86px;
     }
 
     .rent-card {
