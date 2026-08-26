@@ -4938,6 +4938,32 @@
       background: #f5f7fa;
     }
 
+    .order-workflow-current {
+      min-height: 38px;
+      padding: 0 2px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #526176;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .order-workflow-current span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .order-workflow-current strong {
+      flex: 0 0 auto;
+      color: #26354b;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
     .order-workflow-summary {
       padding: 15px 14px;
       border-radius: 8px;
@@ -5009,6 +5035,7 @@
     }
 
     .renew-choice-grid {
+      margin-top: 8px;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
@@ -6822,14 +6849,14 @@
           </header>
 
           <div class="content">
-            <section class="order-workflow-summary">
-              <h2>续费信息</h2>
-              <p>沿用原订单的小区和车辆，支付成功后自动延长月租有效期。</p>
-              <div class="order-workflow-plate"><span data-renew-community>--</span><strong data-renew-plate>--</strong></div>
-            </section>
+            <div class="order-workflow-current" aria-label="本次续费车辆">
+              <span data-renew-community>--</span>
+              <strong data-renew-plate>--</strong>
+            </div>
 
             <section class="order-workflow-section">
               <h3>选择续费期限</h3>
+              <input class="rent-input" type="number" data-renew-months min="1" max="12" step="1" value="1" inputmode="numeric" aria-label="续费月数">
               <div class="renew-choice-grid" role="group" aria-label="续费月数">
                 <button class="renew-choice is-active" type="button" data-renew-month="1">1个月</button>
                 <button class="renew-choice" type="button" data-renew-month="3">3个月</button>
@@ -7341,6 +7368,7 @@
     const orderMoreCloseButtons = document.querySelectorAll("[data-order-more-close]");
     const orderDetailContent = document.querySelector("[data-order-detail-content]");
     const orderDetailFooter = document.querySelector("[data-order-detail-footer]");
+    const renewMonthsInput = document.querySelector("[data-renew-months]");
     const renewMonthButtons = document.querySelectorAll("[data-renew-month]");
     const renewCommunity = document.querySelector("[data-renew-community]");
     const renewPlate = document.querySelector("[data-renew-plate]");
@@ -9187,6 +9215,9 @@
       if (renewStart) renewStart.textContent = start;
       if (renewEnd) renewEnd.textContent = end;
       if (renewAmount) renewAmount.textContent = String(Math.round(monthlyRate * orderState.renewMonths));
+      if (renewMonthsInput && renewMonthsInput.value !== String(orderState.renewMonths)) {
+        renewMonthsInput.value = String(orderState.renewMonths);
+      }
       renewMonthButtons.forEach((button) => button.classList.toggle("is-active", Number(button.dataset.renewMonth) === orderState.renewMonths));
     }
 
@@ -9854,6 +9885,12 @@
         const button = event.target.closest("[data-order-action]");
         if (button) handleOrderAction(button.dataset.orderAction);
       });
+    });
+
+    renewMonthsInput?.addEventListener("input", () => {
+      const parsedMonths = Number.parseInt(renewMonthsInput.value || "1", 10);
+      orderState.renewMonths = Math.min(12, Math.max(1, Number.isFinite(parsedMonths) ? parsedMonths : 1));
+      renderRenewal();
     });
 
     renewMonthButtons.forEach((button) => {
