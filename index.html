@@ -9731,13 +9731,18 @@
     }
 
     function canApplyInvoice(order) {
-      return order.invoiceStatus === "未申请" &&
+      return Boolean(order.paymentAt) &&
+        order.invoiceStatus === "未申请" &&
         !["审批中", "已通过"].includes(order.refundStatus);
     }
 
     function invoiceUnavailableMessage(order) {
       if (order.refundStatus === "审批中") return "退款审批中，暂不可申请开票";
-      if (order.refundStatus === "已通过") return "退款已通过，不可申请开票";
+      if (order.refundStatus === "已通过") {
+        return order.invoiceStatus === "已完成"
+          ? "退款已通过，已开具票据将由财务线下红冲处理"
+          : "退款已通过，不可申请开票";
+      }
       return "--";
     }
 
@@ -9786,7 +9791,7 @@
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
       } else if (order.invoiceStatus === "申请中") {
-        items.push({ action: "invoiceProgress", label: "查看开票进度" });
+        items.push({ action: "invoiceProgress", label: invoiceVoucherFor(order) === "非税票据" ? "查看票据进度" : "查看开票进度" });
       } else if (invoiceAvailable) {
         items.push({ action: "invoice", label: "申请开票" });
       }
@@ -9802,7 +9807,7 @@
       const invoiceRecordRow = order.invoiceStatus === "已完成"
         ? `<div class="order-action-row"><span>电子票据</span><button type="button" data-order-action="viewInvoice">${invoiceViewLabel(order)}</button></div>`
         : order.invoiceStatus === "申请中"
-          ? '<div class="order-action-row"><span>开票申请</span><strong>开票中</strong></div>'
+          ? `<div class="order-action-row"><span>${invoiceVoucherFor(order) === "非税票据" ? "票据申请" : "开票申请"}</span><strong>${invoiceProcessingLabel(order)}</strong></div>`
           : "";
       const monthlyStatus = order.refundStatus === "已通过" || order.rentalStatus === "终止"
         ? "已终止"
@@ -9917,6 +9922,10 @@
 
     function invoiceViewLabel(order) {
       return invoiceVoucherFor(order) === "增值税发票" ? "查看发票" : "查看票据";
+    }
+
+    function invoiceProcessingLabel(order) {
+      return invoiceVoucherFor(order) === "增值税发票" ? "开票处理中" : "票据处理中";
     }
 
     function invoiceRecordType(order) {
@@ -10142,7 +10151,7 @@
         record.innerHTML = `
           <div class="invoice-record-top">
             <span class="invoice-record-name">${invoiceRecordType(order)}</span>
-            <span class="invoice-record-status${isDone ? " done" : ""}">${isDone ? "已完成" : "处理中"}</span>
+            <span class="invoice-record-status${isDone ? " done" : ""}">${isDone ? "已完成" : invoiceProcessingLabel(order)}</span>
           </div>
           <div class="invoice-record-info"><span>${order.community}</span><strong>${formatOrderAmount(order.amount)}</strong></div>
           <div class="invoice-record-foot"><span>${isDone ? (order.invoiceCompletedAt || "--") : (order.invoiceAppliedAt || "已提交申请")}</span><span>${isDone ? invoiceViewLabel(order) : "等待处理"}</span></div>`;
@@ -10175,6 +10184,7 @@
         ${order.invoiceTitle ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "开票抬头" : "票据抬头"}</span><strong>${order.invoiceTitle}</strong></div>` : ""}
         <div class="order-detail-row"><span>申请单号</span><strong>${order.invoiceRequestNo || "--"}</strong></div>
         <div class="order-detail-row"><span>申请时间</span><strong>${order.invoiceAppliedAt || "--"}</strong></div>
+        ${!isDone ? `<div class="order-detail-row"><span>处理状态</span><strong>${invoiceProcessingLabel(order)}</strong></div>` : ""}
         ${isDone ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "发票号码" : "票据号码"}</span><strong>${order.invoiceNumber || "--"}</strong></div><div class="order-detail-row"><span>开具日期</span><strong>${order.invoiceCompletedAt || "--"}</strong></div>` : ""}`;
       invoiceResultFile.hidden = !isDone;
       if (isDone) {
