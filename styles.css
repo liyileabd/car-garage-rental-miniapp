@@ -713,18 +713,11 @@
     }
 
     .home-rent-empty {
-      width: 100%;
-      min-height: 156px;
-      padding: 20px 18px;
-      border: 0;
-      background: transparent;
+      min-height: 138px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: inherit;
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
+      justify-content: space-between;
+      gap: 14px;
     }
 
     [data-home-rent-active][hidden],
@@ -732,43 +725,23 @@
       display: none !important;
     }
 
-    .home-rent-empty-copy > span,
-    .home-rent-empty-copy b {
+    .home-rent-empty b,
+    .home-rent-empty span {
       display: block;
     }
 
-    .home-rent-empty-copy {
-      min-width: 0;
-      width: 100%;
-      text-align: center;
-    }
-
-    .home-rent-empty-copy b {
+    .home-rent-empty b {
       color: #26354b;
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 850;
       line-height: 1.4;
     }
 
-    .home-rent-empty-desc {
+    .home-rent-empty span {
       margin-top: 5px;
       color: #7d8999;
       font-size: 13px;
       line-height: 1.45;
-    }
-
-    .home-rent-empty-cta {
-      height: 40px;
-      margin-top: 18px;
-      border-radius: 8px;
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      background: var(--primary);
-      font-size: 15px;
-      font-weight: 750;
-      box-shadow: 0 6px 13px rgba(47, 124, 246, 0.18);
     }
 
     .card-head {
