@@ -4386,9 +4386,7 @@
     }
 
     .about-row + .about-row,
-    .settings-row + .settings-row,
-    .settings-row + .settings-static,
-    .settings-static + .settings-row {
+    .settings-row + .settings-row {
       border-top: 1px solid #edf1f6;
     }
 
@@ -4420,69 +4418,7 @@
       color: var(--red);
     }
 
-    .settings-static {
-      min-height: 54px;
-      padding: 0 13px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #344256;
-      background: #fff;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .settings-value {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      color: #9aa5b4;
-      font-size: 12px;
-      font-style: normal;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .settings-value em {
-      font-style: normal;
-    }
-
-    .setting-switch {
-      position: relative;
-      width: 42px;
-      height: 24px;
-      padding: 0;
-      border: 0;
-      border-radius: 12px;
-      background: #d8e0ea;
-      cursor: pointer;
-      transition: background 0.16s ease;
-    }
-
-    .setting-switch::after {
-      content: "";
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(26, 44, 70, 0.18);
-      transition: transform 0.16s ease;
-    }
-
-    .setting-switch.is-on {
-      background: var(--primary);
-    }
-
-    .setting-switch.is-on::after {
-      transform: translateX(18px);
-    }
-
-    .about-copyright,
-    .settings-version {
+    .about-copyright {
       margin: 26px 0 0;
       color: #a1abb8;
       font-size: 11px;
@@ -7327,21 +7263,6 @@
 
           <div class="content">
             <section class="settings-group">
-              <div class="settings-static">
-                <span>月租到期提醒</span>
-                <button class="setting-switch is-on" type="button" data-rent-reminder aria-label="关闭月租到期提醒" aria-pressed="true"></button>
-              </div>
-              <button class="settings-row" type="button" data-clear-cache>
-                <span>清除本地缓存</span>
-                <span class="settings-value"><em data-cache-size>0.8 MB</em><span class="chevron">›</span></span>
-              </button>
-              <button class="settings-row" type="button" data-check-update>
-                <span>检查新版本</span>
-                <span class="settings-value">v1.0.0<span class="chevron">›</span></span>
-              </button>
-            </section>
-
-            <section class="settings-group">
               <button class="settings-row" type="button" data-account-manage-action>
                 <span>账号管理</span><span class="chevron">›</span>
               </button>
@@ -7356,8 +7277,6 @@
             <section class="settings-group">
               <button class="settings-row logout-row" type="button" data-logout-action>退出登录</button>
             </section>
-
-            <p class="settings-version">当前已是最新版本</p>
           </div>
         </article>
       </div>
@@ -7416,10 +7335,6 @@
     const accountDeleteCloseActions = document.querySelectorAll("[data-account-delete-close]");
     const accountDeleteConfirmAction = document.querySelector("[data-account-delete-confirm]");
     const policyActions = document.querySelectorAll("[data-policy-action]");
-    const clearCacheAction = document.querySelector("[data-clear-cache]");
-    const cacheSize = document.querySelector("[data-cache-size]");
-    const checkUpdateAction = document.querySelector("[data-check-update]");
-    const rentReminderAction = document.querySelector("[data-rent-reminder]");
     const personalNameInput = document.querySelector("[data-personal-name-input]");
     const personalPhoneInput = document.querySelector("[data-personal-phone-input]");
     const personalIdInput = document.querySelector("[data-personal-id-input]");
@@ -11054,20 +10969,6 @@
         const label = action.dataset.policyAction === "privacy" ? "个人信息保护政策" : "用户服务协议";
         showToast(`正在查看${label}`);
       });
-    });
-
-    clearCacheAction?.addEventListener("click", () => {
-      if (cacheSize) cacheSize.textContent = "0 KB";
-      showToast("缓存已清除");
-    });
-
-    checkUpdateAction?.addEventListener("click", () => showToast("已是最新版本"));
-
-    rentReminderAction?.addEventListener("click", () => {
-      const enabled = rentReminderAction.classList.toggle("is-on");
-      rentReminderAction.setAttribute("aria-pressed", String(enabled));
-      rentReminderAction.setAttribute("aria-label", `${enabled ? "关闭" : "开启"}月租到期提醒`);
-      showToast(enabled ? "已开启月租到期提醒" : "已关闭月租到期提醒");
     });
 
     personalInfoBackButtons.forEach((button) => {
