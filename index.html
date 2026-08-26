@@ -5857,7 +5857,7 @@
                   <div class="plate" data-home-rent-plate>闽D 12345</div>
 <div class="rent-place" data-home-rent-place>湖里安商房小区</div>
                 </div>
-                <button class="small-btn" type="button" data-order-open-id="AS202608170023" data-home-rent-order>查看订单</button>
+                <button class="small-btn" type="button" data-home-rent-renew>续费</button>
               </div>
               <div class="rent-metrics">
                 <div class="metric"><b data-home-rent-remaining>18 天</b><span>剩余时间</span></div>
@@ -7252,7 +7252,7 @@
     const homeRentStatus = document.querySelector("[data-home-rent-status]");
     const homeRentPlate = document.querySelector("[data-home-rent-plate]");
     const homeRentPlace = document.querySelector("[data-home-rent-place]");
-    const homeRentOrder = document.querySelector("[data-home-rent-order]");
+    const homeRentRenew = document.querySelector("[data-home-rent-renew]");
     const homeRentRemaining = document.querySelector("[data-home-rent-remaining]");
     const homeRentEnd = document.querySelector("[data-home-rent-end]");
     const rentSelectedName = document.querySelector("[data-rent-selected-name]");
@@ -8362,7 +8362,7 @@
       }
       if (homeRentPlate) homeRentPlate.textContent = order.plate;
       if (homeRentPlace) homeRentPlace.textContent = order.community;
-      if (homeRentOrder) homeRentOrder.dataset.orderOpenId = order.id;
+      if (homeRentRenew) homeRentRenew.dataset.orderRenewId = order.id;
       if (homeRentRemaining) homeRentRemaining.textContent = `${remainingMonthlyDays(order.end)} 天`;
       if (homeRentEnd) homeRentEnd.textContent = order.end;
     }
@@ -9789,6 +9789,14 @@
       button.addEventListener("click", () => {
         openOrderDetail(button.dataset.orderOpenId, document.body.dataset.currentTab || "home");
       });
+    });
+
+    homeRentRenew?.addEventListener("click", () => {
+      if (!ensureAuthenticated()) return;
+      const order = getOrderById(homeRentRenew.dataset.orderRenewId);
+      if (!order) return;
+      orderState.activeId = order.id;
+      openOrderRenewal();
     });
 
     orderListBackButtons.forEach((button) => {
