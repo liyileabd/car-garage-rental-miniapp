@@ -719,6 +719,31 @@
       padding: 12px;
     }
 
+    .home-rent-empty {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .home-rent-empty b,
+    .home-rent-empty span {
+      display: block;
+    }
+
+    .home-rent-empty b {
+      color: #26354b;
+      font-size: 16px;
+      font-weight: 850;
+    }
+
+    .home-rent-empty span {
+      margin-top: 5px;
+      color: #7d8999;
+      font-size: 13px;
+    }
+
     .card-head {
       display: flex;
       justify-content: space-between;
@@ -5972,20 +5997,29 @@
             </section>
 
             <section class="card rent-card">
-              <div class="card-head">
-                <h3>我的月租</h3>
-                <span class="tag" data-home-rent-status>月租有效</span>
-              </div>
-              <div class="plate-row">
-                <div>
-                  <div class="plate" data-home-rent-plate>闽D 12345</div>
-<div class="rent-place" data-home-rent-place>湖里安商房小区</div>
+              <div data-home-rent-active>
+                <div class="card-head">
+                  <h3>我的月租</h3>
+                  <span class="tag" data-home-rent-status>月租有效</span>
                 </div>
-                <button class="small-btn" type="button" data-home-rent-renew>续费</button>
+                <div class="plate-row">
+                  <div>
+                    <div class="plate" data-home-rent-plate>闽D 12345</div>
+                    <div class="rent-place" data-home-rent-place>湖里安商房小区</div>
+                  </div>
+                  <button class="small-btn" type="button" data-home-rent-renew>续费</button>
+                </div>
+                <div class="rent-metrics">
+                  <div class="metric"><b data-home-rent-remaining>18 天</b><span>剩余时间</span></div>
+                  <div class="metric"><b data-home-rent-end>2026-09-06</b><span>月租截止</span></div>
+                </div>
               </div>
-              <div class="rent-metrics">
-                <div class="metric"><b data-home-rent-remaining>18 天</b><span>剩余时间</span></div>
-                <div class="metric"><b data-home-rent-end>2026-09-06</b><span>月租截止</span></div>
+              <div class="home-rent-empty" data-home-rent-empty hidden>
+                <div>
+                  <b>暂未月租</b>
+                  <span>还没有正在生效的月租车位</span>
+                </div>
+                <button class="small-btn" type="button" data-rent-flow-action>去办理</button>
               </div>
             </section>
 
@@ -7417,6 +7451,8 @@
     const rentCancelPaymentButton = document.querySelector("[data-rent-cancel-payment]");
     const rentSubmitButton = document.querySelector("[data-rent-submit]");
     const homeRentCard = document.querySelector(".home .rent-card");
+    const homeRentActive = document.querySelector("[data-home-rent-active]");
+    const homeRentEmpty = document.querySelector("[data-home-rent-empty]");
     const homeRentStatus = document.querySelector("[data-home-rent-status]");
     const homeRentPlate = document.querySelector("[data-home-rent-plate]");
     const homeRentPlace = document.querySelector("[data-home-rent-place]");
@@ -8579,7 +8615,9 @@
     function syncHomeMonthlyCard() {
       const order = orderState.records.find(isActiveMonthlyOrder);
       if (!homeRentCard) return;
-      homeRentCard.hidden = !order;
+      homeRentCard.hidden = false;
+      if (homeRentActive) homeRentActive.hidden = !order;
+      if (homeRentEmpty) homeRentEmpty.hidden = Boolean(order);
       if (!order) return;
 
       if (homeRentStatus) {
