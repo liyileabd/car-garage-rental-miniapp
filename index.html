@@ -4053,6 +4053,29 @@
       margin-top: 12px !important;
     }
 
+    .personal-services .service-title {
+      margin-bottom: 10px;
+    }
+
+    .personal-service-list {
+      overflow: hidden;
+      border: 1px solid #e8edf4;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .personal-service-row .row-leading {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .personal-service-row .icon {
+      width: 19px;
+      height: 19px;
+      color: #5a6e8b;
+    }
+
     .personal-settings-entry {
       margin-top: 12px;
       overflow: hidden;
@@ -7198,15 +7221,15 @@
               </section>
             </section>
 
-            <section class="card service-card personal-services">
+            <section class="personal-services" aria-label="我的服务">
               <h3 class="service-title">我的服务</h3>
-              <div class="service-grid">
-                <div class="shortcut" data-personal-info-action><span class="icon-tile"><svg class="icon"><use href="#i-user"></use></svg></span>个人信息</div>
-                <div class="shortcut" data-vehicle-manage-action><span class="icon-tile green"><svg class="icon"><use href="#i-car"></use></svg></span>车辆管理</div>
-                <div class="shortcut" data-order-list-action><span class="icon-tile orange"><svg class="icon"><use href="#i-order"></use></svg></span>我的订单</div>
-                <div class="shortcut" data-invoice-list-action><span class="icon-tile"><svg class="icon"><use href="#i-invoice"></use></svg></span>开票记录</div>
-                <div class="shortcut" data-refund-list-action><span class="icon-tile red"><svg class="icon"><use href="#i-refund"></use></svg></span>退款记录</div>
-                <div class="shortcut"><span class="icon-tile"><svg class="icon"><use href="#i-headset"></use></svg></span>客服中心</div>
+              <div class="personal-service-list">
+                <button class="settings-row personal-service-row" type="button" data-personal-info-action><span class="row-leading"><svg class="icon"><use href="#i-user"></use></svg>个人信息</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-vehicle-manage-action><span class="row-leading"><svg class="icon"><use href="#i-car"></use></svg>车辆管理</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-order-list-action><span class="row-leading"><svg class="icon"><use href="#i-order"></use></svg>我的订单</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-invoice-list-action><span class="row-leading"><svg class="icon"><use href="#i-invoice"></use></svg>开票记录</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-refund-list-action><span class="row-leading"><svg class="icon"><use href="#i-refund"></use></svg>退款记录</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button"><span class="row-leading"><svg class="icon"><use href="#i-headset"></use></svg>客服中心</span><span class="chevron">›</span></button>
               </div>
             </section>
 
