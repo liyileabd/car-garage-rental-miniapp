@@ -4908,13 +4908,38 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #3d5f8d;
+      color: #53677f;
       background: #fff;
       font: inherit;
       font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
+    }
+
+    .order-inline-action[data-order-inline-action="renew"] {
+      color: #216bda;
+      border-color: #bdd7ff;
+      background: #f4f8ff;
+    }
+
+    .order-inline-action[data-order-inline-action="refund"] {
+      color: #ca6c42;
+      border-color: #f0d4c5;
+      background: #fff9f5;
+    }
+
+    .order-inline-action[data-order-inline-action="invoice"],
+    .order-inline-action[data-order-inline-action="viewInvoice"] {
+      color: #168452;
+      border-color: #c8e8d7;
+      background: #f4fbf7;
+    }
+
+    .order-inline-action[data-order-inline-action="invoiceProgress"] {
+      color: #637a99;
+      border-color: #d8e3f0;
+      background: #f7faff;
     }
 
     .order-inline-action.is-danger {
