@@ -4773,6 +4773,38 @@
       background: var(--primary);
     }
 
+    .order-subtabs {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0 12px;
+      padding: 0 2px;
+    }
+
+    [data-order-subtabs][hidden] {
+      display: none !important;
+    }
+
+    .order-subtab {
+      height: 28px;
+      min-width: 62px;
+      padding: 0 10px;
+      border: 1px solid #dbe5f2;
+      border-radius: 6px;
+      color: #718097;
+      background: #fff;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .order-subtab.is-active {
+      border-color: #9fc7ff;
+      color: #216bda;
+      background: #f3f8ff;
+    }
+
     .order-list {
       display: grid;
       gap: 10px;
@@ -6926,6 +6958,7 @@
 <button class="order-tab" type="button" data-order-filter="afterSales">售后</button>
 <button class="order-tab" type="button" data-order-filter="completed">已结束</button>
 </nav>
+<nav class="order-subtabs" data-order-subtabs aria-label="订单状态细分" hidden></nav>
 
             <div class="order-list" data-order-list></div>
             <div class="order-empty" data-order-empty>暂无符合条件的订单</div>
@@ -7524,6 +7557,7 @@
     const orderDetailBackButtons = document.querySelectorAll("[data-order-detail-back]");
     const orderWorkflowBackButtons = document.querySelectorAll("[data-order-workflow-back]");
     const orderFilterButtons = document.querySelectorAll("[data-order-filter]");
+    const orderSubTabs = document.querySelector("[data-order-subtabs]");
     const orderList = document.querySelector("[data-order-list]");
     const orderListScreen = document.querySelector(".order-list-page");
     const orderDetailContent = document.querySelector("[data-order-detail-content]");
@@ -7696,6 +7730,7 @@
     const orderState = {
       activeId: "AS202608170023",
       filter: "all",
+      subFilter: "all",
       listReturnScreen: "personal",
       detailReturnScreen: "orderList",
       renewMonths: 1,
@@ -9320,11 +9355,54 @@
       return { label: "有效中", className: "active", panelClass: "is-active", icon: "i-card", description: "月租在有效期内。" };
     }
 
+    function orderSubtabOptions() {
+      if (orderState.filter === "active") {
+        return [
+          { value: "all", label: "全部" },
+          { value: "effective", label: "有效中" },
+          { value: "upcoming", label: "待生效" },
+        ];
+      }
+      if (orderState.filter === "completed") {
+        return [
+          { value: "all", label: "全部" },
+          { value: "expired", label: "已过期" },
+          { value: "terminated", label: "已终止" },
+        ];
+      }
+      return [];
+    }
+
+    function syncOrderSubTabs() {
+      if (!orderSubTabs) return;
+      const options = orderSubtabOptions();
+      orderSubTabs.hidden = options.length === 0;
+      if (!options.length) {
+        orderSubTabs.innerHTML = "";
+        return;
+      }
+      orderSubTabs.innerHTML = options.map((option) => {
+        const active = option.value === orderState.subFilter;
+        return `<button class="order-subtab${active ? " is-active" : ""}" type="button" data-order-sub-filter="${option.value}">${option.label}</button>`;
+      }).join("");
+    }
+
     function orderMatchesFilter(order) {
       const isCompleted = ["过期", "终止"].includes(order.rentalStatus) || order.refundStatus === "已通过";
-      if (orderState.filter === "active") return ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
+      if (orderState.filter === "active") {
+        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
+        if (!isActive) return false;
+        if (orderState.subFilter === "effective") return order.rentalStatus === "有效";
+        if (orderState.subFilter === "upcoming") return order.rentalStatus === "待生效";
+        return true;
+      }
       if (orderState.filter === "afterSales") return ["审批中", "未通过"].includes(order.refundStatus) && !isCompleted;
-      if (orderState.filter === "completed") return isCompleted;
+      if (orderState.filter === "completed") {
+        if (!isCompleted) return false;
+        if (orderState.subFilter === "expired") return order.rentalStatus === "过期";
+        if (orderState.subFilter === "terminated") return order.rentalStatus === "终止" || order.refundStatus === "已通过";
+        return true;
+      }
       return true;
     }
 
@@ -9453,7 +9531,9 @@
       if (!ensureAuthenticated()) return;
       orderState.listReturnScreen = returnScreen === "orderDetail" ? "home" : returnScreen;
       orderState.filter = "all";
+      orderState.subFilter = "all";
       orderFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.orderFilter === "all"));
+      syncOrderSubTabs();
       renderOrderList();
       showTab("orderList");
     }
@@ -9826,7 +9906,9 @@
         invoiceStatus: "未申请",
       });
       orderState.filter = "all";
+      orderState.subFilter = "all";
       orderFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.orderFilter === "all"));
+      syncOrderSubTabs();
       renderOrderList();
       syncVehicleMonthlyState();
       syncHomeMonthlyCard();
@@ -10105,9 +10187,19 @@
     orderFilterButtons.forEach((button) => {
       button.addEventListener("click", () => {
         orderState.filter = button.dataset.orderFilter || "all";
+        orderState.subFilter = "all";
         orderFilterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+        syncOrderSubTabs();
         renderOrderList();
       });
+    });
+
+    orderSubTabs?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-order-sub-filter]");
+      if (!button) return;
+      orderState.subFilter = button.dataset.orderSubFilter || "all";
+      syncOrderSubTabs();
+      renderOrderList();
     });
 
     orderList?.addEventListener("click", (event) => {
@@ -10643,6 +10735,7 @@
     updateVehicleCollection();
     syncHomeMonthlyCard();
     syncPersonalProfile();
+    syncOrderSubTabs();
     renderOrderList();
     renderOrderDetail();
     renderInvoiceList();
