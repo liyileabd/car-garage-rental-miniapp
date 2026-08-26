@@ -919,11 +919,6 @@
               <input type="search" data-vehicle-search placeholder="搜索车牌号" aria-label="搜索车牌号">
             </label>
 
-            <div class="vehicle-list-head">
-              <h3>已绑定车辆</h3>
-              <span data-vehicle-count>4 辆</span>
-            </div>
-
             <div class="vehicle-manage-list" data-vehicle-list>
               <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 12345" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="白色" aria-label="查看闽D 12345车辆信息">
                 <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
@@ -1637,7 +1632,6 @@
     const vehicleSearchInput = document.querySelector("[data-vehicle-search]");
     const vehicleManageScreen = document.querySelector(".vehicle-manage");
     const vehicleList = document.querySelector("[data-vehicle-list]");
-    const vehicleCountLabels = document.querySelectorAll("[data-vehicle-count]");
     const personalVehicleCount = document.querySelector("[data-personal-vehicle-count]");
     const vehicleForm = document.querySelector(".vehicle-form");
     const rentVehicleProfileSection = document.querySelector("[data-rent-vehicle-profile-section]");
@@ -3188,9 +3182,6 @@
         if (visible) visibleCount += 1;
       });
 
-      vehicleCountLabels.forEach((label) => {
-        label.textContent = `${cards.length} 辆`;
-      });
       if (personalVehicleCount) personalVehicleCount.textContent = String(cards.length);
       const vehicleEmpty = vehicleManageScreen?.querySelector(".vehicle-empty");
       if (vehicleEmpty) vehicleEmpty.textContent = cards.length === 0 ? "暂未绑定车辆" : "未找到匹配的车辆";
