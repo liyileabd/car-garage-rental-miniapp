@@ -2172,8 +2172,8 @@
         paymentAt: seed.paymentAt,
         rentalStatus: seed.rentalStatus,
         passStatus: seed.passStatus || (seed.refundStatus === "审批中"
-          ? "已暂停"
-          : ["有效", "待生效"].includes(seed.rentalStatus) ? "已开通" : "已结束"),
+          ? (seed.rentalStatus === "有效" ? "已暂停" : "待生效")
+          : seed.rentalStatus === "有效" ? "已开通" : seed.rentalStatus === "待生效" ? "待生效" : "已结束"),
         refundStatus: seed.refundStatus || "未申请",
         invoiceStatus: invoice.status || "未申请",
         invoiceRequestNo: hasInvoiceApplication ? invoice.requestNo : undefined,
@@ -3814,7 +3814,10 @@
 
     function orderStatusMeta(order) {
       if (order.refundStatus === "审批中") {
-        return { label: "退款审批中", className: "refund", panelClass: "is-refund", icon: "i-refund", description: "退款申请正在审核中，月租通行已暂停，名额暂不释放。" };
+        const description = order.rentalStatus === "待生效"
+          ? "退款申请正在审核中，待生效月租暂不会开通。"
+          : "退款申请正在审核中，月租通行已暂停，名额暂不释放。";
+        return { label: "退款审批中", className: "refund", panelClass: "is-refund", icon: "i-refund", description };
       }
       if (order.refundStatus === "已通过") {
         return { label: "已终止", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款已通过，月租服务已结束。" };
@@ -3934,7 +3937,7 @@
 
     function orderMoreItems(order) {
       const canRenew = order.rentalStatus !== "终止" && order.refundStatus === "未申请";
-      const canRefund = order.rentalStatus === "有效" && order.refundStatus === "未申请";
+      const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
       const invoiceAvailable = canApplyInvoice(order);
       const items = [];
 
@@ -4053,8 +4056,9 @@
     }
 
     function renderRefund(order = getOrderById()) {
-      const estimate = Math.round(order.amount * 0.8);
-      const remaining = order.id === "AS202608170023" ? "13 天" : "以审批测算为准";
+      const isPendingActivation = order.rentalStatus === "待生效";
+      const estimate = isPendingActivation ? order.amount : Math.round(order.amount * 0.8);
+      const remaining = isPendingActivation ? "尚未生效" : order.id === "AS202608170023" ? "13 天" : "以审批测算为准";
       document.querySelector("[data-refund-community]").textContent = order.community;
       document.querySelector("[data-refund-plate]").textContent = order.plate;
       document.querySelector("[data-refund-paid-amount]").textContent = String(order.amount);
@@ -4195,7 +4199,7 @@
       record.status = "已撤销";
       if (order) {
         order.refundStatus = "未申请";
-        order.passStatus = order.rentalStatus === "有效" ? "已开通" : "已结束";
+        order.passStatus = order.rentalStatus === "有效" ? "已开通" : "待生效";
         renderOrderDetail(order.id);
         renderOrderList();
         syncVehicleMonthlyState();
@@ -4408,7 +4412,7 @@
         createdAt: "2026-08-25 10:22",
         paymentAt: "2026-08-25 10:25",
         rentalStatus: "待生效",
-        passStatus: "已开通",
+        passStatus: "待生效",
         refundStatus: "未申请",
         invoiceStatus: "未申请",
       });
@@ -4435,7 +4439,7 @@
       }
       const requestNo = `TK${order.orderNo.slice(2)}${String(refundState.records.length + 1).padStart(2, "0")}`;
       order.refundStatus = "审批中";
-      order.passStatus = "已暂停";
+      order.passStatus = order.rentalStatus === "有效" ? "已暂停" : "待生效";
       refundState.records.unshift({
         id: requestNo,
         requestNo,
