@@ -7075,10 +7075,10 @@
 
           <div class="content">
             <section class="order-workflow-section">
-              <h3>开票内容</h3>
+              <h3 data-invoice-summary-title>开票内容</h3>
               <div class="order-field-row"><span>凭证类型</span><strong data-invoice-voucher-type>--</strong></div>
-              <div class="order-field-row"><span>开票内容</span><strong>月租车位缴费</strong></div>
-              <div class="order-field-row"><span>开票金额</span><strong class="amount" data-invoice-system-amount>--</strong></div>
+              <div class="order-field-row"><span data-invoice-content-label>开票内容</span><strong>月租车位缴费</strong></div>
+              <div class="order-field-row"><span data-invoice-amount-label>开票金额</span><strong class="amount" data-invoice-system-amount>--</strong></div>
             </section>
 
             <section class="order-workflow-section" data-invoice-vat-section>
@@ -7109,11 +7109,10 @@
             </section>
 
             <section class="order-workflow-section invoice-nontax-section" data-invoice-nontax-section hidden>
-              <h3>票据信息</h3>
-              <label class="order-field-row"><span>票据抬头 <em class="invoice-required">*</em></span><input class="order-field-input" data-invoice-nontax-title placeholder="请输入票据抬头" aria-label="票据抬头"></label>
-              <div class="order-field-row"><span>申请人</span><strong data-invoice-nontax-name>--</strong></div>
+              <h3>缴款人信息</h3>
+              <div class="order-field-row"><span>缴款人</span><strong data-invoice-nontax-name>--</strong></div>
               <div class="order-field-row"><span>联系手机号</span><strong data-invoice-nontax-phone>--</strong></div>
-              <p class="order-workflow-tip">提交后由财务办理并上传电子票据，可在开票记录中查看和下载。</p>
+              <p class="order-workflow-tip">票据将按当前缴款人信息开具，完成后可查看电子票据。</p>
             </section>
           </div>
 
@@ -7582,13 +7581,15 @@
     const invoiceSpecialRequiredMarks = document.querySelectorAll("[data-invoice-special-required]");
     const invoiceVatSection = document.querySelector("[data-invoice-vat-section]");
     const invoiceNontaxSection = document.querySelector("[data-invoice-nontax-section]");
+    const invoiceSummaryTitle = document.querySelector("[data-invoice-summary-title]");
+    const invoiceContentLabel = document.querySelector("[data-invoice-content-label]");
+    const invoiceAmountLabel = document.querySelector("[data-invoice-amount-label]");
     const invoiceVoucherType = document.querySelector("[data-invoice-voucher-type]");
     const invoiceSystemAmount = document.querySelector("[data-invoice-system-amount]");
     const invoicePersonalName = document.querySelector("[data-invoice-personal-name]");
     const invoicePhone = document.querySelector("[data-invoice-phone]");
     const invoiceNontaxName = document.querySelector("[data-invoice-nontax-name]");
     const invoiceNontaxPhone = document.querySelector("[data-invoice-nontax-phone]");
-    const invoiceNontaxTitle = document.querySelector("[data-invoice-nontax-title]");
     const invoiceScreenLabel = document.querySelector("[data-invoice-screen-label]");
     const invoicePage = document.querySelector("[data-invoice-page]");
     const invoicePageTitle = document.querySelector("[data-invoice-page-title]");
@@ -8050,6 +8051,8 @@
         invoiceCompletedAt: invoice.completedAt,
         invoiceType: invoice.type,
         invoiceTitle: invoice.title,
+        payerNameSnapshot: invoice.payerName || "张先生",
+        payerPhoneSnapshot: invoice.payerPhone || "13800006688",
         ownerNameSnapshot: "张先生",
         ownerPhoneSnapshot: "13800006688",
       };
@@ -9943,6 +9946,9 @@
       if (invoicePage) invoicePage.setAttribute("aria-label", `${pageTitle}界面`);
       if (invoiceSubmitButton) invoiceSubmitButton.textContent = isVat ? "提交开票申请" : "提交票据申请";
       if (invoiceVoucherType) invoiceVoucherType.textContent = voucher;
+      if (invoiceSummaryTitle) invoiceSummaryTitle.textContent = isVat ? "开票内容" : "缴费信息";
+      if (invoiceContentLabel) invoiceContentLabel.textContent = isVat ? "开票内容" : "收费项目";
+      if (invoiceAmountLabel) invoiceAmountLabel.textContent = isVat ? "开票金额" : "票据金额";
       if (invoiceSystemAmount) invoiceSystemAmount.textContent = formatOrderAmount(order.amount);
       if (invoiceVatSection) invoiceVatSection.hidden = !isVat;
       if (invoiceNontaxSection) invoiceNontaxSection.hidden = isVat;
@@ -9950,7 +9956,6 @@
       if (invoicePhone) invoicePhone.value = userProfileState.phone;
       if (invoiceNontaxName) invoiceNontaxName.textContent = userProfileState.name;
       if (invoiceNontaxPhone) invoiceNontaxPhone.textContent = maskProfilePhone(userProfileState.phone);
-      if (invoiceNontaxTitle) invoiceNontaxTitle.value = order.invoiceTitle || userProfileState.name;
       setInvoiceType(isVat ? "personal" : "nontax");
     }
 
@@ -10175,13 +10180,20 @@
       if (!order || !invoiceResultDetail || !invoiceResultFile) return;
       const isDone = order.invoiceStatus === "已完成";
       const voucher = invoiceVoucherFor(order);
+      const isNontax = voucher === "非税票据";
       const documentType = invoiceRecordType(order);
+      const payerName = order.payerNameSnapshot || order.invoiceTitle || order.ownerNameSnapshot || "--";
+      const partyRow = isNontax
+        ? `<div class="order-detail-row"><span>交款人</span><strong>${payerName}</strong></div>`
+        : order.invoiceTitle
+          ? `<div class="order-detail-row"><span>开票抬头</span><strong>${order.invoiceTitle}</strong></div>`
+          : "";
       invoiceResultDetail.innerHTML = `
-        <h3>凭证信息</h3>
+        <h3>${isNontax ? "票据信息" : "凭证信息"}</h3>
         <div class="order-detail-row"><span>凭证类型</span><strong>${documentType}</strong></div>
-        <div class="order-detail-row"><span>开票内容</span><strong>月租车位缴费</strong></div>
-        <div class="order-detail-row"><span>开票金额</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
-        ${order.invoiceTitle ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "开票抬头" : "票据抬头"}</span><strong>${order.invoiceTitle}</strong></div>` : ""}
+        <div class="order-detail-row"><span>${isNontax ? "收费项目" : "开票内容"}</span><strong>月租车位缴费</strong></div>
+        <div class="order-detail-row"><span>${isNontax ? "票据金额" : "开票金额"}</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
+        ${partyRow}
         <div class="order-detail-row"><span>申请单号</span><strong>${order.invoiceRequestNo || "--"}</strong></div>
         <div class="order-detail-row"><span>申请时间</span><strong>${order.invoiceAppliedAt || "--"}</strong></div>
         ${!isDone ? `<div class="order-detail-row"><span>处理状态</span><strong>${invoiceProcessingLabel(order)}</strong></div>` : ""}
@@ -10322,8 +10334,10 @@
         showToast("请填写个人抬头");
         return;
       }
-      if (!isVat && !invoiceNontaxTitle?.value.trim()) {
-        showToast("请填写票据抬头");
+      const payerName = userProfileState.name.trim();
+      const payerPhone = userProfileState.phone.trim();
+      if (!isVat && (!payerName || !payerPhone)) {
+        showToast("请先补充个人信息");
         return;
       }
       order.invoiceStatus = "申请中";
@@ -10334,7 +10348,11 @@
         : "非税电子票据";
       order.invoiceTitle = isVat
         ? (isCompanyInvoice ? invoiceCompanyInputs[0]?.value.trim() : invoicePersonalName?.value.trim())
-        : invoiceNontaxTitle?.value.trim();
+        : payerName;
+      if (!isVat) {
+        order.payerNameSnapshot = payerName;
+        order.payerPhoneSnapshot = payerPhone;
+      }
       renderOrderDetail(order.id);
       renderOrderList();
       showTab("orderDetail");
