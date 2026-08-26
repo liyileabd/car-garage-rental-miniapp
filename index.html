@@ -3222,6 +3222,23 @@
       gap: 12px;
     }
 
+    .rent-vehicle-empty {
+      display: none;
+      padding: 42px 24px;
+      color: #8b96a6;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .rent-vehicle-select-page[data-rent-vehicle-empty="true"] .rent-vehicle-options {
+      display: none;
+    }
+
+    .rent-vehicle-select-page[data-rent-vehicle-empty="true"] .rent-vehicle-empty {
+      display: block;
+    }
+
     .rent-vehicle-picker {
       width: 100%;
       min-height: 62px;
@@ -6407,6 +6424,7 @@
                 <span class="vehicle-option-check">✓</span>
               </button>
             </div>
+            <div class="rent-vehicle-empty">暂未绑定车辆，请先在车辆管理中新增车辆</div>
           </div>
         </article>
       </div>
@@ -7409,7 +7427,9 @@
     const rentSelectedPrice = document.querySelector("[data-rent-selected-price]");
     const rentCurrentPlate = document.querySelector("[data-rent-current-plate]");
     const rentCurrentMeta = document.querySelector("[data-rent-current-meta]");
-    const getRentVehicleOptions = () => Array.from(document.querySelectorAll("[data-rent-vehicle-option]"));
+    const rentVehicleSelectPage = document.querySelector(".rent-vehicle-select-page");
+    const getRentVehicleOptions = () => Array.from(document.querySelectorAll("[data-rent-vehicle-option]"))
+      .filter((option) => option.dataset.account === accountState.current);
     const rentOwnerGarageName = document.querySelector("[data-rent-owner-garage-name]");
     const confirmGarage = document.querySelector("[data-confirm-garage]");
     const confirmPlate = document.querySelector("[data-confirm-plate]");
@@ -7947,6 +7967,21 @@
         },
       ],
     };
+    const accountState = {
+      current: "wechat",
+      profiles: {
+        wechat: { ...userProfileState },
+        sms: { name: "", phone: "13900001111", idCard: "" },
+      },
+      orders: {
+        wechat: orderState.records,
+        sms: [],
+      },
+      refunds: {
+        wechat: refundState.records,
+        sms: [],
+      },
+    };
     const vehicleFormState = {
       plateColor: "蓝色车牌",
       plateColorCode: "02",
@@ -7973,6 +8008,7 @@
       personalInfo: "个人信息",
       about: "关于小程序",
       settings: "设置",
+      accountManage: "账号管理",
       city: "选择城市",
       garageList: "可办理车库",
       globalSearch: "搜索",
@@ -8073,12 +8109,46 @@
       }, 1700);
     }
 
+    function assignInitialAccountVehicles() {
+      document.querySelectorAll("[data-vehicle-card], [data-rent-vehicle-option]").forEach((item) => {
+        if (!item.dataset.account) item.dataset.account = "wechat";
+      });
+    }
+
+    function setCurrentAccount(accountType) {
+      const previousAccount = accountState.current;
+      accountState.profiles[previousAccount] = { ...userProfileState };
+      accountState.orders[previousAccount] = orderState.records;
+      accountState.refunds[previousAccount] = refundState.records;
+
+      accountState.current = accountType;
+      Object.assign(userProfileState, accountState.profiles[accountType]);
+      orderState.records = accountState.orders[accountType];
+      orderState.activeId = orderState.records[0]?.id || "";
+      refundState.records = accountState.refunds[accountType];
+      refundState.activeId = refundState.records[0]?.id || "";
+      rentVehicleState.plate = "";
+      rentVehicleState.color = "";
+      rentVehicleState.colorCode = "";
+      Object.assign(rentOwnerState, userProfileState);
+      document.body.dataset.account = accountType;
+
+      syncPersonalProfile();
+      syncRentVehiclePicker();
+      updateVehicleCollection();
+      syncHomeMonthlyCard();
+      renderOrderList();
+      renderRefundRecordList();
+      renderInvoiceList();
+    }
+
     function signIn() {
       if (!agreementChecked()) {
         showToast("请先勾选并同意协议");
         return;
       }
 
+      setCurrentAccount(document.body.dataset.loginView === "sms" ? "sms" : "wechat");
       document.body.dataset.auth = "authed";
       document.body.dataset.toast = "hidden";
       showTab("home");
@@ -8151,6 +8221,7 @@
       userProfileState.name = name;
       userProfileState.phone = phone;
       userProfileState.idCard = idCard;
+      accountState.profiles[accountState.current] = { ...userProfileState };
       syncPersonalProfile();
       if (rentOwnerNameInput) rentOwnerNameInput.value = name;
       if (rentOwnerPhoneInput) rentOwnerPhoneInput.value = phone;
@@ -8393,7 +8464,12 @@
       if (rentCurrentMeta) rentCurrentMeta.textContent = rentVehicleState.color
         ? `${rentVehicleState.color} · 当前已绑定车辆`
         : "点击选择已绑定车辆";
-      getRentVehicleOptions().forEach((option) => {
+      const options = getRentVehicleOptions();
+      document.querySelectorAll("[data-rent-vehicle-option]").forEach((option) => {
+        option.hidden = option.dataset.account !== accountState.current;
+      });
+      if (rentVehicleSelectPage) rentVehicleSelectPage.dataset.rentVehicleEmpty = options.length === 0 ? "true" : "false";
+      options.forEach((option) => {
         const selected = option.dataset.plate === rentVehicleState.plate;
         option.classList.toggle("is-selected", selected);
         option.setAttribute("aria-checked", selected ? "true" : "false");
@@ -8548,12 +8624,13 @@
 
     function updateVehicleCollection() {
       syncVehicleMonthlyState();
-      const cards = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []);
+      const allCards = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []);
+      const cards = allCards.filter((card) => card.dataset.account === accountState.current);
       const keyword = vehicleSearchInput?.value.trim().toLowerCase() || "";
       let visibleCount = 0;
 
-      cards.forEach((card) => {
-        const visible = !keyword || card.textContent.toLowerCase().includes(keyword);
+      allCards.forEach((card) => {
+        const visible = card.dataset.account === accountState.current && (!keyword || card.textContent.toLowerCase().includes(keyword));
         card.hidden = !visible;
         if (visible) visibleCount += 1;
       });
@@ -8562,6 +8639,8 @@
         label.textContent = `${cards.length} 辆`;
       });
       if (personalVehicleCount) personalVehicleCount.textContent = String(cards.length);
+      const vehicleEmpty = vehicleManageScreen?.querySelector(".vehicle-empty");
+      if (vehicleEmpty) vehicleEmpty.textContent = cards.length === 0 ? "暂未绑定车辆" : "未找到匹配的车辆";
       if (vehicleManageScreen) vehicleManageScreen.dataset.vehicleEmpty = visibleCount === 0 ? "true" : "false";
     }
 
@@ -8889,6 +8968,7 @@
       card.className = "vehicle-manage-card";
       card.type = "button";
       card.dataset.vehicleCard = "true";
+      card.dataset.account = accountState.current;
       card.dataset.plate = plate;
       card.dataset.plateColor = plateColor;
       card.dataset.plateColorCode = plateColorCode || plateColorCodeFor(plateColor);
@@ -8938,6 +9018,7 @@
       option.setAttribute("role", "radio");
       option.setAttribute("aria-checked", "false");
       option.dataset.rentVehicleOption = "true";
+      option.dataset.account = accountState.current;
       option.dataset.plate = plate;
       option.dataset.vehicleColor = plateColor;
       option.dataset.vehicleColorCode = plateColorCode || plateColorCodeFor(plateColor);
@@ -10499,6 +10580,8 @@
     }
 
     showLoginView("main");
+    assignInitialAccountVehicles();
+    document.body.dataset.account = accountState.current;
     buildPlateKeyboard();
     syncPlateInput();
     syncFullGarageList();
