@@ -7066,11 +7066,11 @@
       </div>
 
       <div class="phone-block" data-screen="orderInvoice">
-        <div class="screen-label">申请开票</div>
-        <article class="phone order-workflow-page" aria-label="申请开票界面">
+        <div class="screen-label" data-invoice-screen-label>申请开票</div>
+        <article class="phone order-workflow-page" data-invoice-page aria-label="申请开票界面">
           <header class="subpage-titlebar">
             <button class="back-btn" type="button" data-order-workflow-back aria-label="返回订单详情">‹</button>
-            申请开票
+            <span data-invoice-page-title>申请开票</span>
           </header>
 
           <div class="content">
@@ -7110,9 +7110,10 @@
 
             <section class="order-workflow-section invoice-nontax-section" data-invoice-nontax-section hidden>
               <h3>票据信息</h3>
+              <label class="order-field-row"><span>票据抬头 <em class="invoice-required">*</em></span><input class="order-field-input" data-invoice-nontax-title placeholder="请输入票据抬头" aria-label="票据抬头"></label>
               <div class="order-field-row"><span>申请人</span><strong data-invoice-nontax-name>--</strong></div>
               <div class="order-field-row"><span>联系手机号</span><strong data-invoice-nontax-phone>--</strong></div>
-              <p class="order-workflow-tip">电子票据由财务线下办理完成后上传，可在开票记录中查看和下载。</p>
+              <p class="order-workflow-tip">提交后由财务办理并上传电子票据，可在开票记录中查看和下载。</p>
             </section>
           </div>
 
@@ -7586,6 +7587,11 @@
     const invoicePhone = document.querySelector("[data-invoice-phone]");
     const invoiceNontaxName = document.querySelector("[data-invoice-nontax-name]");
     const invoiceNontaxPhone = document.querySelector("[data-invoice-nontax-phone]");
+    const invoiceNontaxTitle = document.querySelector("[data-invoice-nontax-title]");
+    const invoiceScreenLabel = document.querySelector("[data-invoice-screen-label]");
+    const invoicePage = document.querySelector("[data-invoice-page]");
+    const invoicePageTitle = document.querySelector("[data-invoice-page-title]");
+    const invoiceSubmitButton = document.querySelector("[data-invoice-submit]");
     const invoiceListActions = document.querySelectorAll("[data-invoice-list-action]");
     const invoiceListBackButtons = document.querySelectorAll("[data-invoice-list-back]");
     const invoiceResultBackButtons = document.querySelectorAll("[data-invoice-result-back]");
@@ -7613,6 +7619,22 @@
       selectedGarage: "",
       selectedLocation: "",
       selectedPrice: 0,
+      selectedCommunityId: "",
+      selectedProjectName: "",
+      selectedProjectType: "",
+    };
+    const communityProjectCatalog = {
+      "湖里安商房小区": { id: "COMMUNITY-001", projectName: "湖里安商房项目", projectType: "公司自营项目" },
+      "思明保障房小区": { id: "COMMUNITY-002", projectName: "思明保障房项目", projectType: "区财政代管项目" },
+      "海沧安商房小区": { id: "COMMUNITY-003", projectName: "海沧安商房项目", projectType: "公司自营项目" },
+      "同安城北安居小区": { id: "COMMUNITY-004", projectName: "同安城北安居项目", projectType: "区财政代管项目" },
+      "集美安置房小区": { id: "COMMUNITY-005", projectName: "集美安置房项目", projectType: "公司自营项目" },
+      "翔安新店保障房": { id: "COMMUNITY-006", projectName: "翔安新店保障房项目", projectType: "区财政代管项目" },
+      "杏林湾安置房小区": { id: "COMMUNITY-007", projectName: "杏林湾安置房项目", projectType: "公司自营项目" },
+      "灌口安置房小区": { id: "COMMUNITY-008", projectName: "灌口安置房项目", projectType: "区财政代管项目" },
+      "五缘湾保障房小区": { id: "COMMUNITY-009", projectName: "五缘湾保障房项目", projectType: "公司自营项目" },
+      "马銮湾安置房小区": { id: "COMMUNITY-010", projectName: "马銮湾安置房项目", projectType: "区财政代管项目" },
+      "软件园三期保障房": { id: "COMMUNITY-011", projectName: "软件园三期保障房项目", projectType: "区财政代管项目" },
     };
     const garageStreetByCommunity = {
       "湖里安商房小区": "江头街道",
@@ -8276,6 +8298,17 @@
       });
     }
 
+    function applyCommunityProjectMetadata() {
+      document.querySelectorAll(".home-garage-list .garage-card").forEach((card) => {
+        const communityName = card.querySelector(".garage-name")?.textContent.trim() || "";
+        const project = communityProjectCatalog[communityName];
+        if (!project) return;
+        card.dataset.communityId = project.id;
+        card.dataset.projectName = project.projectName;
+        card.dataset.projectType = project.projectType;
+      });
+    }
+
     function syncRentGarageList() {
       if (!rentGarageList) return;
       if (!rentGarageList.children.length) {
@@ -8554,6 +8587,11 @@
     function selectRentGarage(card) {
       if (!ensureAuthenticated()) return;
       rentFlowState.selectedName = card.querySelector(".garage-name")?.textContent.trim() || "";
+      const project = communityProjectCatalog[rentFlowState.selectedName];
+      if (!project) {
+        showToast("该小区暂未配置项目管理类型");
+        return;
+      }
       const garageMeta = card.querySelector(".garage-sub")?.textContent.trim() || "";
       const garagePriceText = card.querySelector(".price")?.textContent.match(/\d+/)?.[0] || "--";
       rentFlowState.selectedCommunity = rentFlowState.selectedName;
@@ -8562,6 +8600,9 @@
       const street = garageStreetByCommunity[rentFlowState.selectedName] || "";
       rentFlowState.selectedLocation = [district, street, rentFlowState.selectedGarage].filter(Boolean).join(" · ");
       rentFlowState.selectedPrice = Number(garagePriceText) || 0;
+      rentFlowState.selectedCommunityId = card.dataset.communityId || project.id;
+      rentFlowState.selectedProjectName = card.dataset.projectName || project.projectName;
+      rentFlowState.selectedProjectType = card.dataset.projectType || project.projectType;
       rentGarageList?.querySelectorAll(".garage-card").forEach((item) => {
         const active = item === card;
         item.classList.toggle("is-selected", active);
@@ -8704,7 +8745,9 @@
         passStatus: "已开通",
         refundStatus: "未申请",
         invoiceStatus: "未申请",
-        projectType: "公司自营项目",
+        communityId: rentFlowState.selectedCommunityId,
+        projectName: rentFlowState.selectedProjectName,
+        projectType: rentFlowState.selectedProjectType,
       };
       orderState.records.unshift(order);
       orderState.activeId = order.id;
@@ -9603,6 +9646,12 @@
     function renderInvoice(order = getOrderById()) {
       const voucher = invoiceVoucherFor(order);
       const isVat = voucher === "增值税发票";
+      const pageTitle = isVat ? "申请开票" : "申请非税票据";
+      screenTitles.orderInvoice = pageTitle;
+      if (invoiceScreenLabel) invoiceScreenLabel.textContent = pageTitle;
+      if (invoicePageTitle) invoicePageTitle.textContent = pageTitle;
+      if (invoicePage) invoicePage.setAttribute("aria-label", `${pageTitle}界面`);
+      if (invoiceSubmitButton) invoiceSubmitButton.textContent = isVat ? "提交开票申请" : "提交票据申请";
       if (invoiceVoucherType) invoiceVoucherType.textContent = voucher;
       if (invoiceSystemAmount) invoiceSystemAmount.textContent = formatOrderAmount(order.amount);
       if (invoiceVatSection) invoiceVatSection.hidden = !isVat;
@@ -9611,6 +9660,7 @@
       if (invoicePhone) invoicePhone.value = userProfileState.phone;
       if (invoiceNontaxName) invoiceNontaxName.textContent = userProfileState.name;
       if (invoiceNontaxPhone) invoiceNontaxPhone.textContent = maskProfilePhone(userProfileState.phone);
+      if (invoiceNontaxTitle) invoiceNontaxTitle.value = order.invoiceTitle || userProfileState.name;
       setInvoiceType(isVat ? "personal" : "nontax");
     }
 
@@ -9841,6 +9891,7 @@
         <div class="order-detail-row"><span>凭证类型</span><strong>${documentType}</strong></div>
         <div class="order-detail-row"><span>开票内容</span><strong>月租车位缴费</strong></div>
         <div class="order-detail-row"><span>开票金额</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
+        ${order.invoiceTitle ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "开票抬头" : "票据抬头"}</span><strong>${order.invoiceTitle}</strong></div>` : ""}
         <div class="order-detail-row"><span>申请单号</span><strong>${order.invoiceRequestNo || "--"}</strong></div>
         <div class="order-detail-row"><span>申请时间</span><strong>${order.invoiceAppliedAt || "--"}</strong></div>
         ${isDone ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "发票号码" : "票据号码"}</span><strong>${order.invoiceNumber || "--"}</strong></div><div class="order-detail-row"><span>开具日期</span><strong>${order.invoiceCompletedAt || "--"}</strong></div>` : ""}`;
@@ -9980,12 +10031,19 @@
         showToast("请填写个人抬头");
         return;
       }
+      if (!isVat && !invoiceNontaxTitle?.value.trim()) {
+        showToast("请填写票据抬头");
+        return;
+      }
       order.invoiceStatus = "申请中";
       order.invoiceRequestNo = `KP${order.orderNo.slice(2)}`;
       order.invoiceAppliedAt = "2026-08-25 10:18";
       order.invoiceType = isVat
         ? (isSpecialInvoice ? "增值税专用发票" : "增值税普通发票")
         : "非税电子票据";
+      order.invoiceTitle = isVat
+        ? (isCompanyInvoice ? invoiceCompanyInputs[0]?.value.trim() : invoicePersonalName?.value.trim())
+        : invoiceNontaxTitle?.value.trim();
       renderOrderDetail(order.id);
       renderOrderList();
       showTab("orderDetail");
@@ -10249,7 +10307,7 @@
       button.addEventListener("click", () => setInvoiceType(button.dataset.invoiceType || "personal"));
     });
 
-    document.querySelector("[data-invoice-submit]")?.addEventListener("click", submitInvoice);
+    invoiceSubmitButton?.addEventListener("click", submitInvoice);
 
     rentFlowBackActions.forEach((action) => {
       action.addEventListener("click", () => {
@@ -10728,6 +10786,7 @@
     document.body.dataset.account = accountState.current;
     buildPlateKeyboard();
     syncPlateInput();
+    applyCommunityProjectMetadata();
     syncFullGarageList();
     syncRentGarageList();
     applyGarageListControls();
