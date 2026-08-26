@@ -1299,20 +1299,16 @@
       </div>
 
       <div class="phone-block" data-screen="invoiceResult">
-        <div class="screen-label">票据详情</div>
-        <article class="phone invoice-result-page" aria-label="发票或票据详情界面">
+        <div class="screen-label" data-invoice-result-screen-label>开票申请详情</div>
+        <article class="phone invoice-result-page" data-invoice-result-page aria-label="开票申请详情界面">
           <header class="subpage-titlebar">
             <button class="back-btn" type="button" data-invoice-result-back aria-label="返回开票记录">‹</button>
-            票据详情
+            <span data-invoice-result-title>开票申请详情</span>
           </header>
 
           <div class="content">
             <section class="order-detail-section" data-invoice-result-detail></section>
             <section class="invoice-result-file" data-invoice-result-file></section>
-            <section class="invoice-help-card">
-              <span>开票信息需要更正或票据有问题，请联系客服处理。</span>
-              <button type="button" data-invoice-support>联系客服</button>
-            </section>
           </div>
         </article>
       </div>
@@ -1734,6 +1730,9 @@
     const invoiceListScreen = document.querySelector(".invoice-list-page");
     const invoiceResultDetail = document.querySelector("[data-invoice-result-detail]");
     const invoiceResultFile = document.querySelector("[data-invoice-result-file]");
+    const invoiceResultScreenLabel = document.querySelector("[data-invoice-result-screen-label]");
+    const invoiceResultPage = document.querySelector("[data-invoice-result-page]");
+    const invoiceResultTitle = document.querySelector("[data-invoice-result-title]");
     const refundListActions = document.querySelectorAll("[data-refund-list-action]");
     const refundListBackButtons = document.querySelectorAll("[data-refund-list-back]");
     const refundDetailBackButtons = document.querySelectorAll("[data-refund-detail-back]");
@@ -2439,7 +2438,7 @@
       refundDetail: "退款详情",
       orderInvoice: "申请开票",
       invoiceList: "开票记录",
-      invoiceResult: "票据详情",
+      invoiceResult: "开票申请详情",
       login: "登录",
     };
     const loginViewTitles = {
@@ -4338,6 +4337,7 @@
       const voucher = invoiceVoucherFor(order);
       const isNontax = voucher === "非税票据";
       const documentType = invoiceRecordType(order);
+      const pageTitle = isDone ? "发票详情" : "开票申请详情";
       const payerName = escapeHtml(order.payerNameSnapshot || order.invoiceTitle || order.ownerNameSnapshot || "--");
       const invoiceTitle = escapeHtml(order.invoiceTitle || "");
       const partyRow = isNontax
@@ -4345,9 +4345,19 @@
         : order.invoiceTitle
           ? `<div class="order-detail-row"><span>开票抬头</span><strong>${invoiceTitle}</strong></div>`
           : "";
+      const applicationState = !isDone
+        ? `<div class="invoice-application-status"><div><strong>申请已提交</strong><span>财务正在处理，请耐心等待</span></div><b>${invoiceProcessingLabel(order)}</b></div>`
+        : "";
+      screenTitles.invoiceResult = pageTitle;
+      if (invoiceResultScreenLabel) invoiceResultScreenLabel.textContent = pageTitle;
+      if (invoiceResultTitle) invoiceResultTitle.textContent = pageTitle;
+      if (invoiceResultPage) invoiceResultPage.setAttribute("aria-label", `${pageTitle}界面`);
       invoiceResultDetail.innerHTML = `
-        <h3>${isNontax ? "票据信息" : "凭证信息"}</h3>
+        <h3>${isDone ? "凭证信息" : "申请信息"}</h3>
+        ${applicationState}
         <div class="order-detail-row"><span>凭证类型</span><strong>${documentType}</strong></div>
+        <div class="order-detail-row"><span>小区</span><strong class="order-detail-location">${escapeHtml(order.community)}</strong></div>
+        <div class="order-detail-row"><span>办理车辆</span><strong>${escapeHtml(order.plate)}</strong></div>
         <div class="order-detail-row"><span>${isNontax ? "收费项目" : "开票内容"}</span><strong>月租车位缴费</strong></div>
         <div class="order-detail-row"><span>${isNontax ? "票据金额" : "开票金额"}</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
         ${partyRow}
@@ -4512,7 +4522,7 @@
       }
       renderOrderDetail(order.id);
       renderOrderList();
-      showTab("orderDetail");
+      openInvoiceResult(order.id, "orderDetail");
       showToast(isVat ? "开票申请已提交" : "票据申请已提交");
     }
 
@@ -4631,8 +4641,6 @@
       const record = event.target.closest("[data-invoice-order-id]");
       if (record) openInvoiceResult(record.dataset.invoiceOrderId, "invoiceList");
     });
-
-    document.querySelector("[data-invoice-support]")?.addEventListener("click", () => showToast("客服电话：0592-1234567"));
 
     invoiceResultFile?.addEventListener("click", (event) => {
       if (event.target.closest("[data-invoice-file-action]")) showToast("正在打开电子凭证");

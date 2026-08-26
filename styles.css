@@ -5605,6 +5605,45 @@
       padding-bottom: 20px;
     }
 
+    .invoice-application-status {
+      margin: 0 0 10px;
+      padding: 0 0 11px;
+      border-bottom: 1px solid #edf1f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .invoice-application-status strong,
+    .invoice-application-status span {
+      display: block;
+    }
+
+    .invoice-application-status strong {
+      color: #344256;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .invoice-application-status span {
+      margin-top: 4px;
+      color: #7d8999;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .invoice-application-status b {
+      flex: 0 0 auto;
+      padding: 4px 7px;
+      border-radius: 4px;
+      color: #2f72d6;
+      background: #f3f8ff;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
     .invoice-result-file {
       margin-top: 10px;
       padding: 14px;
@@ -5646,33 +5685,6 @@
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-    }
-
-    .invoice-help-card {
-      margin-top: 10px;
-      padding: 13px 14px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: #6a7789;
-      background: #f8fbff;
-      border: 1px solid rgba(47, 124, 246, 0.16);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .invoice-help-card button {
-      flex: 0 0 auto;
-      border: 0;
-      color: var(--primary);
-      background: transparent;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 850;
-      cursor: pointer;
-      white-space: nowrap;
     }
 
     .order-workflow-footer {
@@ -5728,8 +5740,7 @@
     .order-detail-section,
     .order-workflow-section,
     .invoice-record-card,
-    .refund-record-card,
-    .invoice-help-card {
+    .refund-record-card {
       border-radius: var(--card-radius);
     }
 
