@@ -6101,12 +6101,12 @@
                 <input type="search" data-rent-garage-query placeholder="搜索小区或车库" aria-label="搜索小区或车库">
               </label>
             </div>
-            <div class="garage-list-tools rent-garage-filter-tools" aria-label="办理车库筛选排序">
-              <div class="garage-tool-row" role="group" aria-label="排序">
-                <span class="tool-label">筛选</span>
-                <button class="garage-tool-btn is-active" type="button" data-rent-sort="distance">距离最近</button>
-                <button class="garage-tool-btn" type="button" data-rent-sort="priceAsc">价格最低</button>
-                <button class="garage-tool-btn" type="button" data-rent-sort="priceDesc">价格最高</button>
+            <div class="garage-list-tools rent-garage-filter-tools" aria-label="按地理位置筛选办理车库">
+              <div class="garage-tool-row" role="group" aria-label="选择区域">
+                <span class="tool-label">区域</span>
+                <button class="garage-tool-btn is-active" type="button" data-rent-area="all">全部</button>
+                <button class="garage-tool-btn" type="button" data-rent-area="湖里区">湖里区</button>
+                <button class="garage-tool-btn" type="button" data-rent-area="思明区">思明区</button>
               </div>
             </div>
             <div class="garage-list" data-rent-garage-list></div>
@@ -7228,9 +7228,7 @@
     const rentFlowActions = document.querySelectorAll("[data-rent-flow-action]");
     const homeRentActions = document.querySelectorAll(".home-garage-list .garage-card:not(.full) .rent-button");
     const rentGarageQuery = document.querySelector("[data-rent-garage-query]");
-    const rentFilterToggle = document.querySelector("[data-rent-filter-toggle]");
-    const rentFilterPanel = document.querySelector("[data-rent-filter-panel]");
-    const rentSortButtons = document.querySelectorAll("[data-rent-sort]");
+    const rentAreaButtons = document.querySelectorAll("[data-rent-area]");
     const rentFlowBackActions = document.querySelectorAll("[data-rent-flow-back]");
     const rentOwnerBackActions = document.querySelectorAll("[data-rent-owner-back]");
     const rentOwnerNextButton = document.querySelector("[data-rent-owner-next]");
@@ -7448,7 +7446,7 @@
       day: 24,
     };
     const rentGarageState = {
-      sort: "distance",
+      area: "all",
     };
     const refundState = {
       activeId: "TK202608200014",
@@ -8086,19 +8084,15 @@
       const keyword = rentGarageQuery?.value.trim().toLowerCase() || "";
       const cards = Array.from(rentGarageList.querySelectorAll(".garage-card"));
 
-      cards.sort((a, b) => {
-        if (rentGarageState.sort === "priceAsc") return garagePrice(a) - garagePrice(b);
-        if (rentGarageState.sort === "priceDesc") return garagePrice(b) - garagePrice(a);
-        return garageDistance(a) - garageDistance(b);
-      });
-
       let visibleCount = 0;
       cards.forEach((card) => {
         const searchableText = card.textContent.toLowerCase();
-        const visible = !keyword || searchableText.includes(keyword);
+        const district = card.querySelector(".garage-stat-row span")?.textContent.trim() || "";
+        const inConfiguredArea = ["湖里区", "思明区"].includes(district);
+        const areaMatched = rentGarageState.area === "all" || district === rentGarageState.area;
+        const visible = inConfiguredArea && areaMatched && (!keyword || searchableText.includes(keyword));
         card.style.display = visible ? "" : "none";
         if (visible) visibleCount += 1;
-        rentGarageList.appendChild(card);
       });
 
       const rentFlowScreen = document.querySelector(".rent-flow");
@@ -10224,20 +10218,11 @@
       rentGarageQuery.addEventListener("input", applyRentGarageControls);
     }
 
-    if (rentFilterToggle && rentFilterPanel) {
-      rentFilterToggle.addEventListener("click", () => {
-        const isOpen = rentFilterPanel.classList.toggle("is-open");
-        rentFilterToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      });
-    }
-
-    rentSortButtons.forEach((button) => {
+    rentAreaButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        rentGarageState.sort = button.dataset.rentSort;
-        rentSortButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+        rentGarageState.area = button.dataset.rentArea || "all";
+        rentAreaButtons.forEach((item) => item.classList.toggle("is-active", item === button));
         applyRentGarageControls();
-        rentFilterPanel?.classList.remove("is-open");
-        rentFilterToggle?.setAttribute("aria-expanded", "false");
       });
     });
 
