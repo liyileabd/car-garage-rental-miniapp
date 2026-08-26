@@ -4893,145 +4893,39 @@
     }
 
     .order-card-actions {
-      min-height: 36px;
-      padding: 7px 14px 8px;
+      min-height: 44px;
+      padding: 8px 14px 10px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 8px;
     }
 
-    .order-more-button {
-      height: 24px;
-      padding: 0;
-      border: 0;
+    .order-card-actions[hidden] {
+      display: none;
+    }
+
+    .order-inline-action {
+      height: 28px;
+      padding: 0 11px;
+      border: 1px solid #d9e5f4;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      color: #a2adbb;
-      background: transparent;
+      justify-content: center;
+      color: #3d5f8d;
+      background: #fff;
       font: inherit;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .order-more-sheet {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      visibility: hidden;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease, visibility 160ms ease;
-    }
-
-    .order-list-page[data-order-more="open"] .order-more-sheet {
-      visibility: visible;
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .order-more-backdrop {
-      position: absolute;
-      inset: 0;
-      border: 0;
-      background: rgba(19, 31, 49, 0.3);
-      cursor: pointer;
-    }
-
-    .order-more-panel {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      padding: 8px 12px 12px;
-      border-radius: 14px 14px 0 0;
-      background: #f5f7fa;
-      box-shadow: 0 -10px 28px rgba(27, 48, 81, 0.16);
-      transform: translateY(100%);
-      transition: transform 180ms ease;
-    }
-
-    .order-list-page[data-order-more="open"] .order-more-panel {
-      transform: translateY(0);
-    }
-
-    .order-more-handle {
-      width: 32px;
-      height: 4px;
-      margin: 0 auto 8px;
-      border-radius: 4px;
-      background: #d8e0ea;
-    }
-
-    .order-more-title {
-      display: block;
-      padding: 3px 4px 10px;
-      color: #6a778a;
       font-size: 13px;
       font-weight: 700;
-    }
-
-    .order-more-actions {
-      overflow: hidden;
-      border-radius: 8px;
-      background: #fff;
-    }
-
-    .order-more-action {
-      width: 100%;
-      min-height: 46px;
-      padding: 0 14px;
-      border: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #344256;
-      background: #fff;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 750;
+      white-space: nowrap;
       cursor: pointer;
-      text-align: left;
     }
 
-    .order-more-action + .order-more-action {
-      border-top: 1px solid #eef2f6;
-    }
-
-    .order-more-action .chevron {
-      color: #a3afbd;
-      font-size: 19px;
-      font-weight: 500;
-    }
-
-    .order-more-action.is-danger {
+    .order-inline-action.is-danger {
       color: #d8654e;
-    }
-
-    .order-more-unavailable {
-      min-height: 46px;
-      padding: 12px 14px;
-      border-top: 1px solid #eef2f6;
-      display: flex;
-      align-items: center;
-      color: #8a96a7;
-      background: #fafbfd;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .order-more-cancel {
-      width: 100%;
-      height: 44px;
-      margin-top: 8px;
-      border: 0;
-      border-radius: 8px;
-      color: #536277;
-      background: #fff;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 750;
-      cursor: pointer;
+      border-color: #f0d4cf;
+      background: #fffafa;
     }
 
     .order-empty {
@@ -7015,15 +6909,6 @@
             <div class="order-empty" data-order-empty>暂无符合条件的订单</div>
           </div>
 
-          <section class="order-more-sheet" data-order-more-sheet aria-hidden="true" aria-label="订单更多操作">
-            <button class="order-more-backdrop" type="button" data-order-more-close aria-label="关闭订单操作"></button>
-            <div class="order-more-panel" role="dialog" aria-modal="true" aria-labelledby="order-more-title">
-              <div class="order-more-handle"></div>
-              <strong class="order-more-title" id="order-more-title" data-order-more-title>订单操作</strong>
-              <div class="order-more-actions" data-order-more-actions></div>
-              <button class="order-more-cancel" type="button" data-order-more-close>取消</button>
-            </div>
-          </section>
         </article>
       </div>
 
@@ -7619,10 +7504,6 @@
     const orderFilterButtons = document.querySelectorAll("[data-order-filter]");
     const orderList = document.querySelector("[data-order-list]");
     const orderListScreen = document.querySelector(".order-list-page");
-    const orderMoreSheet = document.querySelector("[data-order-more-sheet]");
-    const orderMoreTitle = document.querySelector("[data-order-more-title]");
-    const orderMoreActions = document.querySelector("[data-order-more-actions]");
-    const orderMoreCloseButtons = document.querySelectorAll("[data-order-more-close]");
     const orderDetailContent = document.querySelector("[data-order-detail-content]");
     const orderDetailFooter = document.querySelector("[data-order-detail-footer]");
     const renewMonthsInput = document.querySelector("[data-renew-months]");
@@ -7802,7 +7683,6 @@
       invoiceTypeFilter: "all",
       invoiceListReturnScreen: "personal",
       invoiceResultReturnScreen: "invoiceList",
-      moreId: "",
       records: [
         {
           id: "AS202608170023",
@@ -9491,6 +9371,7 @@
 
       records.forEach((order) => {
         const status = orderStatusMeta(order);
+        const actions = orderMoreItems(order).filter((item) => !item.unavailable);
         const card = document.createElement("section");
         card.className = "order-card";
         const amountLabel = order.paymentStatus === "已取消"
@@ -9508,8 +9389,8 @@
               <strong>${amountLabel} ${formatOrderAmount(order.amount)}</strong>
             </div>
           </button>
-          <div class="order-card-actions">
-            <button class="order-more-button" type="button" data-order-more-id="${order.id}" aria-label="${order.orderNo}更多操作">更多</button>
+          <div class="order-card-actions"${actions.length ? "" : " hidden"}>
+            ${actions.map((item) => `<button class="order-inline-action${item.danger ? " is-danger" : ""}" type="button" data-order-inline-id="${order.id}" data-order-inline-action="${item.action}">${item.label}</button>`).join("")}
           </div>`;
         orderList.appendChild(card);
       });
@@ -9542,28 +9423,6 @@
       }
 
       return items;
-    }
-
-    function closeOrderMore() {
-      orderState.moreId = "";
-      if (orderListScreen) orderListScreen.dataset.orderMore = "closed";
-      if (orderMoreSheet) orderMoreSheet.setAttribute("aria-hidden", "true");
-    }
-
-    function openOrderMore(orderId) {
-      if (!ensureAuthenticated()) return;
-      const order = getOrderById(orderId);
-      if (!order || !orderListScreen || !orderMoreActions) return;
-      orderState.activeId = order.id;
-      orderState.moreId = order.id;
-      if (orderMoreTitle) orderMoreTitle.textContent = `${order.plate} · 订单操作`;
-      orderMoreActions.innerHTML = orderMoreItems(order).map((item) => item.unavailable ? `
-        <div class="order-more-unavailable">${item.label}</div>` : `
-        <button class="order-more-action${item.danger ? " is-danger" : ""}" type="button" data-order-more-action="${item.action}">
-          <span>${item.label}</span><span class="chevron">›</span>
-        </button>`).join("");
-      orderListScreen.dataset.orderMore = "open";
-      orderMoreSheet?.setAttribute("aria-hidden", "false");
     }
 
     function renderOrderDetail(orderId = orderState.activeId) {
@@ -9634,7 +9493,6 @@
       if (!ensureAuthenticated()) return;
       orderState.listReturnScreen = returnScreen === "orderDetail" ? "home" : returnScreen;
       orderState.filter = "all";
-      closeOrderMore();
       orderFilterButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.orderFilter === "all"));
       renderOrderList();
       showTab("orderList");
@@ -10303,23 +10161,15 @@
     });
 
     orderList?.addEventListener("click", (event) => {
-      const moreButton = event.target.closest("[data-order-more-id]");
-      if (moreButton) {
+      const inlineAction = event.target.closest("[data-order-inline-action]");
+      if (inlineAction) {
         event.stopPropagation();
-        openOrderMore(moreButton.dataset.orderMoreId);
+        orderState.activeId = inlineAction.dataset.orderInlineId || "";
+        handleOrderAction(inlineAction.dataset.orderInlineAction || "");
         return;
       }
       const card = event.target.closest("[data-order-open-id]");
       if (card) openOrderDetail(card.dataset.orderOpenId);
-    });
-
-    orderMoreCloseButtons.forEach((button) => button.addEventListener("click", closeOrderMore));
-
-    orderMoreActions?.addEventListener("click", (event) => {
-      const action = event.target.closest("[data-order-more-action]")?.dataset.orderMoreAction;
-      if (!action) return;
-      closeOrderMore();
-      handleOrderAction(action);
     });
 
     [orderDetailContent, orderDetailFooter].forEach((container) => {
