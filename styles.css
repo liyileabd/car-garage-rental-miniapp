@@ -4994,11 +4994,13 @@
       white-space: normal;
     }
 
+    .order-detail-row.refund-reason-row,
     .order-detail-row.refund-note-row {
       align-items: flex-start;
       padding-top: 3px;
     }
 
+    .order-detail-row .refund-reason-value,
     .order-detail-row .refund-note-value {
       overflow: visible;
       text-overflow: clip;
