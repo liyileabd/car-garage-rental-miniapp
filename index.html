@@ -831,6 +831,25 @@
       padding: 14px 10px 14px;
     }
 
+    .home-ad-slot {
+      height: 122px;
+      margin-top: 20px;
+      border: 1px dashed rgba(103, 137, 181, 0.28);
+      border-radius: var(--card-radius);
+      display: grid;
+      place-items: center;
+      color: #9aa9bd;
+      background: rgba(255, 255, 255, 0.54);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .home-ad-slot span {
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: rgba(235, 242, 251, 0.86);
+    }
+
     .home .shortcut-grid {
       grid-template-columns: repeat(3, 1fr);
     }
@@ -5848,11 +5867,9 @@
               </div>
             </section>
 
-            <div class="section-head">
-              <h3>附近可办理车库</h3>
-              <button class="section-more-link" type="button" data-garage-more>全部 11 <span class="chevron">›</span></button>
-            </div>
-            <div class="garage-list home-garage-list">
+            <section class="home-ad-slot" aria-label="广告位预留"><span>广告位预留</span></section>
+
+            <div class="garage-list home-garage-list" hidden aria-hidden="true">
               <section class="card garage-card">
                 <div>
                   <div class="garage-name"><svg class="icon sm"><use href="#i-parking"></use></svg>湖里安商房小区</div>
