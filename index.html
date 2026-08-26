@@ -8075,7 +8075,7 @@
 
       let visibleCount = 0;
       cards.forEach((card) => {
-        const searchableText = card.textContent.toLowerCase();
+        const searchableText = card.querySelector(".garage-name")?.textContent.toLowerCase() || "";
         const district = card.querySelector(".garage-stat-row span")?.textContent.trim() || "";
         const inConfiguredArea = ["湖里区", "思明区"].includes(district);
         const areaMatched = rentGarageState.area === "all" || district === rentGarageState.area;
