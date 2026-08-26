@@ -3310,6 +3310,10 @@
       cursor: pointer;
     }
 
+    .rent-vehicle-option.is-account-hidden {
+      display: none;
+    }
+
     .rent-vehicle-option.is-selected {
       border-color: rgba(47, 124, 246, 0.5);
       background: #f3f8ff;
@@ -6472,7 +6476,7 @@
 
           <div class="content">
             <div class="rent-vehicle-options" role="radiogroup" aria-label="选择已绑定车辆">
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="true" data-rent-vehicle-option data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="true" data-rent-vehicle-option data-account="wechat" data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 12345</strong>
@@ -6480,7 +6484,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-plate="闽D 67890" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 67890" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 67890</strong>
@@ -6488,7 +6492,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-plate="闽D A24680" data-vehicle-color="绿牌" data-vehicle-color-code="26">
+              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D A24680" data-vehicle-color="绿牌" data-vehicle-color-code="26">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D A24680</strong>
@@ -6496,7 +6500,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-plate="闽D 13579" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 13579" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 13579</strong>
@@ -8642,7 +8646,10 @@
         : "点击选择已绑定车辆";
       const options = getRentVehicleOptions();
       document.querySelectorAll("[data-rent-vehicle-option]").forEach((option) => {
-        option.hidden = option.dataset.account !== accountState.current;
+        const belongsToCurrentAccount = option.dataset.account === accountState.current;
+        option.hidden = !belongsToCurrentAccount;
+        option.classList.toggle("is-account-hidden", !belongsToCurrentAccount);
+        option.setAttribute("aria-hidden", belongsToCurrentAccount ? "false" : "true");
       });
       if (rentVehicleSelectPage) rentVehicleSelectPage.dataset.rentVehicleEmpty = options.length === 0 ? "true" : "false";
       options.forEach((option) => {
