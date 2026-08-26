@@ -2603,6 +2603,16 @@
       return value.length === 11 ? `${value.slice(0, 3)}****${value.slice(-4)}` : value;
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;",
+      })[character]);
+    }
+
     function syncPersonalProfile() {
       if (personalNameInput) personalNameInput.value = userProfileState.name;
       if (personalPhoneInput) personalPhoneInput.value = userProfileState.phone;
@@ -4249,7 +4259,7 @@
         <section class="order-detail-section">
           <h3>退款原因</h3>
           <div class="order-detail-row"><span>退款原因</span><strong>${record.reason}</strong></div>
-          <div class="order-detail-row"><span>补充说明</span><strong>${record.note || "--"}</strong></div>
+          <div class="order-detail-row"><span>补充说明</span><strong>${escapeHtml(record.note || "--")}</strong></div>
         </section>`;
       if (refundDetailFooter) {
         refundDetailFooter.hidden = record.status !== "审批中";
@@ -4309,11 +4319,12 @@
       const voucher = invoiceVoucherFor(order);
       const isNontax = voucher === "非税票据";
       const documentType = invoiceRecordType(order);
-      const payerName = order.payerNameSnapshot || order.invoiceTitle || order.ownerNameSnapshot || "--";
+      const payerName = escapeHtml(order.payerNameSnapshot || order.invoiceTitle || order.ownerNameSnapshot || "--");
+      const invoiceTitle = escapeHtml(order.invoiceTitle || "");
       const partyRow = isNontax
         ? `<div class="order-detail-row"><span>交款人</span><strong>${payerName}</strong></div>`
         : order.invoiceTitle
-          ? `<div class="order-detail-row"><span>开票抬头</span><strong>${order.invoiceTitle}</strong></div>`
+          ? `<div class="order-detail-row"><span>开票抬头</span><strong>${invoiceTitle}</strong></div>`
           : "";
       invoiceResultDetail.innerHTML = `
         <h3>${isNontax ? "票据信息" : "凭证信息"}</h3>
