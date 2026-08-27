@@ -3496,6 +3496,71 @@
       display: block;
     }
 
+    .rent-overlap-dialog {
+      position: absolute;
+      inset: 0;
+      z-index: 32;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease, visibility 160ms ease;
+    }
+
+    .rent-vehicle[data-rent-overlap-dialog="open"] .rent-overlap-dialog {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .rent-overlap-backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(20, 29, 43, 0.42);
+      cursor: pointer;
+    }
+
+    .rent-overlap-panel {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+      border-radius: 14px 14px 0 0;
+      background: #fff;
+      box-shadow: 0 -12px 28px rgba(22, 37, 58, 0.16);
+    }
+
+    .rent-overlap-panel h3 {
+      margin: 0;
+      color: #172033;
+      font-size: 18px;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    .rent-overlap-panel p {
+      margin: 11px 4px 0;
+      color: #6f7d90;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .rent-overlap-action {
+      width: 100%;
+      height: 44px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 7px;
+      color: #fff;
+      background: var(--primary);
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
     .rent-date-panel {
       position: absolute;
       right: 0;

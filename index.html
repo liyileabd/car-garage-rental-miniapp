@@ -565,6 +565,15 @@
               </div>
             </div>
           </div>
+
+          <section class="rent-overlap-dialog" data-rent-overlap-dialog aria-hidden="true" aria-label="月租重叠提示">
+            <button class="rent-overlap-backdrop" type="button" data-rent-overlap-close aria-label="关闭提示"></button>
+            <div class="rent-overlap-panel" role="dialog" aria-modal="true" aria-labelledby="rent-overlap-title">
+              <h3 id="rent-overlap-title">该车辆已有月租</h3>
+              <p data-rent-overlap-message>所选租期与已有月租重叠，请调整起租日期或选择其他车辆。</p>
+              <button class="rent-overlap-action" type="button" data-rent-overlap-close>调整信息</button>
+            </div>
+          </section>
         </article>
       </div>
 
@@ -1582,6 +1591,9 @@
     const rentDateYearList = document.querySelector("[data-rent-date-year-list]");
     const rentDateMonthList = document.querySelector("[data-rent-date-month-list]");
     const rentDateDayList = document.querySelector("[data-rent-date-day-list]");
+    const rentOverlapDialog = document.querySelector("[data-rent-overlap-dialog]");
+    const rentOverlapMessage = document.querySelector("[data-rent-overlap-message]");
+    const rentOverlapCloseActions = document.querySelectorAll("[data-rent-overlap-close]");
     const rentMonthsInput = document.querySelector("[data-rent-months]");
     const rentMonthOptions = document.querySelectorAll("[data-rent-month-option]");
     const rentEndDateLabel = document.querySelector("[data-rent-end-date]");
@@ -2937,6 +2949,49 @@
       end.setMonth(end.getMonth() + rentTermState.months);
       end.setDate(end.getDate() - 1);
       return formatRentDate(end);
+    }
+
+    function findMonthlyRentOverlap({ community, plate, start, end, excludeOrderId = "" }) {
+      const plateKey = vehiclePlateKey(plate || "");
+      if (!community || !plateKey || !/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end)) {
+        return null;
+      }
+
+      return orderState.records.find((order) => {
+        const stillEffective = !["过期", "终止"].includes(order.rentalStatus) && order.refundStatus !== "已通过";
+        return stillEffective &&
+          order.id !== excludeOrderId &&
+          order.community === community &&
+          vehiclePlateKey(order.plate || "") === plateKey &&
+          start <= order.end &&
+          end >= order.start;
+      }) || null;
+    }
+
+    function getRentOverlap() {
+      return findMonthlyRentOverlap({
+        community: rentFlowState.selectedCommunity || rentFlowState.selectedName,
+        plate: rentVehicleState.plate,
+        start: rentStartDateInput?.value || "",
+        end: calculateRentEndDate(),
+      });
+    }
+
+    function openRentOverlapDialog(order) {
+      const rentVehicleScreen = document.querySelector(".rent-vehicle");
+      if (!rentVehicleScreen || !rentOverlapDialog || !order) return;
+      const selectedEnd = calculateRentEndDate();
+      if (rentOverlapMessage) {
+        rentOverlapMessage.textContent = `${order.plate} 在${order.community}已有 ${order.start} 至 ${order.end} 的月租，所选 ${rentStartDateInput?.value || "--"} 至 ${selectedEnd} 与其重叠。请调整起租日期或选择其他车辆。`;
+      }
+      rentVehicleScreen.dataset.rentOverlapDialog = "open";
+      rentOverlapDialog.setAttribute("aria-hidden", "false");
+    }
+
+    function closeRentOverlapDialog() {
+      const rentVehicleScreen = document.querySelector(".rent-vehicle");
+      if (rentVehicleScreen) rentVehicleScreen.dataset.rentOverlapDialog = "closed";
+      rentOverlapDialog?.setAttribute("aria-hidden", "true");
     }
 
     function updateRentTermState() {
@@ -4408,6 +4463,17 @@
       const original = getOrderById();
       const start = nextDate(original.end);
       const end = addOrderMonths(start, orderState.renewMonths);
+      const overlap = findMonthlyRentOverlap({
+        community: original.community,
+        plate: original.plate,
+        start,
+        end,
+        excludeOrderId: original.id,
+      });
+      if (overlap) {
+        showToast("该车辆在此小区已有重叠月租，不能重复续费");
+        return;
+      }
       const monthlyRate = Math.round(original.amount / Math.max(original.months, 1));
       const newId = `AS20260825${String(orderState.records.length + 91).padStart(4, "0")}`;
       orderState.records.unshift({
@@ -4830,6 +4896,11 @@
     if (rentVehicleNextButton) {
       rentVehicleNextButton.addEventListener("click", () => {
         if (rentVehicleNextButton.disabled) return;
+        const overlap = getRentOverlap();
+        if (overlap) {
+          openRentOverlapDialog(overlap);
+          return;
+        }
         startRentNoticeReading();
         showTab("rentNotice");
       });
@@ -4850,6 +4921,12 @@
           showToast("请先阅读并同意告知书");
           return;
         }
+        const overlap = getRentOverlap();
+        if (overlap) {
+          showTab("rentVehicle");
+          requestAnimationFrame(() => openRentOverlapDialog(overlap));
+          return;
+        }
         const order = createMonthlyRentOrder();
         renderOrderList();
         syncVehicleMonthlyState();
@@ -4858,6 +4935,10 @@
         showToast(`${order.plate}月租已开通`);
       });
     }
+
+    rentOverlapCloseActions.forEach((action) => {
+      action.addEventListener("click", closeRentOverlapDialog);
+    });
 
     rentCancelPaymentButton?.addEventListener("click", () => {
       showTab("home");
