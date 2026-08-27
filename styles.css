@@ -4995,6 +4995,13 @@
       font-weight: 850;
     }
 
+    .order-card-refund-note {
+      margin: 10px 0 0;
+      color: #77869a;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     .order-card-actions {
       min-height: 44px;
       padding: 8px 14px 10px;

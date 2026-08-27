@@ -3965,10 +3965,7 @@
         return { label: "退款审批中", className: "refund", panelClass: "is-refund", icon: "i-refund", description };
       }
       if (order.refundStatus === "已通过") {
-        return { label: "已终止", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款已通过，月租服务已结束。" };
-      }
-      if (order.refundStatus === "未通过") {
-        return { label: "退款未通过", className: "refund", panelClass: "is-refund", icon: "i-refund", description: "退款申请未通过，月租服务仍按当前租期执行。" };
+        return { label: "月租已结束", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款申请审核通过，工作人员将联系您确认退款金额及方式。" };
       }
       if (order.rentalStatus === "待生效") {
         return { label: "待生效", className: "syncing", panelClass: "is-pending", icon: "i-info", description: "续费已支付，将在当前租期结束后自动生效。" };
@@ -4017,13 +4014,13 @@
     function orderMatchesFilter(order) {
       const isCompleted = ["过期", "终止"].includes(order.rentalStatus) || order.refundStatus === "已通过";
       if (orderState.filter === "active") {
-        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
+        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && !["审批中", "已通过"].includes(order.refundStatus);
         if (!isActive) return false;
         if (orderState.subFilter === "effective") return order.rentalStatus === "有效";
         if (orderState.subFilter === "upcoming") return order.rentalStatus === "待生效";
         return true;
       }
-      if (orderState.filter === "afterSales") return ["审批中", "未通过"].includes(order.refundStatus) && !isCompleted;
+      if (orderState.filter === "afterSales") return order.refundStatus === "审批中";
       if (orderState.filter === "completed") {
         if (!isCompleted) return false;
         if (orderState.subFilter === "expired") return order.rentalStatus === "过期";
@@ -4057,6 +4054,9 @@
       records.forEach((order) => {
         const status = orderStatusMeta(order);
         const actions = orderMoreItems(order).filter((item) => !item.unavailable);
+        const refundApprovedNote = order.refundStatus === "已通过"
+          ? '<p class="order-card-refund-note">退款申请审核通过，工作人员将联系您确认退款金额及方式。</p>'
+          : "";
         const card = document.createElement("section");
         card.className = "order-card";
         card.innerHTML = `
@@ -4070,6 +4070,7 @@
               <span>${order.start} 至 ${order.end}</span>
               <strong>实付 ${formatOrderAmount(order.amount)}</strong>
             </div>
+            ${refundApprovedNote}
           </button>
           <div class="order-card-actions"${actions.length ? "" : " hidden"}>
             ${actions.map((item) => `<button class="order-inline-action${item.danger ? " is-danger" : ""}" type="button" data-order-inline-id="${order.id}" data-order-inline-action="${item.action}">${item.label}</button>`).join("")}
@@ -4081,15 +4082,15 @@
     }
 
     function orderMoreItems(order) {
-      const canRenew = order.rentalStatus !== "终止" && order.refundStatus === "未申请";
-      const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && order.refundStatus === "未申请";
+      const hasOpenRefund = ["审批中", "已通过"].includes(order.refundStatus);
+      const canRenew = order.rentalStatus !== "终止" && !hasOpenRefund;
+      const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && !hasOpenRefund;
       const invoiceAvailable = canApplyInvoice(order);
       const items = [];
 
       if (canRenew) items.push({ action: "renew", label: "续费" });
       if (canRefund) items.push({ action: "refund", label: "申请退款" });
       if (order.refundStatus === "审批中") items.push({ label: "退款审批中", unavailable: true });
-      if (order.refundStatus === "已通过") items.push({ label: "退款已通过", unavailable: true });
 
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
@@ -4113,7 +4114,7 @@
           ? `<div class="order-action-row"><span>开票申请</span><strong>${invoiceProcessingLabel(order)}</strong></div>`
           : "";
       const monthlyStatus = order.refundStatus === "已通过" || order.rentalStatus === "终止"
-        ? "已终止"
+        ? "月租已结束"
         : order.rentalStatus === "过期"
           ? "已过期"
           : order.rentalStatus;
@@ -4125,9 +4126,9 @@
       const refundStatusRow = order.refundStatus === "审批中"
         ? '<div class="order-detail-row"><span>退款申请</span><strong>审批中</strong></div>'
         : order.refundStatus === "已通过"
-          ? '<div class="order-detail-row"><span>退款申请</span><strong>已通过</strong></div>'
+          ? '<div class="order-detail-row"><span>退款申请</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
           : order.refundStatus === "未通过"
-            ? '<div class="order-detail-row"><span>退款申请</span><strong>未通过</strong></div>'
+            ? '<div class="order-detail-row"><span>退款申请</span><strong>审核未通过</strong></div>'
             : "";
       const serviceSection = `<section class="order-detail-section">
           <h3>服务状态</h3>
@@ -4296,11 +4297,11 @@
     function refundRecordStatusMeta(record) {
       if (record.status === "已通过") {
         return {
-          label: "退款已通过",
+          label: "审核已通过",
           className: "approved",
           panelClass: "is-active",
           icon: "i-refund",
-          description: "退款申请已通过，实际退款将由工作人员线下处理。",
+          description: "退款申请审核通过，工作人员将联系您确认退款金额及方式。",
         };
       }
       if (record.status === "未通过") {
@@ -4378,7 +4379,7 @@
         card.innerHTML = `
           <div class="refund-record-top">
             <span class="refund-record-plate">${record.plate}</span>
-            <span class="refund-record-status ${status.className}">${record.status}</span>
+            <span class="refund-record-status ${status.className}">${status.label}</span>
           </div>
           <div class="refund-record-place">${record.community}</div>
           <div class="refund-record-info"><span>${refundRecordAmountLabel(record)}</span><strong>${record.reason}</strong></div>
@@ -4401,12 +4402,18 @@
       const record = getRefundRecord(refundId);
       if (!record || !refundDetailContent) return;
       refundState.activeId = record.id;
+      const resultRows = record.status === "已通过"
+        ? '<div class="order-detail-row"><span>审核状态</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
+        : record.status === "未通过"
+          ? '<div class="order-detail-row"><span>审核状态</span><strong>审核未通过</strong></div>'
+          : '<div class="order-detail-row"><span>审核状态</span><strong>审批中</strong></div>';
       refundDetailContent.innerHTML = `
         <section class="order-detail-section">
           <h3>退款申请</h3>
           <div class="order-detail-row"><span>退款申请单号</span><strong>${record.requestNo}</strong></div>
           <div class="order-detail-row"><span>原订单号</span><strong>${record.orderNo}</strong></div>
           <div class="order-detail-row"><span>提交时间</span><strong>${record.submittedAt}</strong></div>
+          ${resultRows}
           ${["已通过", "未通过"].includes(record.status) ? `<div class="order-detail-row"><span>审批时间</span><strong>${record.approvedAt || "--"}</strong></div>` : ""}
         </section>
         <section class="order-detail-section">
