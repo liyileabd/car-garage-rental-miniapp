@@ -1408,15 +1408,16 @@
     }
 
     .plate-input-shell {
-      height: 54px;
+      height: 52px;
       margin-top: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.72);
+      padding: 4px;
+      border: 1px solid #c4d8f8;
       border-radius: 8px;
       display: flex;
       align-items: stretch;
       overflow: hidden;
       background: #3e83de;
-      box-shadow: 0 5px 14px rgba(47, 124, 246, 0.16);
+      box-shadow: 0 4px 12px rgba(47, 124, 246, 0.15);
       transition: background 160ms ease, box-shadow 160ms ease;
     }
 
@@ -1518,29 +1519,29 @@
     }
 
     .plate-input-shell {
-      height: 58px;
       display: grid;
-      grid-template-columns: 52px 52px 18px minmax(0, 1fr);
+      grid-template-columns: 48px 44px 14px minmax(0, 1fr);
+      column-gap: 4px;
     }
 
     .plate-number-slot {
       min-width: 0;
       border: 0;
-      border-right: 1px solid rgba(255, 255, 255, 0.29);
       display: grid;
       place-items: center;
       color: #fff;
-      background: transparent;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
       font: inherit;
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 850;
       line-height: 1;
       cursor: pointer;
     }
 
     .plate-number-slot.is-active-cell {
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.23);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.72);
     }
 
     .plate-number-slot:active {
@@ -1549,7 +1550,7 @@
 
     .plate-input-shell.is-white .plate-number-slot {
       color: #344256;
-      border-right-color: #dce5ef;
+      background: #f2f6fa;
     }
 
     .plate-input-shell.is-white .plate-number-slot.is-empty {
@@ -1559,7 +1560,7 @@
     .plate-input-shell.is-white .plate-number-slot.is-active-cell,
     .plate-input-shell.is-white .plate-number-slot:active {
       background: #f0f5fa;
-      box-shadow: inset 0 0 0 1px #d8e5f2;
+      box-shadow: inset 0 -2px 0 #78a8df;
     }
 
     .plate-tail-input {
@@ -1602,7 +1603,7 @@
       display: grid;
       place-items: center;
       color: rgba(255, 255, 255, 0.94);
-      font-size: 20px;
+      font-size: 15px;
       font-weight: 850;
       line-height: 1;
     }
@@ -1619,30 +1620,34 @@
 
     .plate-tail-cells {
       position: absolute;
-      inset: 0;
+      inset: 5px 1px;
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
       pointer-events: none;
     }
 
     .plate-tail-cell {
       min-width: 0;
-      border-right: 1px solid rgba(255, 255, 255, 0.29);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 3px;
       display: grid;
       place-items: center;
       color: #fff;
-      font-size: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 18px;
       font-weight: 850;
       line-height: 1;
     }
 
     .plate-tail-cell:nth-child(5) {
-      border-right: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.42);
     }
 
     .plate-tail-cell.is-active-cell {
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.23);
+      border-color: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.58);
     }
 
     .plate-input-shell.is-green .plate-tail-cells {
@@ -1650,21 +1655,23 @@
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(5) {
-      border-right: 1px solid rgba(255, 255, 255, 0.29);
+      border-right: 1px solid rgba(255, 255, 255, 0.42);
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(6) {
-      border-right: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.42);
     }
 
     .plate-input-shell.is-white .plate-tail-cell {
       color: #344256;
-      border-right-color: #dce5ef;
+      border-color: #dce5ef;
+      background: #f9fbfd;
     }
 
     .plate-input-shell.is-white .plate-tail-cell.is-active-cell {
       background: #f0f5fa;
-      box-shadow: inset 0 0 0 1px #d8e5f2;
+      border-color: #78a8df;
+      box-shadow: inset 0 -2px 0 #78a8df;
     }
 
     .plate-input-hint {
