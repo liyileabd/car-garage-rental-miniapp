@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>湖里国投月租车位小程序</title>
-  <link rel="stylesheet" href="styles.css?v=5e0ed13">
+  <link rel="stylesheet" href="styles.css?v=refund-account-v1">
 </head>
 <body data-current-tab="home" data-auth="guest" data-login-view="main" data-toast="hidden">
   <svg width="0" height="0" aria-hidden="true" focusable="false">
@@ -1201,6 +1201,19 @@
               <textarea class="refund-note-input" data-refund-note maxlength="100" placeholder="补充说明（选填，最多100字）"></textarea>
             </section>
 
+            <section class="order-workflow-section" aria-label="退款收款信息">
+              <h3>退款收款信息</h3>
+              <label class="order-field-row refund-account-field">
+                <span>收款人 <em class="refund-required">*</em></span>
+                <input class="order-field-input" data-refund-recipient maxlength="20" placeholder="请输入收款人姓名" aria-label="收款人">
+              </label>
+              <label class="order-field-row refund-account-field">
+                <span>收款账户 <em class="refund-required">*</em></span>
+                <input class="order-field-input" data-refund-account maxlength="50" placeholder="请输入收款账户" aria-label="收款账户">
+              </label>
+              <p class="order-workflow-tip">收款人须与订单付款人一致。首次填写后将自动带出，仍可修改。</p>
+            </section>
+
             <p class="order-workflow-tip">实际退款金额以后台审批结果和后续财务线下处理为准。</p>
           </div>
 
@@ -1722,6 +1735,8 @@
     const renewAmount = document.querySelector("[data-renew-amount]");
     const refundReasonButtons = document.querySelectorAll("[data-refund-reason]");
     const refundNote = document.querySelector("[data-refund-note]");
+    const refundRecipientInput = document.querySelector("[data-refund-recipient]");
+    const refundAccountInput = document.querySelector("[data-refund-account]");
     const invoiceTypeButtons = document.querySelectorAll("[data-invoice-type]");
     const invoicePersonalFields = document.querySelector("[data-invoice-personal-fields]");
     const invoiceCompanyFields = document.querySelector("[data-invoice-company-fields]");
@@ -2434,6 +2449,10 @@
       refunds: {
         wechat: refundState.records,
         sms: [],
+      },
+      refundAccounts: {
+        wechat: { recipient: "", account: "" },
+        sms: { recipient: "", account: "" },
       },
     };
     const vehicleFormState = {
@@ -4351,6 +4370,14 @@
       showTab("orderRenew");
     }
 
+    function getSavedRefundAccount() {
+      return accountState.refundAccounts[accountState.current] || { recipient: "", account: "" };
+    }
+
+    function getOrderPayerName(order) {
+      return String(order?.payerNameSnapshot || userProfileState.name || "").trim();
+    }
+
     function renderRefund(order = getOrderById()) {
       const quote = getRefundQuote(order);
       document.querySelector("[data-refund-community]").textContent = order.community;
@@ -4359,6 +4386,15 @@
       document.querySelector("[data-refund-remaining-term]").textContent = quote.remainingTerm;
       document.querySelector("[data-refund-estimate]").textContent = String(quote.estimatedAmount);
       if (refundNote) refundNote.value = "";
+      const savedAccount = getSavedRefundAccount();
+      if (refundRecipientInput) {
+        refundRecipientInput.value = savedAccount.recipient || "";
+        clearFieldError(refundRecipientInput);
+      }
+      if (refundAccountInput) {
+        refundAccountInput.value = savedAccount.account || "";
+        clearFieldError(refundAccountInput);
+      }
       refundReasonButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.refundReason === orderState.refundReason));
     }
 
@@ -4763,11 +4799,31 @@
       if (!ensureAuthenticated()) return;
       const order = getOrderById();
       const note = refundNote?.value.trim() || "";
+      const recipient = refundRecipientInput?.value.trim() || "";
+      const account = refundAccountInput?.value.trim() || "";
+      const payerName = getOrderPayerName(order);
+      [refundRecipientInput, refundAccountInput].forEach(clearFieldError);
       const hasPendingRefund = refundState.records.some((record) => {
         return record.orderNo === order.orderNo && record.status === "审批中";
       });
       if (order.refundStatus === "审批中" || hasPendingRefund) {
         showToast("该订单已有退款申请，不能重复提交");
+        return;
+      }
+      if (!recipient) {
+        showFieldError(refundRecipientInput, "请输入收款人姓名");
+        return;
+      }
+      if (!isChineseName(recipient)) {
+        showFieldError(refundRecipientInput, "收款人请填写2至20个中文字符");
+        return;
+      }
+      if (payerName && recipient !== payerName) {
+        showFieldError(refundRecipientInput, "收款人需与订单付款人一致");
+        return;
+      }
+      if (!account) {
+        showFieldError(refundAccountInput, "请输入收款账户");
         return;
       }
       if (orderState.refundReason === "其他原因" && !note) {
@@ -4776,6 +4832,7 @@
       }
       const quote = getRefundQuote(order);
       const requestNo = `TK${order.orderNo.slice(2)}${String(refundState.records.length + 1).padStart(2, "0")}`;
+      accountState.refundAccounts[accountState.current] = { recipient, account };
       order.refundStatus = "审批中";
       order.passStatus = order.rentalStatus === "有效" ? "已暂停" : "待生效";
       refundState.records.unshift({
@@ -4794,6 +4851,8 @@
         status: "审批中",
         reason: orderState.refundReason,
         note,
+        refundRecipient: recipient,
+        refundAccount: account,
         submittedAt: "2026-08-25 10:18",
         approvedAt: "--",
         hasCompletedInvoice: order.invoiceStatus === "已完成",

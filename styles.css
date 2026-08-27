@@ -5455,6 +5455,22 @@
       resize: none;
     }
 
+    .refund-required {
+      color: #dc6047;
+      font-style: normal;
+    }
+
+    .refund-account-field.has-field-error {
+      min-height: 68px;
+      flex-wrap: wrap;
+      align-content: center;
+    }
+
+    .refund-account-field .field-error-message {
+      flex: 0 0 calc(100% - 96px);
+      margin: -3px 0 3px auto;
+    }
+
     .order-workflow-tip {
       margin: 0;
       color: #8592a3;
