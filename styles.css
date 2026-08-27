@@ -4133,9 +4133,18 @@
       border-radius: 50%;
       display: grid;
       place-items: center;
+      overflow: hidden;
       color: #fff;
       background: linear-gradient(135deg, #2F7CF6, #7AB7FF);
       box-shadow: 0 10px 20px rgba(47, 124, 246, 0.22);
+    }
+
+    .avatar img,
+    .personal-avatar-preview img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
     }
 
     body[data-auth="guest"] .avatar {
@@ -4599,6 +4608,10 @@
       gap: 12px;
     }
 
+    .personal-avatar-field {
+      min-height: 72px;
+    }
+
     .personal-info-field + .personal-info-field {
       border-top: 1px solid #eef2f6;
     }
@@ -4634,6 +4647,50 @@
 
     .personal-info-input::placeholder {
       color: #a0aab7;
+    }
+
+    .personal-avatar-control {
+      min-width: 0;
+      margin-left: auto;
+      padding: 0;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #8b98a8;
+      background: transparent;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .personal-avatar-control > span:last-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .personal-avatar-control b {
+      color: #a4afbd;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .personal-avatar-preview {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--primary);
+      background: #eef5ff;
+    }
+
+    .personal-avatar-preview .icon {
+      width: 24px;
+      height: 24px;
     }
 
     .rent-prerequisite-section {

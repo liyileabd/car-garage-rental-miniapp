@@ -1369,6 +1369,21 @@
           <div class="content">
             <h2 class="personal-info-head">个人信息</h2>
             <section class="personal-info-section">
+              <div class="personal-info-field personal-avatar-field">
+                <label>头像</label>
+                <button class="personal-avatar-control" type="button" data-personal-avatar-action aria-label="更换头像">
+                  <span class="personal-avatar-preview" data-profile-avatar>
+                    <svg class="icon"><use href="#i-user"></use></svg>
+                    <img alt="用户头像" hidden>
+                  </span>
+                  <span>更换头像 <b>›</b></span>
+                </button>
+                <input type="file" accept="image/*" data-personal-avatar-file hidden>
+              </div>
+              <div class="personal-info-field">
+                <label for="personal-nickname-input">昵称</label>
+                <input id="personal-nickname-input" class="personal-info-input" data-personal-nickname-input value="湖里车主" maxlength="16" placeholder="请输入昵称" autocomplete="nickname">
+              </div>
               <div class="personal-info-field">
                 <label for="personal-name-input">真实姓名 <em>*</em></label>
                 <input id="personal-name-input" class="personal-info-input" data-personal-name-input value="张先生" maxlength="20" placeholder="请输入真实姓名" autocomplete="name">
@@ -1405,10 +1420,13 @@
           <div class="content">
             <section class="personal-hero">
               <section class="card profile-card" data-personal-login-action>
-                <div class="avatar"><svg class="icon lg"><use href="#i-user"></use></svg></div>
+                <div class="avatar" data-profile-avatar>
+                  <svg class="icon lg"><use href="#i-user"></use></svg>
+                  <img alt="用户头像" hidden>
+                </div>
                 <div>
                   <div class="profile-main">
-                    <h2><span class="authed-name">张先生</span><span class="guest-name">登录/注册</span></h2>
+                    <h2><span class="authed-name">湖里车主</span><span class="guest-name">登录/注册</span></h2>
                   </div>
                   <div class="phone-mask"><span class="authed-phone">138****6688</span><span class="guest-tip">点击登录/注册，开启更多功能</span></div>
                 </div>
@@ -1558,9 +1576,13 @@
     const accountDeleteCloseActions = document.querySelectorAll("[data-account-delete-close]");
     const accountDeleteConfirmAction = document.querySelector("[data-account-delete-confirm]");
     const policyActions = document.querySelectorAll("[data-policy-action]");
+    const personalNicknameInput = document.querySelector("[data-personal-nickname-input]");
     const personalNameInput = document.querySelector("[data-personal-name-input]");
     const personalPhoneInput = document.querySelector("[data-personal-phone-input]");
     const personalIdInput = document.querySelector("[data-personal-id-input]");
+    const personalAvatarAction = document.querySelector("[data-personal-avatar-action]");
+    const personalAvatarFileInput = document.querySelector("[data-personal-avatar-file]");
+    const profileAvatarSlots = document.querySelectorAll("[data-profile-avatar]");
     const personalInfoSaveButton = document.querySelector("[data-personal-info-save]");
     const authedNameLabels = document.querySelectorAll(".authed-name");
     const authedPhoneLabels = document.querySelectorAll(".authed-phone");
@@ -1831,6 +1853,8 @@
       idCard: "",
     };
     const userProfileState = {
+      nickname: "湖里车主",
+      avatarUrl: "",
       name: "张先生",
       phone: "13800006688",
       idCard: "350211199001011234",
@@ -2401,7 +2425,7 @@
       current: "wechat",
       profiles: {
         wechat: { ...userProfileState },
-        sms: { name: "", phone: "13900001111", idCard: "" },
+        sms: { nickname: "", avatarUrl: "", name: "", phone: "13900001111", idCard: "" },
       },
       orders: {
         wechat: orderState.records,
@@ -2752,14 +2776,26 @@
     }
 
     function syncPersonalProfile() {
+      if (personalNicknameInput) personalNicknameInput.value = userProfileState.nickname || "";
       if (personalNameInput) personalNameInput.value = userProfileState.name;
       if (personalPhoneInput) personalPhoneInput.value = userProfileState.phone;
       if (personalIdInput) personalIdInput.value = userProfileState.idCard;
       authedNameLabels.forEach((label) => {
-        label.textContent = userProfileState.name || "用户";
+        label.textContent = userProfileState.nickname || "你好";
       });
       authedPhoneLabels.forEach((label) => {
         label.textContent = maskProfilePhone(userProfileState.phone);
+      });
+      profileAvatarSlots.forEach((slot) => {
+        const image = slot.querySelector("img");
+        const icon = slot.querySelector("svg");
+        const hasAvatar = Boolean(userProfileState.avatarUrl);
+        if (image) {
+          image.src = hasAvatar ? userProfileState.avatarUrl : "";
+          image.hidden = !hasAvatar;
+        }
+        if (icon) icon.hidden = hasAvatar;
+        slot.classList.toggle("has-image", hasAvatar);
       });
     }
 
@@ -2773,6 +2809,7 @@
     }
 
     function savePersonalInfo() {
+      const nickname = personalNicknameInput?.value.trim() || "";
       const name = personalNameInput?.value.trim() || "";
       const phone = personalPhoneInput?.value.trim() || "";
       const idCard = personalIdInput?.value.trim().toUpperCase() || "";
@@ -2781,6 +2818,7 @@
         phone: personalPhoneInput,
         idCard: personalIdInput,
       })) return;
+      userProfileState.nickname = nickname;
       userProfileState.name = name;
       userProfileState.phone = phone;
       userProfileState.idCard = idCard;
@@ -5468,6 +5506,28 @@
 
     personalInfoActions.forEach((action) => {
       action.addEventListener("click", openPersonalInfo);
+    });
+
+    personalAvatarAction?.addEventListener("click", () => {
+      personalAvatarFileInput?.click();
+    });
+
+    personalAvatarFileInput?.addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("请选择图片文件");
+        event.target.value = "";
+        return;
+      }
+      if (userProfileState.avatarUrl?.startsWith("blob:")) {
+        URL.revokeObjectURL(userProfileState.avatarUrl);
+      }
+      userProfileState.avatarUrl = URL.createObjectURL(file);
+      accountState.profiles[accountState.current] = { ...userProfileState };
+      syncPersonalProfile();
+      event.target.value = "";
+      showToast("头像已更新");
     });
 
     aboutActions.forEach((action) => {
