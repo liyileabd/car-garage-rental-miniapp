@@ -2531,19 +2531,53 @@
       return Boolean(agreement && agreement.classList.contains("is-checked"));
     }
 
-    function clearFieldError(input) {
-      if (!input) return;
-      input.classList.remove("is-invalid");
-      input.removeAttribute("aria-invalid");
+    let fieldErrorSequence = 0;
+
+    function fieldErrorKey(input) {
+      if (!input) return "";
+      if (!input.dataset.fieldErrorKey) {
+        input.dataset.fieldErrorKey = input.id || `field-error-${++fieldErrorSequence}`;
+      }
+      return input.dataset.fieldErrorKey;
     }
 
-    function showFieldError(input, message) {
+    function fieldErrorHost(input) {
+      return input?.closest(".personal-info-field, .rent-prerequisite-field, .vehicle-field, .phone-field") || input?.parentElement;
+    }
+
+    function clearFieldError(input) {
+      if (!input) return;
+      const key = fieldErrorKey(input);
+      const host = fieldErrorHost(input);
+      input.classList.remove("is-invalid");
+      input.removeAttribute("aria-invalid");
+      input.closest(".plate-input-shell")?.classList.remove("is-invalid");
+      host?.querySelector(`.field-error-message[data-field-error-for="${key}"]`)?.remove();
+      if (host && !host.querySelector(".field-error-message")) host.classList.remove("has-field-error");
+    }
+
+    function showFieldError(input, message, options = {}) {
+      const { focus = true, toast = true } = options;
       if (input) {
+        const key = fieldErrorKey(input);
+        const host = fieldErrorHost(input);
         input.classList.add("is-invalid");
         input.setAttribute("aria-invalid", "true");
-        input.focus();
+        input.closest(".plate-input-shell")?.classList.add("is-invalid");
+        if (host) {
+          host.classList.add("has-field-error");
+          let error = host.querySelector(`.field-error-message[data-field-error-for="${key}"]`);
+          if (!error) {
+            error = document.createElement("p");
+            error.className = "field-error-message";
+            error.dataset.fieldErrorFor = key;
+            host.appendChild(error);
+          }
+          error.textContent = message;
+        }
+        if (focus) input.focus();
       }
-      showToast(message);
+      if (toast) showToast(message);
     }
 
     function isValidMobilePhone(value) {
@@ -2569,28 +2603,27 @@
       const name = String(profile.name || "").trim();
       const phone = String(profile.phone || "").trim();
       const idCard = String(profile.idCard || "").trim().toUpperCase();
+      const errors = [];
+      Object.values(fields).forEach(clearFieldError);
       if (!name) {
-        showFieldError(fields.name, "请输入真实姓名");
-        return false;
-      }
-      if (!isChineseName(name)) {
-        showFieldError(fields.name, "真实姓名请使用中文填写");
-        return false;
+        errors.push({ input: fields.name, message: "请输入真实姓名" });
+      } else if (!isChineseName(name)) {
+        errors.push({ input: fields.name, message: "真实姓名需填写2至20个中文字符" });
       }
       if (!phone) {
-        showFieldError(fields.phone, "请输入手机号");
-        return false;
-      }
-      if (!isValidMobilePhone(phone)) {
-        showFieldError(fields.phone, "请输入正确的11位手机号");
-        return false;
+        errors.push({ input: fields.phone, message: "请输入手机号" });
+      } else if (!isValidMobilePhone(phone)) {
+        errors.push({ input: fields.phone, message: "请输入正确的11位手机号" });
       }
       if (!idCard) {
-        showFieldError(fields.idCard, "请输入身份证号");
-        return false;
+        errors.push({ input: fields.idCard, message: "请输入身份证号" });
+      } else if (!isValidIdCard(idCard)) {
+        errors.push({ input: fields.idCard, message: "身份证号应为18位，且出生日期有效" });
       }
-      if (!isValidIdCard(idCard)) {
-        showFieldError(fields.idCard, "请输入正确的18位身份证号");
+      if (errors.length) {
+        errors.forEach(({ input, message }) => showFieldError(input, message, { focus: false, toast: false }));
+        errors[0].input?.focus();
+        showToast("请按提示完善个人信息");
         return false;
       }
       return true;
@@ -2875,12 +2908,7 @@
 
     function updateRentOwnerNextState() {
       if (!rentOwnerNextButton) return;
-      const complete = hasCompleteProfile({
-        name: rentOwnerNameInput?.value.trim() || "",
-        phone: rentOwnerPhoneInput?.value.trim() || "",
-        idCard: rentOwnerIdCardInput?.value.trim() || "",
-      });
-      rentOwnerNextButton.disabled = !rentFlowState.selectedName || !complete;
+      rentOwnerNextButton.disabled = !rentFlowState.selectedName;
     }
 
     function hasCompleteProfile(profile = userProfileState) {
@@ -3472,6 +3500,9 @@
         const colorClass = plateColorClass(vehicleFormState.plateColorCode);
         if (colorClass !== "blue") vehiclePlateShell.classList.add(`is-${colorClass}`);
       }
+      if (vehiclePlateInput && vehicleFormState.plateProvince && vehicleFormState.plateLetter && vehicleFormState.plateSuffix.length === limit) {
+        clearFieldError(vehiclePlateInput);
+      }
       renderPlateKeyboard();
     }
 
@@ -3816,8 +3847,8 @@
       const appearance = vehicleAppearanceInput?.value.trim() || "";
       const isValidPlate = Boolean(vehicleFormState.plateProvince && vehicleFormState.plateLetter) && suffix.length === plateSuffixLimit();
       if (!isValidPlate) {
-        showToast(vehicleFormState.plateColorCode === "26" ? "请完整输入8位绿牌号码" : "请完整输入7位车牌号码");
-        vehiclePlateInput?.focus();
+        const requiredTailLength = plateSuffixLimit();
+        showFieldError(vehiclePlateInput, `请完整填写车牌号：闽D后需填写${requiredTailLength}位（已填${suffix.length}位）`, { focus: false });
         return;
       }
       vehicleFormState.plateSuffix = suffix;

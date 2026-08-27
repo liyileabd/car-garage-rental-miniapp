@@ -1642,7 +1642,7 @@
 
     .plate-tail-cells {
       position: absolute;
-      inset: 16px 0 10px;
+      inset: 8px 0 7px;
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
@@ -1654,13 +1654,13 @@
       border: 0;
       border-bottom: 2px solid rgba(255, 255, 255, 0.76);
       border-radius: 0;
-      display: flex;
-      align-items: flex-end;
+      display: grid;
+      place-items: center;
       justify-content: center;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
       color: #fff;
       background: transparent;
-      font-size: 19px;
+      font-size: 22px;
       font-weight: 600;
       line-height: 1;
     }
@@ -1681,13 +1681,13 @@
 
     .plate-input-shell.is-green .plate-tail-cells {
       grid-template-columns: repeat(6, minmax(0, 1fr));
-      inset: 15px 2px 10px;
+      inset: 9px 2px 7px;
       gap: 8px;
     }
 
     .plate-input-shell.is-green .plate-tail-cell {
-      padding-bottom: 3px;
-      font-size: 18px;
+      padding-bottom: 2px;
+      font-size: 20px;
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(5) {
@@ -4679,6 +4679,31 @@
       font-style: normal;
     }
 
+    .field-error-message {
+      margin: 0;
+      color: #d5675b;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .personal-info-field.has-field-error,
+    .rent-prerequisite-field.has-field-error {
+      min-height: 76px;
+      flex-wrap: wrap;
+      align-content: center;
+    }
+
+    .personal-info-field .field-error-message,
+    .rent-prerequisite-field .field-error-message {
+      flex: 0 0 calc(100% - 96px);
+      margin: -7px 0 1px auto;
+    }
+
+    .vehicle-field .field-error-message {
+      margin-top: -2px;
+    }
+
     .personal-info-footer {
       position: absolute;
       right: 0;
@@ -5867,6 +5892,10 @@
     .personal-info-input.is-invalid {
       color: #c95649;
       box-shadow: inset 0 -2px 0 #d9675b;
+    }
+
+    .plate-input-shell.is-invalid {
+      box-shadow: 0 0 0 3px #d9675b, 0 0 0 6px rgba(217, 103, 91, 0.1), 0 6px 14px rgba(217, 103, 91, 0.16);
     }
 
     .vehicle-text-input.is-invalid,
