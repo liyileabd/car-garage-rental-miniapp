@@ -4043,8 +4043,8 @@
       if (order.refundStatus === "审批中") return "退款审批中，暂不可申请开票";
       if (order.refundStatus === "已通过") {
         return order.invoiceStatus === "已完成"
-          ? "退款已通过，已开具票据将由财务线下红冲处理"
-          : "退款已通过，不可申请开票";
+          ? "退款已完成，已开具票据将由财务线下处理"
+          : "售后处理中，暂不可申请开票";
       }
       return "--";
     }
@@ -4093,7 +4093,7 @@
 
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
-      } else if (order.invoiceStatus === "申请中") {
+      } else if (order.invoiceStatus === "申请中" && order.refundStatus !== "审批中") {
         items.push({ action: "invoiceProgress", label: "查看开票进度" });
       } else if (invoiceAvailable) {
         items.push({ action: "invoice", label: "申请开票" });
@@ -4109,7 +4109,7 @@
 
       const invoiceRecordRow = order.invoiceStatus === "已完成"
         ? `<div class="order-action-row"><span>开票信息</span><button type="button" data-order-action="viewInvoice">${invoiceViewLabel(order)}</button></div>`
-        : order.invoiceStatus === "申请中"
+        : ["申请中", "已暂停"].includes(order.invoiceStatus)
           ? `<div class="order-action-row"><span>开票申请</span><strong>${invoiceProcessingLabel(order)}</strong></div>`
           : "";
       const monthlyStatus = order.refundStatus === "已通过" || order.rentalStatus === "终止"
@@ -4229,6 +4229,7 @@
     }
 
     function invoiceProcessingLabel(order) {
+      if (order.invoiceStatus === "已暂停") return "开票申请已暂停";
       return invoiceVoucherFor(order) === "增值税发票" ? "开票处理中" : "票据处理中";
     }
 
@@ -4281,7 +4282,7 @@
 
     function invoiceMatchesFilter(order) {
       if (order.invoiceStatus === "未申请") return false;
-      if (orderState.invoiceFilter === "processing" && order.invoiceStatus !== "申请中") return false;
+      if (orderState.invoiceFilter === "processing" && !["申请中", "已暂停"].includes(order.invoiceStatus)) return false;
       if (orderState.invoiceFilter === "done" && order.invoiceStatus !== "已完成") return false;
       if (orderState.invoiceTypeFilter === "nontax") return invoiceVoucherFor(order) === "非税票据";
       if (orderState.invoiceTypeFilter === "vat") return invoiceVoucherFor(order) === "增值税发票";
@@ -4345,8 +4346,12 @@
       if (order) {
         order.refundStatus = "未申请";
         order.passStatus = order.rentalStatus === "有效" ? "已开通" : "待生效";
+        if (order.invoiceStatus === "已暂停" && record.invoiceStatusBeforeRefund === "申请中") {
+          order.invoiceStatus = "申请中";
+        }
         renderOrderDetail(order.id);
         renderOrderList();
+        renderInvoiceList();
         syncVehicleMonthlyState();
         syncHomeMonthlyCard();
       }
@@ -4449,6 +4454,7 @@
       invoiceRecordList.innerHTML = "";
       records.forEach((order) => {
         const isDone = order.invoiceStatus === "已完成";
+        const isPaused = order.invoiceStatus === "已暂停";
         const record = document.createElement("button");
         record.type = "button";
         record.className = "invoice-record-card";
@@ -4460,7 +4466,7 @@
             <span class="invoice-record-status${isDone ? " done" : ""}">${isDone ? "已完成" : invoiceProcessingLabel(order)}</span>
           </div>
           <div class="invoice-record-info"><span>${order.community}</span><strong>${formatOrderAmount(order.amount)}</strong></div>
-          <div class="invoice-record-foot"><span>${isDone ? (order.invoiceCompletedAt || "--") : (order.invoiceAppliedAt || "已提交申请")}</span><span>${isDone ? invoiceViewLabel(order) : "等待处理"}</span></div>`;
+          <div class="invoice-record-foot"><span>${isDone ? (order.invoiceCompletedAt || "--") : (order.invoiceAppliedAt || "已提交申请")}</span><span>${isDone ? invoiceViewLabel(order) : (isPaused ? "退款处理中" : "等待处理")}</span></div>`;
         invoiceRecordList.appendChild(record);
       });
       invoiceListScreen.dataset.invoiceEmpty = records.length === 0 ? "true" : "false";
@@ -4480,6 +4486,7 @@
     function renderInvoiceResult(order = getOrderById()) {
       if (!order || !invoiceResultDetail || !invoiceResultFile) return;
       const isDone = order.invoiceStatus === "已完成";
+      const isPaused = order.invoiceStatus === "已暂停";
       const voucher = invoiceVoucherFor(order);
       const isNontax = voucher === "非税票据";
       const documentType = invoiceRecordType(order);
@@ -4492,7 +4499,7 @@
           ? `<div class="order-detail-row"><span>开票抬头</span><strong>${invoiceTitle}</strong></div>`
           : "";
       const applicationState = !isDone
-        ? `<div class="invoice-application-status"><div><strong>申请已提交</strong><span>财务正在处理，请耐心等待</span></div><b>${invoiceProcessingLabel(order)}</b></div>`
+        ? `<div class="invoice-application-status"><div><strong>${isPaused ? "开票申请已暂停" : "申请已提交"}</strong><span>${isPaused ? "退款处理中，当前不开具票据" : "财务正在处理，请耐心等待"}</span></div><b>${invoiceProcessingLabel(order)}</b></div>`
         : "";
       screenTitles.invoiceResult = pageTitle;
       if (invoiceResultScreenLabel) invoiceResultScreenLabel.textContent = pageTitle;
@@ -4610,8 +4617,10 @@
         return;
       }
       const requestNo = `TK${order.orderNo.slice(2)}${String(refundState.records.length + 1).padStart(2, "0")}`;
+      const invoiceStatusBeforeRefund = order.invoiceStatus;
       order.refundStatus = "审批中";
       order.passStatus = order.rentalStatus === "有效" ? "已暂停" : "待生效";
+      if (order.invoiceStatus === "申请中") order.invoiceStatus = "已暂停";
       refundState.records.unshift({
         id: requestNo,
         requestNo,
@@ -4631,9 +4640,11 @@
         submittedAt: "2026-08-25 10:18",
         approvedAt: "--",
         hasCompletedInvoice: order.invoiceStatus === "已完成",
+        invoiceStatusBeforeRefund,
       });
       renderOrderDetail(order.id);
       renderOrderList();
+      renderInvoiceList();
       syncVehicleMonthlyState();
       syncHomeMonthlyCard();
       showTab("orderDetail");
