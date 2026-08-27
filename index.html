@@ -634,31 +634,30 @@
           </header>
 
           <div class="content">
-            <section class="notice-intro">
-              <h3>办理前请阅读</h3>
-              <p>以下内容将影响本次月租办理和后续使用。</p>
-            </section>
-
-            <section class="notice-rule-list" aria-label="月租办理规则">
-              <article class="notice-rule">
-                <h4>办理方式</h4>
-                <p>本次办理的是小区月租名额，不分配固定车位，也不展示车位编号。</p>
+            <div class="notice-document-filebar">
+              <span class="notice-file-badge compact">PDF</span>
+              <span>湖里国投月租车位办理告知书</span>
+              <b data-rent-notice-read-time>阅读中 5 秒</b>
+            </div>
+            <div class="notice-pdf-stage">
+              <article class="notice-pdf-page">
+                <h2>湖里国投月租车位办理告知书</h2>
+                <p class="notice-pdf-version">版本号：V2026.08</p>
+                <p>尊敬的车主：</p>
+                <p>欢迎使用湖里国投月租车位线上办理服务。请在办理前仔细阅读本告知书，确认了解月租办理、车辆通行及后续服务的相关约定。</p>
+                <p>本次办理为小区车库月租名额，不分配固定车位。月卡仅限本次登记的车辆在有效期内使用，车辆识别以已绑定车牌信息为准。</p>
+                <p>月租费用按照所选小区、起租日期、租赁月数及当期收费标准计算，支付前将向您展示订单金额与有效期限。</p>
+                <p>支付成功后，系统将为已登记车辆开通相应车库的月租通行权限。退款、开票等后续事项，请在订单详情中按规则申请办理。</p>
+                <p class="notice-pdf-sign">请确认已阅读并理解以上内容。</p>
               </article>
-              <article class="notice-rule">
-                <h4>车辆通行</h4>
-                <p>一张月卡仅绑定一辆车辆，月租期间按已登记车牌识别通行。</p>
-              </article>
-              <article class="notice-rule">
-                <h4>起租与费用</h4>
-                <p>按所选起租日、租赁月数和车库收费标准计算，支付前将展示应付金额。</p>
-              </article>
-              <article class="notice-rule">
-                <h4>订单与售后</h4>
-                <p>支付成功后开通对应车库的月租通行权限。退款和开票可在订单内申请并查看处理进度。</p>
-              </article>
-            </section>
+              <span class="notice-pdf-page-count">1 / 2</span>
+            </div>
           </div>
           <footer class="notice-footer">
+            <button class="notice-agreement" type="button" data-rent-notice-agreement aria-pressed="false">
+              <i class="notice-agreement-check"></i>
+              <span>我已阅读并同意《月租车位办理告知书》</span>
+            </button>
             <button class="rent-next-btn" type="button" data-rent-notice-next disabled>请阅读 5 秒</button>
           </footer>
         </article>
@@ -1623,6 +1622,8 @@
     const rentMonthOptions = document.querySelectorAll("[data-rent-month-option]");
     const rentEndDateLabel = document.querySelector("[data-rent-end-date]");
     const rentNoticeNextButton = document.querySelector("[data-rent-notice-next]");
+    const rentNoticeAgreementAction = document.querySelector("[data-rent-notice-agreement]");
+    const rentNoticeReadingLabels = document.querySelectorAll("[data-rent-notice-read-time]");
     const rentTermPrice = document.querySelector("[data-rent-term-price]");
     const rentCancelPaymentButton = document.querySelector("[data-rent-cancel-payment]");
     const rentSubmitButton = document.querySelector("[data-rent-submit]");
@@ -1866,6 +1867,7 @@
     const rentNoticeReadState = {
       secondsLeft: 0,
       read: false,
+      agreed: false,
     };
     const rentDateMinimum = new Date(2026, 7, 24);
     const rentDatePickerState = {
@@ -3178,10 +3180,18 @@
 
     function updateRentNoticeNextState() {
       if (!rentNoticeNextButton) return;
-      rentNoticeNextButton.disabled = !rentNoticeReadState.read;
-      rentNoticeNextButton.textContent = rentNoticeReadState.read
-        ? "已阅读，继续办理"
-        : `请阅读 ${rentNoticeReadState.secondsLeft} 秒`;
+      const readyToContinue = rentNoticeReadState.read && rentNoticeReadState.agreed;
+      rentNoticeNextButton.disabled = !readyToContinue;
+      rentNoticeNextButton.textContent = !rentNoticeReadState.read
+        ? `请阅读 ${rentNoticeReadState.secondsLeft} 秒`
+        : rentNoticeReadState.agreed ? "同意并继续" : "请勾选并同意";
+      rentNoticeReadingLabels.forEach((label) => {
+        label.textContent = rentNoticeReadState.read
+          ? "已完成阅读"
+          : `阅读中 ${rentNoticeReadState.secondsLeft} 秒`;
+      });
+      rentNoticeAgreementAction?.classList.toggle("is-checked", rentNoticeReadState.agreed);
+      rentNoticeAgreementAction?.setAttribute("aria-pressed", String(rentNoticeReadState.agreed));
     }
 
     function startRentNoticeReading() {
@@ -3189,6 +3199,7 @@
       rentTermState.noticeChecked = false;
       rentNoticeReadState.secondsLeft = 5;
       rentNoticeReadState.read = false;
+      rentNoticeReadState.agreed = false;
       updateRentNoticeNextState();
 
       const tick = () => {
@@ -5175,6 +5186,11 @@
         showTab("rentNotice");
       });
     }
+
+    rentNoticeAgreementAction?.addEventListener("click", () => {
+      rentNoticeReadState.agreed = !rentNoticeReadState.agreed;
+      updateRentNoticeNextState();
+    });
 
     if (rentNoticeNextButton) {
       rentNoticeNextButton.addEventListener("click", () => {

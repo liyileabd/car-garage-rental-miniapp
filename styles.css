@@ -3757,53 +3757,29 @@
     }
 
     .rent-notice-page .content {
-      bottom: 78px;
+      bottom: 112px;
       padding: 18px 18px 24px;
     }
 
-    .notice-intro {
-      padding: 2px 0 16px;
+    .notice-file-badge {
+      width: 37px;
+      height: 42px;
+      flex: 0 0 37px;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      color: #d85d50;
+      background: #fff0ee;
+      font-size: 11px;
+      font-weight: 850;
     }
 
-    .notice-intro h3 {
-      margin: 0;
-      color: #172033;
-      font-size: 17px;
-      font-weight: 800;
-    }
-
-    .notice-intro p {
-      margin: 6px 0 0;
-      color: #7a8799;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .notice-rule-list {
-      border-top: 1px solid #edf1f6;
-      border-bottom: 1px solid #edf1f6;
-    }
-
-    .notice-rule {
-      padding: 15px 0;
-    }
-
-    .notice-rule + .notice-rule {
-      border-top: 1px solid #f0f3f7;
-    }
-
-    .notice-rule h4 {
-      margin: 0;
-      color: #26364d;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .notice-rule p {
-      margin: 5px 0 0;
-      color: #718096;
-      font-size: 13px;
-      line-height: 1.58;
+    .notice-file-badge.compact {
+      width: 29px;
+      height: 32px;
+      flex-basis: 29px;
+      border-radius: 4px;
+      font-size: 9px;
     }
 
     .notice-footer {
@@ -3812,9 +3788,51 @@
       right: 0;
       bottom: 0;
       left: 0;
-      padding: 12px 18px 14px;
+      padding: 10px 18px 14px;
       border-top: 1px solid #edf1f6;
       background: #fff;
+    }
+
+    .notice-agreement {
+      width: 100%;
+      margin: 0 0 10px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 0;
+      color: #6d7b8e;
+      background: transparent;
+      font: inherit;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .notice-agreement-check {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+      border: 1px solid #bdc8d6;
+      border-radius: 50%;
+      position: relative;
+      background: #fff;
+    }
+
+    .notice-agreement.is-checked .notice-agreement-check {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .notice-agreement.is-checked .notice-agreement-check::after {
+      content: "";
+      width: 6px;
+      height: 3px;
+      border-bottom: 1.5px solid #fff;
+      border-left: 1.5px solid #fff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transform: rotate(-45deg);
     }
 
     .notice-footer .rent-next-btn {
@@ -3822,6 +3840,89 @@
       height: 46px;
       border-radius: 7px;
       font-size: 15px;
+    }
+
+    .rent-notice-page .content {
+      top: 0;
+      padding: 12px 14px 24px;
+      background: #eef2f6;
+    }
+
+    .notice-document-filebar {
+      min-height: 44px;
+      padding: 6px 2px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #56677e;
+      font-size: 12px;
+    }
+
+    .notice-document-filebar > span:nth-child(2) {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .notice-document-filebar b {
+      color: #8d9aab;
+      font-size: 11px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .notice-pdf-stage {
+      padding: 12px 12px 20px;
+      border-radius: var(--card-radius);
+      background: #e3e9f0;
+    }
+
+    .notice-pdf-page {
+      min-height: 496px;
+      padding: 28px 24px;
+      background: #fff;
+      box-shadow: 0 2px 7px rgba(44, 66, 94, 0.1);
+    }
+
+    .notice-pdf-page h2 {
+      margin: 0;
+      color: #27364a;
+      font-size: 18px;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-align: center;
+    }
+
+    .notice-pdf-version {
+      margin: 8px 0 23px !important;
+      color: #8b98a8 !important;
+      font-size: 11px !important;
+      text-align: center;
+    }
+
+    .notice-pdf-page p {
+      margin: 0 0 14px;
+      color: #4b5c70;
+      font-family: "Songti SC", SimSun, serif;
+      font-size: 13px;
+      line-height: 1.9;
+      text-align: justify;
+    }
+
+    .notice-pdf-page .notice-pdf-sign {
+      margin-top: 26px;
+      color: #6d7b8e;
+      text-align: right;
+    }
+
+    .notice-pdf-page-count {
+      display: block;
+      margin-top: 13px;
+      color: #8794a5;
+      font-size: 11px;
+      text-align: center;
     }
 
     .rent-flow-bottom {
