@@ -1426,6 +1426,13 @@
       box-shadow: 0 0 0 3px #159d62, 0 6px 14px rgba(21, 165, 105, 0.16);
     }
 
+    /* Green new-energy plates carry one extra tail character. Give that row
+       a little more room without changing the approved five-character plate. */
+    .plate-input-shell.is-green {
+      grid-template-columns: 46px 36px 14px minmax(0, 1fr);
+      column-gap: 2px;
+    }
+
     .plate-input-shell.is-yellow {
       background: linear-gradient(100deg, #bc850e 0%, #e1b12c 100%);
       box-shadow: 0 0 0 3px #c9951c, 0 6px 14px rgba(186, 131, 11, 0.16);
@@ -1674,6 +1681,13 @@
 
     .plate-input-shell.is-green .plate-tail-cells {
       grid-template-columns: repeat(6, minmax(0, 1fr));
+      inset: 15px 2px 10px;
+      gap: 8px;
+    }
+
+    .plate-input-shell.is-green .plate-tail-cell {
+      padding-bottom: 3px;
+      font-size: 18px;
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(5) {
