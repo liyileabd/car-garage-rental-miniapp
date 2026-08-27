@@ -933,7 +933,7 @@
                 <div class="vehicle-card-copy">
                   <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 12345</strong><span class="vehicle-plate-tag">蓝牌</span></div>
                   <div class="vehicle-meta-line">小型车 · 白色</div>
-                  <span class="vehicle-bind-tag">已绑定</span>
+                  <span class="vehicle-bind-tag" hidden></span>
                 </div>
                 <span class="vehicle-card-arrow">›</span>
               </button>
@@ -942,7 +942,7 @@
                 <div class="vehicle-card-copy">
                   <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 67890</strong><span class="vehicle-plate-tag">蓝牌</span></div>
                   <div class="vehicle-meta-line">小型车 · 黑色</div>
-                  <span class="vehicle-bind-tag">已绑定</span>
+                  <span class="vehicle-bind-tag" hidden></span>
                 </div>
                 <span class="vehicle-card-arrow">›</span>
               </button>
@@ -951,7 +951,7 @@
                 <div class="vehicle-card-copy">
                   <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D A24680</strong><span class="vehicle-plate-tag green">绿牌</span></div>
                   <div class="vehicle-meta-line">新能源小型车 · 银灰色</div>
-                  <span class="vehicle-bind-tag">已绑定</span>
+                  <span class="vehicle-bind-tag" hidden></span>
                 </div>
                 <span class="vehicle-card-arrow">›</span>
               </button>
@@ -960,7 +960,7 @@
                 <div class="vehicle-card-copy">
                   <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 13579</strong><span class="vehicle-plate-tag">蓝牌</span></div>
                   <div class="vehicle-meta-line">小型车 · 灰色</div>
-                  <span class="vehicle-bind-tag">已绑定</span>
+                  <span class="vehicle-bind-tag" hidden></span>
                 </div>
                 <span class="vehicle-card-arrow">›</span>
               </button>
@@ -3325,7 +3325,8 @@
         card.dataset.monthlyActive = active ? "true" : "false";
         const tag = card.querySelector(".vehicle-bind-tag");
         if (tag) {
-          tag.textContent = active ? "月租使用中" : "已绑定";
+          tag.hidden = !active;
+          tag.textContent = active ? "月租使用中" : "";
           tag.classList.toggle("monthly-active", active);
         }
         const plate = card.dataset.plate || "车辆";
@@ -3842,7 +3843,7 @@
       meta.textContent = `${grade} · ${appearance || "外观颜色未填写"}`;
       const bindTag = document.createElement("span");
       bindTag.className = "vehicle-bind-tag";
-      bindTag.textContent = "已绑定";
+      bindTag.hidden = true;
       copy.append(plateLine, meta, bindTag);
 
       const arrow = document.createElement("span");

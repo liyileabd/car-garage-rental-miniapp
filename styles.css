@@ -2046,6 +2046,10 @@
       background: #eef5ff;
     }
 
+    .vehicle-bind-tag[hidden] {
+      display: none;
+    }
+
     .vehicle-card-arrow {
       color: #a0acbc;
       font-size: 20px;
