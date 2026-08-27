@@ -2165,11 +2165,7 @@
     function createDemoOrder(seed) {
       const community = communityById[seed.communityId];
       const invoice = seed.invoice || {};
-      // A pending refund pauses any already submitted invoice request.
-      const invoiceStatus = seed.refundStatus === "审批中" && invoice.status === "申请中"
-        ? "已暂停"
-        : invoice.status || "未申请";
-      const hasInvoiceApplication = invoiceStatus !== "未申请";
+      const hasInvoiceApplication = invoice.status && invoice.status !== "未申请";
       return {
         id: seed.orderNo,
         orderNo: seed.orderNo,
@@ -2193,7 +2189,7 @@
           ? (seed.rentalStatus === "有效" ? "已暂停" : "待生效")
           : seed.rentalStatus === "有效" ? "已开通" : seed.rentalStatus === "待生效" ? "待生效" : "已结束"),
         refundStatus: seed.refundStatus || "未申请",
-        invoiceStatus,
+        invoiceStatus: invoice.status || "未申请",
         invoiceRequestNo: hasInvoiceApplication ? invoice.requestNo : undefined,
         invoiceNumber: invoice.number,
         invoiceAppliedAt: hasInvoiceApplication ? invoice.appliedAt : undefined,
@@ -2362,9 +2358,6 @@
         submittedAt: seed.submittedAt,
         approvedAt: seed.approvedAt || "--",
         hasCompletedInvoice: order.invoiceStatus === "已完成",
-        invoiceStatusBeforeRefund: order.refundStatus === "审批中" && order.invoiceStatus === "已暂停"
-          ? "申请中"
-          : undefined,
       };
     }
 
@@ -4353,9 +4346,6 @@
       if (order) {
         order.refundStatus = "未申请";
         order.passStatus = order.rentalStatus === "有效" ? "已开通" : "待生效";
-        if (order.invoiceStatus === "已暂停" && record.invoiceStatusBeforeRefund === "申请中") {
-          order.invoiceStatus = "申请中";
-        }
         renderOrderDetail(order.id);
         renderOrderList();
         renderInvoiceList();
@@ -4624,10 +4614,8 @@
         return;
       }
       const requestNo = `TK${order.orderNo.slice(2)}${String(refundState.records.length + 1).padStart(2, "0")}`;
-      const invoiceStatusBeforeRefund = order.invoiceStatus;
       order.refundStatus = "审批中";
       order.passStatus = order.rentalStatus === "有效" ? "已暂停" : "待生效";
-      if (order.invoiceStatus === "申请中") order.invoiceStatus = "已暂停";
       refundState.records.unshift({
         id: requestNo,
         requestNo,
@@ -4647,7 +4635,6 @@
         submittedAt: "2026-08-25 10:18",
         approvedAt: "--",
         hasCompletedInvoice: order.invoiceStatus === "已完成",
-        invoiceStatusBeforeRefund,
       });
       renderOrderDetail(order.id);
       renderOrderList();
