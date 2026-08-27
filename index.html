@@ -419,12 +419,6 @@
               </div>
             </section>
 
-            <div class="rent-garage-tools" aria-label="搜索和筛选小区">
-              <label class="garage-search-input rent-garage-search">
-                <svg class="icon sm"><use href="#i-search"></use></svg>
-                <input type="search" data-rent-garage-query placeholder="搜索小区" aria-label="搜索小区">
-              </label>
-            </div>
             <div class="garage-list-tools rent-garage-filter-tools" aria-label="按地理位置筛选办理小区">
               <div class="garage-tool-row" role="group" aria-label="选择区域">
                 <span class="tool-label">区域</span>
@@ -509,7 +503,7 @@
                   <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                   <span class="vehicle-option-copy">
                     <strong data-rent-current-plate>闽D A12345</strong>
-                    <small data-rent-current-meta>蓝牌 · 当前已绑定车辆</small>
+                    <small data-rent-current-meta>蓝牌</small>
                   </span>
                   <span class="chevron">›</span>
                 </button>
@@ -591,7 +585,7 @@
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 12345</strong>
-                  <small>蓝牌 · 当前已绑定车辆</small>
+                  <small>蓝牌</small>
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
@@ -599,7 +593,7 @@
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 67890</strong>
-                  <small>蓝牌 · 当前已绑定车辆</small>
+                  <small>蓝牌</small>
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
@@ -607,7 +601,7 @@
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D A24680</strong>
-                  <small>绿牌 · 当前已绑定车辆</small>
+                  <small>绿牌</small>
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
@@ -615,7 +609,7 @@
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 13579</strong>
-                  <small>蓝牌 · 当前已绑定车辆</small>
+                  <small>蓝牌</small>
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
@@ -1089,7 +1083,7 @@
           <footer class="vehicle-form-footer">
             <button class="vehicle-save-button" type="button" data-save-vehicle>保存车辆</button>
             <button class="vehicle-unbind-button" type="button" data-unbind-vehicle>解绑车辆</button>
-            <p class="vehicle-locked-footer-message" data-vehicle-locked-message hidden>该车辆已关联有效月租，月租结束前不可修改或解绑</p>
+            <p class="vehicle-locked-footer-message" data-vehicle-locked-message hidden>该车辆已关联月租，月租结束前不可修改或解绑</p>
           </footer>
         </article>
       </div>
@@ -1860,11 +1854,12 @@
       read: false,
       agreed: false,
     };
-    const rentDateMinimum = new Date(2026, 7, 24);
+    const rentDateMinimum = new Date();
+    rentDateMinimum.setHours(0, 0, 0, 0);
     const rentDatePickerState = {
-      year: 2026,
-      month: 8,
-      day: 24,
+      year: rentDateMinimum.getFullYear(),
+      month: rentDateMinimum.getMonth() + 1,
+      day: rentDateMinimum.getDate(),
     };
     const rentGarageState = {
       area: "all",
@@ -3100,11 +3095,7 @@
 
     function calculateRentEndDate() {
       if (!rentStartDateInput?.value) return "--";
-      const [year, month, day] = rentStartDateInput.value.split("-").map(Number);
-      const end = new Date(year, month - 1, day);
-      end.setMonth(end.getMonth() + rentTermState.months);
-      end.setDate(end.getDate() - 1);
-      return formatRentDate(end);
+      return addOrderMonths(rentStartDateInput.value, rentTermState.months);
     }
 
     function findMonthlyRentOverlap({ community, plate, start, end, excludeOrderId = "" }) {
@@ -3206,7 +3197,7 @@
     function syncRentVehiclePicker() {
       if (rentCurrentPlate) rentCurrentPlate.textContent = rentVehicleState.plate || "请选择车辆";
       if (rentCurrentMeta) rentCurrentMeta.textContent = rentVehicleState.color
-        ? `${rentVehicleState.color} · 当前已绑定车辆`
+        ? rentVehicleState.color
         : "点击选择已绑定车辆";
       const options = getRentVehicleOptions();
       document.querySelectorAll("[data-rent-vehicle-option]").forEach((option) => {
@@ -3291,6 +3282,15 @@
     function isActiveMonthlyOrder(order) {
       return order.rentalStatus === "有效"
         && order.refundStatus !== "已通过";
+    }
+
+    function vehicleHasLockedMonthlyRental(plate) {
+      const key = vehiclePlateKey(plate);
+      return orderState.records.some((order) => {
+        return vehiclePlateKey(order.plate || "") === key &&
+          ["有效", "待生效"].includes(order.rentalStatus) &&
+          order.refundStatus !== "已通过";
+      });
     }
 
     function hasHomeActiveMonthlyOrder(order) {
@@ -3396,6 +3396,11 @@
         communityId: rentFlowState.selectedCommunityId,
         projectName: rentFlowState.selectedProjectName,
         projectType: rentFlowState.selectedProjectType,
+        ownerNameSnapshot: userProfileState.name,
+        ownerPhoneSnapshot: userProfileState.phone,
+        idCardNoSnapshot: userProfileState.idCard,
+        payerNameSnapshot: userProfileState.name,
+        payerPhoneSnapshot: userProfileState.phone,
       };
       orderState.records.unshift(order);
       orderState.activeId = order.id;
@@ -3672,8 +3677,8 @@
     }
 
     function openVehicleUnbindDialog() {
-      if (vehicleHasActiveMonthlyRental(vehicleFormState.editingPlateKey)) {
-        showToast("该车辆已关联有效月租，暂不能解绑");
+      if (vehicleHasLockedMonthlyRental(vehicleFormState.editingPlateKey)) {
+        showToast("该车辆已关联月租，暂不能解绑");
         return;
       }
       const card = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []).find((item) => {
@@ -3789,7 +3794,7 @@
       }
       syncRentVehicleFormMode();
       syncPlateInput();
-      setVehicleFormLocked(Boolean(card && vehicleHasActiveMonthlyRental(card.dataset.plate || "")));
+      setVehicleFormLocked(Boolean(card && vehicleHasLockedMonthlyRental(card.dataset.plate || "")));
       showTab("vehicleForm");
     }
 
@@ -3854,7 +3859,7 @@
       option.dataset.vehicleColorCode = plateColorCode || plateColorCodeFor(plateColor);
       option.innerHTML = '<span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span><span class="vehicle-option-copy"><strong></strong><small></small></span><span class="vehicle-option-check">✓</span>';
       option.querySelector("strong").textContent = plate;
-      option.querySelector("small").textContent = `${plateColor} · 当前已绑定车辆`;
+      option.querySelector("small").textContent = plateColor;
       options.appendChild(option);
     }
 
@@ -3871,9 +3876,9 @@
         closeVehicleClaimDialog();
         return;
       }
-      if (vehicleHasActiveMonthlyRental(plateKey)) {
+      if (vehicleHasLockedMonthlyRental(plateKey)) {
         closeVehicleClaimDialog();
-        showToast("该车辆已关联有效月租，暂不能解绑");
+        showToast("该车辆已关联月租，暂不能解绑");
         return;
       }
 
@@ -3890,8 +3895,8 @@
     }
 
     function saveVehicle() {
-      if (vehicleFormState.editingPlateKey && vehicleHasActiveMonthlyRental(vehicleFormState.editingPlateKey)) {
-        showToast("该车辆已关联有效月租，暂不能修改");
+      if (vehicleFormState.editingPlateKey && vehicleHasLockedMonthlyRental(vehicleFormState.editingPlateKey)) {
+        showToast("该车辆已关联月租，暂不能修改");
         return;
       }
       const suffix = cleanPlateSuffix(vehicleFormState.plateSuffix);
@@ -3940,7 +3945,7 @@
           rentOption.dataset.vehicleColor = vehicle.plateColor;
           rentOption.dataset.vehicleColorCode = vehicle.plateColorCode;
           rentOption.querySelector("strong").textContent = vehicle.plate;
-          rentOption.querySelector("small").textContent = `${vehicle.plateColor} · 当前已绑定车辆`;
+          rentOption.querySelector("small").textContent = vehicle.plateColor;
         }
       } else {
         vehicleList?.prepend(createVehicleCard(vehicle));
@@ -4025,6 +4030,34 @@
       return `¥${Number(amount || 0).toFixed(2)}`;
     }
 
+    function dateFromOrderValue(value) {
+      const [year, month, day] = String(value || "").slice(0, 10).split("-").map(Number);
+      if (!year || !month || !day) return null;
+      return new Date(year, month - 1, day);
+    }
+
+    function getRefundQuote(order) {
+      if (order.rentalStatus === "待生效") {
+        return { remainingTerm: "尚未生效", estimatedAmount: order.amount };
+      }
+      const start = dateFromOrderValue(order.start);
+      const end = dateFromOrderValue(order.end);
+      if (!start || !end || end < start) {
+        return { remainingTerm: "--", estimatedAmount: 0 };
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const totalDays = Math.floor((end - start) / 86400000) + 1;
+      const remainingStart = today > start ? today : start;
+      const remainingDays = remainingStart > end
+        ? 0
+        : Math.floor((end - remainingStart) / 86400000) + 1;
+      return {
+        remainingTerm: `${remainingDays} 天`,
+        estimatedAmount: Math.round((order.amount * remainingDays) / totalDays),
+      };
+    }
+
     function nextDate(dateValue) {
       const [year, month, day] = String(dateValue).split("-").map(Number);
       const date = new Date(year, month - 1, day + 1);
@@ -4033,10 +4066,14 @@
 
     function addOrderMonths(startDate, months) {
       const [year, month, day] = String(startDate).split("-").map(Number);
-      const date = new Date(year, month - 1, day);
-      date.setMonth(date.getMonth() + months);
-      date.setDate(date.getDate() - 1);
-      return formatRentDate(date);
+      if (!year || !month || !day) return "--";
+      const monthOffset = month - 1 + Math.max(1, Number.parseInt(months, 10) || 1);
+      const targetYear = year + Math.floor(monthOffset / 12);
+      const targetMonth = monthOffset % 12;
+      const lastDay = new Date(targetYear, targetMonth + 1, 0).getDate();
+      const end = new Date(targetYear, targetMonth, Math.min(day, lastDay));
+      if (day <= lastDay) end.setDate(end.getDate() - 1);
+      return formatRentDate(end);
     }
 
     function orderStatusMeta(order) {
@@ -4112,10 +4149,20 @@
       return true;
     }
 
+    function isVatInvoiceApplicationExpired(order) {
+      if (invoiceVoucherFor(order) !== "增值税发票" || !order.paymentAt) return false;
+      const paidAt = dateFromOrderValue(order.paymentAt);
+      if (!paidAt) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return Math.floor((today - paidAt) / 86400000) > 30;
+    }
+
     function canApplyInvoice(order) {
       return Boolean(order.paymentAt) &&
         order.invoiceStatus === "未申请" &&
-        !["审批中", "已通过"].includes(order.refundStatus);
+        !["审批中", "已通过"].includes(order.refundStatus) &&
+        !isVatInvoiceApplicationExpired(order);
     }
 
     function invoiceUnavailableMessage(order) {
@@ -4125,6 +4172,7 @@
           ? "退款已完成，已开具票据将由财务线下处理"
           : "售后处理中，暂不可申请开票";
       }
+      if (isVatInvoiceApplicationExpired(order)) return "该订单已超过支付后30天，暂不支持线上申请开票";
       return "--";
     }
 
@@ -4163,9 +4211,13 @@
       orderListScreen.dataset.orderEmpty = records.length === 0 ? "true" : "false";
     }
 
+    function canRenewOrder(order) {
+      return order?.rentalStatus === "有效" && !["审批中", "已通过"].includes(order.refundStatus);
+    }
+
     function orderMoreItems(order) {
       const hasOpenRefund = ["审批中", "已通过"].includes(order.refundStatus);
-      const canRenew = order.rentalStatus !== "终止" && !hasOpenRefund;
+      const canRenew = canRenewOrder(order);
       const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && !hasOpenRefund;
       const invoiceAvailable = canApplyInvoice(order);
       const items = [];
@@ -4278,20 +4330,22 @@
 
     function openOrderRenewal() {
       if (!ensureAuthenticated()) return;
+      if (!canRenewOrder(getOrderById())) {
+        showToast("仅有效中的月租可以续费");
+        return;
+      }
       orderState.renewMonths = 1;
       renderRenewal();
       showTab("orderRenew");
     }
 
     function renderRefund(order = getOrderById()) {
-      const isPendingActivation = order.rentalStatus === "待生效";
-      const estimate = isPendingActivation ? order.amount : Math.round(order.amount * 0.8);
-      const remaining = isPendingActivation ? "尚未生效" : order.id === "AS202608170023" ? "13 天" : "以审批测算为准";
+      const quote = getRefundQuote(order);
       document.querySelector("[data-refund-community]").textContent = order.community;
       document.querySelector("[data-refund-plate]").textContent = order.plate;
       document.querySelector("[data-refund-paid-amount]").textContent = String(order.amount);
-      document.querySelector("[data-refund-remaining-term]").textContent = remaining;
-      document.querySelector("[data-refund-estimate]").textContent = String(estimate);
+      document.querySelector("[data-refund-remaining-term]").textContent = quote.remainingTerm;
+      document.querySelector("[data-refund-estimate]").textContent = String(quote.estimatedAmount);
       if (refundNote) refundNote.value = "";
       refundReasonButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.refundReason === orderState.refundReason));
     }
@@ -4339,8 +4393,10 @@
       if (invoiceNontaxSection) invoiceNontaxSection.hidden = isVat;
       if (invoicePersonalName) invoicePersonalName.value = userProfileState.name;
       if (invoicePhone) invoicePhone.value = userProfileState.phone;
-      if (invoiceNontaxName) invoiceNontaxName.textContent = userProfileState.name;
-      if (invoiceNontaxPhone) invoiceNontaxPhone.textContent = maskProfilePhone(userProfileState.phone);
+      const payerName = order.payerNameSnapshot || order.ownerNameSnapshot || userProfileState.name;
+      const payerPhone = order.payerPhoneSnapshot || order.ownerPhoneSnapshot || userProfileState.phone;
+      if (invoiceNontaxName) invoiceNontaxName.textContent = payerName;
+      if (invoiceNontaxPhone) invoiceNontaxPhone.textContent = maskProfilePhone(payerPhone);
       setInvoiceType(isVat ? "personal" : "nontax");
     }
 
@@ -4645,6 +4701,10 @@
     function submitRenewal() {
       if (!ensureAuthenticated()) return;
       const original = getOrderById();
+      if (!canRenewOrder(original)) {
+        showToast("仅有效中的月租可以续费");
+        return;
+      }
       const start = nextDate(original.end);
       const end = addOrderMonths(start, orderState.renewMonths);
       const overlap = findMonthlyRentOverlap({
@@ -4702,6 +4762,7 @@
         showFieldError(refundNote, "请选择其他原因后，请补充具体说明");
         return;
       }
+      const quote = getRefundQuote(order);
       const requestNo = `TK${order.orderNo.slice(2)}${String(refundState.records.length + 1).padStart(2, "0")}`;
       order.refundStatus = "审批中";
       order.passStatus = order.rentalStatus === "有效" ? "已暂停" : "待生效";
@@ -4715,8 +4776,8 @@
         originalPaidAmount: order.amount,
         start: order.start,
         end: order.end,
-        remainingTerm: order.id === "AS202608170023" ? "13 天" : "以审批测算为准",
-        estimatedAmount: Math.round(order.amount * 0.8),
+        remainingTerm: quote.remainingTerm,
+        estimatedAmount: quote.estimatedAmount,
         approvedAmount: null,
         status: "审批中",
         reason: orderState.refundReason,
@@ -4784,8 +4845,8 @@
         showFieldError(invoicePhone, "请输入正确的11位手机号");
         return;
       }
-      const payerName = userProfileState.name.trim();
-      const payerPhone = userProfileState.phone.trim();
+      const payerName = String(order.payerNameSnapshot || order.ownerNameSnapshot || userProfileState.name).trim();
+      const payerPhone = String(order.payerPhoneSnapshot || order.ownerPhoneSnapshot || userProfileState.phone).trim();
       if (!isVat && (!payerName || !payerPhone)) {
         showToast("请先补充个人信息");
         return;
@@ -5623,6 +5684,10 @@
     document.body.dataset.account = accountState.current;
     buildPlateKeyboard();
     syncPlateInput();
+    const defaultRentStartDate = formatRentDate(rentDateMinimum);
+    if (rentStartDateInput) rentStartDateInput.value = defaultRentStartDate;
+    if (rentStartDateDisplay) rentStartDateDisplay.textContent = defaultRentStartDate;
+    syncRentDatePickerState(defaultRentStartDate);
     renderCommunityCatalog();
     applyCommunityProjectMetadata();
     syncFullGarageList();
