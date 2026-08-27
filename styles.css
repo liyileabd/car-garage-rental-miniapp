@@ -1408,38 +1408,38 @@
     }
 
     .plate-input-shell {
-      height: 52px;
-      margin-top: 8px;
-      padding: 4px;
-      border: 1px solid #c4d8f8;
-      border-radius: 8px;
+      height: 58px;
+      margin: 12px 3px 8px;
+      padding: 6px 12px;
+      border: 2px solid #fff;
+      border-radius: 24px;
       display: flex;
       align-items: stretch;
       overflow: hidden;
-      background: #3e83de;
-      box-shadow: 0 4px 12px rgba(47, 124, 246, 0.15);
+      background: linear-gradient(100deg, #0758f0 0%, #159bf2 100%);
+      box-shadow: 0 0 0 3px #148bd8, 0 6px 14px rgba(28, 121, 218, 0.18);
       transition: background 160ms ease, box-shadow 160ms ease;
     }
 
     .plate-input-shell.is-green {
-      background: #15a569;
-      box-shadow: 0 5px 14px rgba(21, 165, 105, 0.16);
+      background: linear-gradient(100deg, #079154 0%, #1eb978 100%);
+      box-shadow: 0 0 0 3px #159d62, 0 6px 14px rgba(21, 165, 105, 0.16);
     }
 
     .plate-input-shell.is-yellow {
-      background: #dba722;
-      box-shadow: 0 5px 14px rgba(186, 131, 11, 0.16);
+      background: linear-gradient(100deg, #bc850e 0%, #e1b12c 100%);
+      box-shadow: 0 0 0 3px #c9951c, 0 6px 14px rgba(186, 131, 11, 0.16);
     }
 
     .plate-input-shell.is-black {
       background: #3c4655;
-      box-shadow: 0 5px 14px rgba(29, 39, 54, 0.18);
+      box-shadow: 0 0 0 3px #536273, 0 6px 14px rgba(29, 39, 54, 0.18);
     }
 
     .plate-input-shell.is-white {
-      border-color: #dae4ef;
+      border-color: #fff;
       background: #fbfcfe;
-      box-shadow: 0 5px 14px rgba(75, 96, 123, 0.12);
+      box-shadow: 0 0 0 3px #9eafc4, 0 6px 14px rgba(75, 96, 123, 0.12);
     }
 
     .plate-input-shell.is-white .plate-prefix-button {
@@ -1459,12 +1459,12 @@
 
     .plate-input-shell:focus-within,
     .plate-input-shell.is-keyboard-open {
-      box-shadow: 0 0 0 3px rgba(47, 124, 246, 0.16), 0 5px 14px rgba(47, 124, 246, 0.16);
+      box-shadow: 0 0 0 3px #148bd8, 0 0 0 6px rgba(47, 124, 246, 0.14), 0 6px 14px rgba(47, 124, 246, 0.16);
     }
 
     .plate-input-shell.is-green:focus-within,
     .plate-input-shell.is-green.is-keyboard-open {
-      box-shadow: 0 0 0 3px rgba(21, 165, 105, 0.16), 0 5px 14px rgba(21, 165, 105, 0.16);
+      box-shadow: 0 0 0 3px #159d62, 0 0 0 6px rgba(21, 165, 105, 0.14), 0 6px 14px rgba(21, 165, 105, 0.16);
     }
 
     .plate-prefix-button {
@@ -1520,37 +1520,52 @@
 
     .plate-input-shell {
       display: grid;
-      grid-template-columns: 48px 44px 14px minmax(0, 1fr);
-      column-gap: 4px;
+      grid-template-columns: 50px 40px 18px minmax(0, 1fr);
+      column-gap: 3px;
     }
 
     .plate-number-slot {
+      position: relative;
       min-width: 0;
       border: 0;
       display: grid;
       place-items: center;
       color: #fff;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      background: transparent;
       font: inherit;
-      font-size: 20px;
-      font-weight: 850;
+      font-size: 27px;
+      font-weight: 560;
       line-height: 1;
       cursor: pointer;
     }
 
+    .plate-number-slot::after {
+      content: "";
+      position: absolute;
+      right: 7px;
+      bottom: 6px;
+      left: 7px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
     .plate-number-slot.is-active-cell {
-      background: rgba(255, 255, 255, 0.18);
-      box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.72);
+      background: transparent;
+      box-shadow: none;
     }
 
     .plate-number-slot:active {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .plate-input-shell.is-white .plate-number-slot {
       color: #344256;
-      background: #f2f6fa;
+      background: transparent;
+    }
+
+    .plate-input-shell.is-white .plate-number-slot::after {
+      background: #9aabc0;
     }
 
     .plate-input-shell.is-white .plate-number-slot.is-empty {
@@ -1559,8 +1574,8 @@
 
     .plate-input-shell.is-white .plate-number-slot.is-active-cell,
     .plate-input-shell.is-white .plate-number-slot:active {
-      background: #f0f5fa;
-      box-shadow: inset 0 -2px 0 #78a8df;
+      background: rgba(52, 66, 86, 0.05);
+      box-shadow: none;
     }
 
     .plate-tail-input {
@@ -1603,8 +1618,8 @@
       display: grid;
       place-items: center;
       color: rgba(255, 255, 255, 0.94);
-      font-size: 15px;
-      font-weight: 850;
+      font-size: 26px;
+      font-weight: 650;
       line-height: 1;
     }
 
@@ -1620,34 +1635,37 @@
 
     .plate-tail-cells {
       position: absolute;
-      inset: 5px 1px;
+      inset: 5px 0 6px;
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 4px;
+      gap: 10px;
       pointer-events: none;
     }
 
     .plate-tail-cell {
       min-width: 0;
-      border: 1px solid rgba(255, 255, 255, 0.42);
-      border-radius: 3px;
-      display: grid;
-      place-items: center;
+      border: 0;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.78);
+      border-radius: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 5px;
       color: #fff;
-      background: rgba(255, 255, 255, 0.05);
-      font-size: 18px;
-      font-weight: 850;
+      background: transparent;
+      font-size: 20px;
+      font-weight: 650;
       line-height: 1;
     }
 
     .plate-tail-cell:nth-child(5) {
-      border-right: 1px solid rgba(255, 255, 255, 0.42);
+      border-right: 0;
     }
 
     .plate-tail-cell.is-active-cell {
-      border-color: rgba(255, 255, 255, 0.86);
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.58);
+      border-bottom-color: #fff;
+      background: transparent;
+      box-shadow: none;
     }
 
     .plate-input-shell.is-green .plate-tail-cells {
@@ -1655,23 +1673,23 @@
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(5) {
-      border-right: 1px solid rgba(255, 255, 255, 0.42);
+      border-right: 0;
     }
 
     .plate-input-shell.is-green .plate-tail-cell:nth-child(6) {
-      border-right: 1px solid rgba(255, 255, 255, 0.42);
+      border-right: 0;
     }
 
     .plate-input-shell.is-white .plate-tail-cell {
       color: #344256;
-      border-color: #dce5ef;
-      background: #f9fbfd;
+      border-bottom-color: #9aabc0;
+      background: transparent;
     }
 
     .plate-input-shell.is-white .plate-tail-cell.is-active-cell {
-      background: #f0f5fa;
-      border-color: #78a8df;
-      box-shadow: inset 0 -2px 0 #78a8df;
+      border-bottom-color: #344256;
+      background: transparent;
+      box-shadow: none;
     }
 
     .plate-input-hint {
