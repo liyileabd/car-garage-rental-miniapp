@@ -1535,19 +1535,9 @@
       background: transparent;
       font: inherit;
       font-size: 27px;
-      font-weight: 560;
+      font-weight: 500;
       line-height: 1;
       cursor: pointer;
-    }
-
-    .plate-number-slot::after {
-      content: "";
-      position: absolute;
-      right: 7px;
-      bottom: 6px;
-      left: 7px;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.78);
     }
 
     .plate-number-slot.is-active-cell {
@@ -1562,10 +1552,6 @@
     .plate-input-shell.is-white .plate-number-slot {
       color: #344256;
       background: transparent;
-    }
-
-    .plate-input-shell.is-white .plate-number-slot::after {
-      background: #9aabc0;
     }
 
     .plate-input-shell.is-white .plate-number-slot.is-empty {
@@ -1635,26 +1621,26 @@
 
     .plate-tail-cells {
       position: absolute;
-      inset: 5px 0 6px;
+      inset: 16px 0 10px;
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
+      gap: 12px;
       pointer-events: none;
     }
 
     .plate-tail-cell {
       min-width: 0;
       border: 0;
-      border-bottom: 3px solid rgba(255, 255, 255, 0.78);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.76);
       border-radius: 0;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding-bottom: 5px;
+      padding-bottom: 4px;
       color: #fff;
       background: transparent;
-      font-size: 20px;
-      font-weight: 650;
+      font-size: 19px;
+      font-weight: 600;
       line-height: 1;
     }
 
