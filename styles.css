@@ -1945,6 +1945,10 @@
       cursor: pointer;
     }
 
+    .vehicle-manage-card[hidden] {
+      display: none;
+    }
+
     .vehicle-manage-card:active {
       border-color: rgba(47, 124, 246, 0.34);
       background: #f8fbff;
