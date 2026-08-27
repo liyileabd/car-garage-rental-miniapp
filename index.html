@@ -3251,6 +3251,11 @@
         && order.refundStatus !== "已通过";
     }
 
+    function hasHomeActiveMonthlyOrder(order) {
+      return order.rentalStatus === "有效"
+        && order.refundStatus === "未申请";
+    }
+
     function vehicleHasActiveMonthlyRental(plate) {
       const key = vehiclePlateKey(plate);
       return orderState.records.some((order) => {
@@ -3294,26 +3299,29 @@
     }
 
     function syncHomeMonthlyCard() {
-      const order = orderState.records.find(isActiveMonthlyOrder);
+      const order = orderState.records.find(hasHomeActiveMonthlyOrder);
       if (!homeRentCard) return;
       homeRentCard.hidden = false;
       if (homeRentActive) homeRentActive.hidden = !order;
       if (homeRentEmpty) homeRentEmpty.hidden = Boolean(order);
-      if (!order) return;
+      if (!order) {
+        homeRentRenew?.removeAttribute("data-order-renew-id");
+        homeRentStatus?.classList.remove("refund");
+        return;
+      }
 
       const latestPeriod = orderState.records
         .filter((candidate) => {
           return candidate.plate === order.plate &&
             candidate.community === order.community &&
             ["有效", "待生效"].includes(candidate.rentalStatus) &&
-            candidate.refundStatus !== "已通过";
+            candidate.refundStatus === "未申请";
         })
         .sort((a, b) => String(b.end).localeCompare(String(a.end)))[0] || order;
 
       if (homeRentStatus) {
-        const hasRefundPending = order.refundStatus === "审批中";
-        homeRentStatus.textContent = hasRefundPending ? "退款审批中" : "月租有效";
-        homeRentStatus.classList.toggle("refund", hasRefundPending);
+        homeRentStatus.textContent = "月租有效";
+        homeRentStatus.classList.remove("refund");
       }
       if (homeRentPlate) homeRentPlate.textContent = order.plate;
       if (homeRentPlace) homeRentPlace.textContent = order.community;
