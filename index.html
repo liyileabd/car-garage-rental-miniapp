@@ -2765,6 +2765,13 @@
       return value.length === 11 ? `${value.slice(0, 3)}****${value.slice(-4)}` : value;
     }
 
+    function displayProfileName(profile) {
+      const nickname = String(profile?.nickname || "").trim();
+      if (nickname) return nickname;
+      const phone = String(profile?.phone || "").replace(/\D/g, "");
+      return phone.length >= 4 ? `${phone.slice(-4)}用户` : "用户";
+    }
+
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, (character) => ({
         "&": "&amp;",
@@ -2781,7 +2788,7 @@
       if (personalPhoneInput) personalPhoneInput.value = userProfileState.phone;
       if (personalIdInput) personalIdInput.value = userProfileState.idCard;
       authedNameLabels.forEach((label) => {
-        label.textContent = userProfileState.nickname || "你好";
+        label.textContent = displayProfileName(userProfileState);
       });
       authedPhoneLabels.forEach((label) => {
         label.textContent = maskProfilePhone(userProfileState.phone);
