@@ -4361,7 +4361,7 @@
         <div class="order-detail-row"><span>${isNontax ? "收费项目" : "开票内容"}</span><strong>月租车位缴费</strong></div>
         <div class="order-detail-row"><span>${isNontax ? "票据金额" : "开票金额"}</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
         ${partyRow}
-        <div class="order-detail-row"><span>申请单号</span><strong>${order.invoiceRequestNo || "--"}</strong></div>
+        <div class="order-detail-row"><span>开票申请单号</span><strong>${order.invoiceRequestNo || "--"}</strong></div>
         <div class="order-detail-row"><span>申请时间</span><strong>${order.invoiceAppliedAt || "--"}</strong></div>
         ${!isDone ? `<div class="order-detail-row"><span>处理状态</span><strong>${invoiceProcessingLabel(order)}</strong></div>` : ""}
         ${isDone ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "发票号码" : "票据号码"}</span><strong>${order.invoiceNumber || "--"}</strong></div><div class="order-detail-row"><span>开具日期</span><strong>${order.invoiceCompletedAt || "--"}</strong></div>` : ""}`;
