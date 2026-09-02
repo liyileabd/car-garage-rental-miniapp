@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>湖里国投月租车位小程序</title>
-  <link rel="stylesheet" href="styles.css?v=refund-account-v2">
+<link rel="stylesheet" href="styles.css?v=prototype-v15">
 </head>
 <body data-current-tab="home" data-auth="authed" data-login-view="main" data-toast="hidden">
   <svg width="0" height="0" aria-hidden="true" focusable="false">
@@ -476,10 +476,10 @@
           <div class="content">
             <section class="card rent-vehicle-summary">
               <div class="card-head">
-                <h3>选择车辆与租期</h3>
+                <h3>办理车辆与租期</h3>
                 <span class="tag">第二步</span>
               </div>
-              <p>选择本次办理车辆，并填写月租开始日期和租赁月数。</p>
+              <p>登记本次办理车辆，并填写月租开始日期和租赁月数。</p>
               <div class="rent-flow-stepper" aria-label="办理步骤">
                 <span class="rent-flow-step"><i>1</i><b>选择小区</b></span>
                 <span class="rent-flow-line" aria-hidden="true"></span>
@@ -498,21 +498,12 @@
 
             <section class="card rent-form-card">
               <div class="rent-form-field">
-                <span class="rent-form-label">选择车辆 <em>*</em></span>
+                <span class="rent-form-label rent-form-label-row"><span>办理车辆 <em>*</em></span><b data-rent-selected-count>已选 0/2 辆</b></span>
                 <button class="rent-vehicle-picker" type="button" data-open-rent-vehicle-picker aria-label="打开车辆选择">
-                  <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
-                  <span class="vehicle-option-copy">
-                    <strong data-rent-current-plate>闽D A12345</strong>
-                    <small data-rent-current-meta>蓝牌</small>
-                  </span>
-                  <span class="chevron">›</span>
+                  <span class="rent-vehicle-picker-list" data-rent-selected-vehicles><span class="rent-vehicle-picker-empty"><span class="rent-vehicle-picker-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span><strong>请选择车辆</strong><span class="rent-vehicle-picker-arrow">›</span></span></span>
                 </button>
               </div>
 
-              <p class="rent-form-tip">本次月卡只绑定一辆车辆，办理后将关联所选车辆的通行权限。</p>
-            </section>
-
-            <section class="card rent-form-card">
               <div class="rent-form-field rent-date-field">
                 <span class="rent-form-label">开始日期 <em>*</em></span>
                 <input type="hidden" data-rent-start-date value="2026-08-24">
@@ -576,12 +567,13 @@
         <article class="phone garage-list-page rent-vehicle-select-page" aria-label="选择办理车辆界面">
           <header class="subpage-titlebar">
             <button class="back-btn" type="button" data-rent-vehicle-picker-back aria-label="返回选择车辆和租期">‹</button>
-            选择车辆
+            选择办理车辆
+            <button class="subpage-complete" type="button" data-rent-vehicle-picker-complete disabled>完成</button>
           </header>
 
           <div class="content">
-            <div class="rent-vehicle-options" role="radiogroup" aria-label="选择已绑定车辆">
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="true" data-rent-vehicle-option data-account="wechat" data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+            <div class="rent-vehicle-options" role="group" aria-label="选择已绑定车辆，最多两辆">
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 12345</strong>
@@ -589,7 +581,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 67890" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 67890" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 67890</strong>
@@ -597,7 +589,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D A24680" data-vehicle-color="绿牌" data-vehicle-color-code="26">
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D A24680" data-vehicle-color="绿牌" data-vehicle-color-code="26">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D A24680</strong>
@@ -605,7 +597,7 @@
                 </span>
                 <span class="vehicle-option-check">✓</span>
               </button>
-              <button class="rent-vehicle-option" type="button" role="radio" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 13579" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 13579" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
                 <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
                 <span class="vehicle-option-copy">
                   <strong>闽D 13579</strong>
@@ -633,7 +625,7 @@
               <p class="notice-pdf-version">版本号：V2026.08</p>
               <p>尊敬的车主：</p>
               <p>欢迎使用湖里国投月租车位线上办理服务。请在办理前仔细阅读本告知书，确认了解月租办理、车辆通行及后续服务的相关约定。</p>
-              <p>本次办理为小区车库月租名额，不分配固定车位。月卡仅限本次登记的车辆在有效期内使用，车辆识别以已绑定车牌信息为准。</p>
+              <p>本次办理为小区车库月租名额，不分配固定车位。月卡仅限本次登记车辆在有效期内使用，车辆识别以已绑定车牌信息为准。</p>
               <p>月租费用按照所选小区、起租日期、租赁月数及当期收费标准计算，支付前将向您展示订单金额与有效期限。</p>
               <p>支付成功后，系统将为已登记车辆开通相应车库的月租通行权限。退款、开票等后续事项，请在订单详情中按规则申请办理。</p>
               <p class="notice-pdf-sign">请确认已阅读并理解以上内容。</p>
@@ -677,13 +669,9 @@
                 <span class="list-label">办理小区</span>
                 <strong data-confirm-garage>--</strong>
               </div>
-              <div class="list-row">
-                <span class="list-label">车牌号码</span>
-                <strong data-confirm-plate>--</strong>
-              </div>
-              <div class="list-row">
-                <span class="list-label">车牌颜色</span>
-                <strong data-confirm-color>蓝牌</strong>
+              <div class="list-row rent-confirm-vehicle-row">
+                <span class="list-label">登记车辆</span>
+                <strong class="rent-confirm-vehicles" data-confirm-vehicles>--</strong>
               </div>
               <div class="list-row">
                 <span class="list-label">开始日期</span>
@@ -908,6 +896,11 @@
           </header>
 
           <div class="content">
+            <label class="vehicle-search-input">
+              <svg class="icon sm"><use href="#i-search"></use></svg>
+              <input type="search" data-vehicle-search placeholder="搜索车牌号" aria-label="搜索车牌号">
+            </label>
+
             <div class="vehicle-manage-list" data-vehicle-list>
               <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 12345" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="白色" aria-label="查看闽D 12345车辆信息">
                 <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
@@ -1083,6 +1076,73 @@
         </article>
       </div>
 
+      <div class="phone-block" data-screen="vehicleSwapSource">
+        <div class="screen-label">变更月租车辆</div>
+        <article class="phone garage-list-page vehicle-swap-select-page" aria-label="本订单已办理车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-source-back aria-label="返回订单">‹</button>
+            本订单已办理车辆
+          </header>
+
+          <div class="content">
+            <div class="vehicle-swap-option-list" data-vehicle-swap-source-options></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="phone-block" data-screen="vehicleSwap">
+        <div class="screen-label">变更月租车辆</div>
+        <article class="phone order-workflow-page vehicle-swap-page" aria-label="变更月租车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-back aria-label="返回订单">‹</button>
+            变更月租车辆
+          </header>
+
+          <div class="content">
+            <section class="order-workflow-section">
+              <h3>关联月租</h3>
+              <div class="order-field-row"><span>小区</span><strong class="order-detail-location" data-vehicle-swap-community>--</strong></div>
+              <div class="order-field-row"><span>有效期</span><strong data-vehicle-swap-term>--</strong></div>
+              <div class="order-field-row" data-vehicle-swap-from-row><span>本次变更车辆</span><strong data-vehicle-swap-from>--</strong></div>
+            </section>
+
+            <section class="order-workflow-section" data-vehicle-swap-target-section>
+              <h3 data-vehicle-swap-target-heading>变更为</h3>
+              <button class="vehicle-swap-target" type="button" data-open-vehicle-swap-picker aria-label="选择新车辆">
+                <span class="vehicle-swap-target-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-swap-target-copy"><strong data-vehicle-swap-target-plate>请选择车辆</strong><small data-vehicle-swap-target-color hidden></small></span>
+                <span class="vehicle-swap-target-arrow">›</span>
+              </button>
+            </section>
+
+            <section class="order-workflow-section vehicle-swap-unbind-note" data-vehicle-swap-unbind-note hidden>
+              <h3>移除车辆</h3>
+              <p>移除后，该车辆不再享有本月租订单的通行权限。</p>
+            </section>
+          </div>
+
+          <footer class="order-workflow-footer vehicle-swap-footer" data-vehicle-swap-footer>
+            <button class="order-workflow-submit" type="button" data-vehicle-swap-submit disabled>确认变更</button>
+            <button class="vehicle-swap-unbind" type="button" data-vehicle-swap-unbind hidden>移除该车辆</button>
+          </footer>
+        </article>
+      </div>
+
+      <div class="phone-block" data-screen="vehicleSwapSelect">
+        <div class="screen-label">选择车辆</div>
+        <article class="phone garage-list-page vehicle-swap-select-page" aria-label="选择新车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-picker-back aria-label="返回变更月租车辆">‹</button>
+            <span data-vehicle-swap-picker-title>选择新车辆</span>
+          </header>
+
+          <div class="content">
+            <div class="vehicle-swap-option-list" data-vehicle-swap-options></div>
+            <div class="vehicle-swap-empty" data-vehicle-swap-empty hidden>暂无可变更车辆</div>
+          </div>
+        </article>
+      </div>
+
       <div class="phone-block" data-screen="orderList">
         <div class="screen-label">我的订单</div>
         <article class="phone order-list-page" data-order-empty="false" aria-label="我的订单界面">
@@ -1213,15 +1273,15 @@
       </div>
 
       <div class="phone-block" data-screen="refundAccount">
-        <div class="screen-label">退款账户</div>
+        <div class="screen-label">退款收款信息</div>
         <article class="phone personal-info-page refund-account-page" aria-label="退款账户界面">
           <header class="subpage-titlebar">
             <button class="back-btn" type="button" data-refund-account-back aria-label="返回申请退款">‹</button>
-            退款账户
+            退款收款信息
           </header>
 
           <div class="content">
-            <h2 class="personal-info-head">收款账户</h2>
+            <h2 class="personal-info-head">收款信息</h2>
             <section class="personal-info-section">
               <div class="personal-info-field refund-account-payer-field">
                 <label>收款人</label>
@@ -1240,7 +1300,7 @@
                 <input id="refund-account-phone-input" class="personal-info-input" data-refund-account-phone-input inputmode="tel" maxlength="11" placeholder="请输入联系电话" aria-label="联系电话">
               </div>
             </section>
-            <p class="refund-account-note">收款人已按订单付款人锁定，账户信息仅用于线下退款处理。</p>
+            <p class="refund-account-note">收款人已按订单付款人锁定，账户信息仅用于线下退款处理。核对不一致时，将提示修改后重新提交。</p>
           </div>
 
           <footer class="personal-info-footer">
@@ -1662,15 +1722,15 @@
     const homeRentEnd = document.querySelector("[data-home-rent-end]");
     const rentSelectedName = document.querySelector("[data-rent-selected-name]");
     const rentSelectedPrice = document.querySelector("[data-rent-selected-price]");
-    const rentCurrentPlate = document.querySelector("[data-rent-current-plate]");
-    const rentCurrentMeta = document.querySelector("[data-rent-current-meta]");
+    const rentSelectedVehicles = document.querySelector("[data-rent-selected-vehicles]");
+    const rentSelectedCount = document.querySelector("[data-rent-selected-count]");
     const rentVehicleSelectPage = document.querySelector(".rent-vehicle-select-page");
+    const rentVehiclePickerComplete = document.querySelector("[data-rent-vehicle-picker-complete]");
     const getRentVehicleOptions = () => Array.from(document.querySelectorAll("[data-rent-vehicle-option]"))
       .filter((option) => option.dataset.account === accountState.current);
     const rentOwnerGarageName = document.querySelector("[data-rent-owner-garage-name]");
     const confirmGarage = document.querySelector("[data-confirm-garage]");
-    const confirmPlate = document.querySelector("[data-confirm-plate]");
-    const confirmColor = document.querySelector("[data-confirm-color]");
+    const confirmVehicles = document.querySelector("[data-confirm-vehicles]");
     const confirmStart = document.querySelector("[data-confirm-start]");
     const confirmEnd = document.querySelector("[data-confirm-end]");
     const confirmMonths = document.querySelector("[data-confirm-months]");
@@ -1695,6 +1755,7 @@
     const vehicleManageBackButtons = document.querySelectorAll("[data-vehicle-manage-back]");
     const vehicleFormBackButtons = document.querySelectorAll("[data-vehicle-form-back]");
     const vehicleFormOpenButtons = document.querySelectorAll("[data-open-vehicle-form]");
+    const vehicleSearchInput = document.querySelector("[data-vehicle-search]");
     const vehicleManageScreen = document.querySelector(".vehicle-manage");
     const vehicleList = document.querySelector("[data-vehicle-list]");
     const personalVehicleCount = document.querySelector("[data-personal-vehicle-count]");
@@ -1734,6 +1795,26 @@
     const vehicleUnbindButton = document.querySelector("[data-unbind-vehicle]");
     const vehicleSaveButton = document.querySelector("[data-save-vehicle]");
     const vehicleLockedMessage = document.querySelector("[data-vehicle-locked-message]");
+    const vehicleSwapSourceBackActions = document.querySelectorAll("[data-vehicle-swap-source-back]");
+    const vehicleSwapBackActions = document.querySelectorAll("[data-vehicle-swap-back]");
+    const vehicleSwapPickerBackActions = document.querySelectorAll("[data-vehicle-swap-picker-back]");
+    const vehicleSwapSourceOptions = document.querySelector("[data-vehicle-swap-source-options]");
+    const vehicleSwapCommunity = document.querySelector("[data-vehicle-swap-community]");
+    const vehicleSwapTerm = document.querySelector("[data-vehicle-swap-term]");
+    const vehicleSwapFrom = document.querySelector("[data-vehicle-swap-from]");
+    const vehicleSwapFromRow = document.querySelector("[data-vehicle-swap-from-row]");
+    const vehicleSwapTargetSection = document.querySelector("[data-vehicle-swap-target-section]");
+    const vehicleSwapTargetHeading = document.querySelector("[data-vehicle-swap-target-heading]");
+    const vehicleSwapTargetPicker = document.querySelector("[data-open-vehicle-swap-picker]");
+    const vehicleSwapTargetPlate = document.querySelector("[data-vehicle-swap-target-plate]");
+    const vehicleSwapTargetColor = document.querySelector("[data-vehicle-swap-target-color]");
+    const vehicleSwapUnbindAction = document.querySelector("[data-vehicle-swap-unbind]");
+    const vehicleSwapUnbindNote = document.querySelector("[data-vehicle-swap-unbind-note]");
+    const vehicleSwapOptions = document.querySelector("[data-vehicle-swap-options]");
+    const vehicleSwapEmpty = document.querySelector("[data-vehicle-swap-empty]");
+    const vehicleSwapFooter = document.querySelector("[data-vehicle-swap-footer]");
+    const vehicleSwapSubmit = document.querySelector("[data-vehicle-swap-submit]");
+    const vehicleSwapPickerTitle = document.querySelector("[data-vehicle-swap-picker-title]");
     const vehicleFormTitle = document.querySelector("[data-vehicle-form-title]");
     const garageMapBackButtons = document.querySelectorAll("[data-garage-map-back]");
     const mapGarageNames = document.querySelectorAll("[data-map-garage-name], [data-map-garage-title]");
@@ -1874,10 +1955,9 @@
     const garageStreetByCommunity = Object.fromEntries(
       communityCatalog.map((community) => [community.communityName, community.street]),
     );
+    const RENT_VEHICLE_LIMIT = 2;
     const rentVehicleState = {
-      plate: "",
-      color: "",
-      colorCode: "",
+      vehicles: [],
     };
     const rentOwnerState = {
       name: "",
@@ -2224,6 +2304,12 @@
       const community = communityById[seed.communityId];
       const invoice = seed.invoice || {};
       const hasInvoiceApplication = invoice.status && invoice.status !== "未申请";
+      const vehicles = (Array.isArray(seed.vehicles) && seed.vehicles.length
+        ? seed.vehicles
+        : [{ plate: seed.plate, color: seed.color || seed.plateColor || "", colorCode: seed.colorCode || seed.plateColorCode || "" }])
+        .map(normalizeRegisteredVehicle)
+        .filter((vehicle) => vehicle.plate);
+      const primaryVehicle = vehicles[0] || { plate: seed.plate || "--", color: "", colorCode: "" };
       return {
         id: seed.orderNo,
         orderNo: seed.orderNo,
@@ -2234,8 +2320,12 @@
         location: `${community.district} · ${community.street} · ${community.garageName}`,
         projectName: community.projectName,
         projectType: community.projectType,
-        vehicleId: `VEHICLE-${seed.plate.replace(/\s+/g, "")}`,
-        plate: seed.plate,
+        vehicleId: vehicles.map((vehicle) => `VEHICLE-${vehicle.plate.replace(/\s+/g, "")}`).join(","),
+        plate: primaryVehicle.plate,
+        color: primaryVehicle.color,
+        colorCode: primaryVehicle.colorCode,
+        vehicles,
+        vehicleCount: vehicles.length,
         start: seed.start,
         end: seed.end,
         months: seed.months,
@@ -2268,6 +2358,10 @@
           type: "新办",
           communityId: "COMMUNITY-001",
           plate: "闽D 12345",
+          vehicles: [
+            { plate: "闽D 12345", color: "蓝牌", colorCode: "02" },
+            { plate: "闽D 13579", color: "蓝牌", colorCode: "02" },
+          ],
           start: "2026-08-07",
           end: "2026-09-06",
           months: 1,
@@ -2415,7 +2509,8 @@
         orderNo: order.orderNo,
         community: order.community,
         garage: order.garage,
-        plate: order.plate,
+        plate: orderVehicleText(order, { compact: true }),
+        vehicles: getOrderVehicles(order),
         originalPaidAmount: order.amount,
         start: order.start,
         end: order.end,
@@ -2499,6 +2594,12 @@
       photos: [],
       editingPlateKey: "",
     };
+    const vehicleSwapState = {
+      orderId: "",
+      fromPlate: "",
+      toVehicle: null,
+      mode: "swap",
+    };
     const externallyBoundVehicleKeys = new Set(["闽D88888"]);
     const screenTitles = {
       home: "湖里国投月租车位小程序",
@@ -2519,6 +2620,9 @@
       garageMap: "车库位置",
       vehicleManage: "车辆管理",
       vehicleForm: "新增车辆",
+      vehicleSwapSource: "本订单已办理车辆",
+      vehicleSwap: "变更月租车辆",
+      vehicleSwapSelect: "选择新车辆",
       orderList: "我的订单",
       orderDetail: "订单详情",
       orderRenew: "月租续费",
@@ -2753,9 +2857,7 @@
       orderState.activeId = orderState.records[0]?.id || "";
       refundState.records = accountState.refunds[accountType];
       refundState.activeId = refundState.records[0]?.id || "";
-      rentVehicleState.plate = "";
-      rentVehicleState.color = "";
-      rentVehicleState.colorCode = "";
+      rentVehicleState.vehicles = [];
       Object.assign(rentOwnerState, userProfileState);
       document.body.dataset.account = accountType;
 
@@ -3059,12 +3161,9 @@
         openPrerequisiteVehicleForm(false);
         return;
       }
-      const defaultVehicle = vehicleOptions.find((option) => {
-        return !vehicleHasActiveMonthlyRental(option.dataset.plate || "");
-      }) || vehicleOptions[0];
-      rentVehicleState.plate = defaultVehicle.dataset.plate || "";
-      rentVehicleState.color = defaultVehicle.dataset.vehicleColor || "";
-      rentVehicleState.colorCode = defaultVehicle.dataset.vehicleColorCode || "";
+      rentVehicleState.vehicles = selectedRentVehicles().filter((vehicle) => {
+        return vehicleOptions.some((option) => vehiclePlateKey(option.dataset.plate || "") === vehiclePlateKey(vehicle.plate));
+      });
       syncRentVehiclePicker();
       updateRentVehicleNextState();
       updateRentTermState();
@@ -3172,27 +3271,31 @@
         return stillEffective &&
           order.id !== excludeOrderId &&
           order.community === community &&
-          vehiclePlateKey(order.plate || "") === plateKey &&
+          orderHasVehicle(order, plate) &&
           start <= order.end &&
           end >= order.start;
       }) || null;
     }
 
     function getRentOverlap() {
-      return findMonthlyRentOverlap({
-        community: rentFlowState.selectedCommunity || rentFlowState.selectedName,
-        plate: rentVehicleState.plate,
-        start: rentStartDateInput?.value || "",
-        end: calculateRentEndDate(),
-      });
+      const community = rentFlowState.selectedCommunity || rentFlowState.selectedName;
+      const start = rentStartDateInput?.value || "";
+      const end = calculateRentEndDate();
+      for (const vehicle of selectedRentVehicles()) {
+        const order = findMonthlyRentOverlap({ community, plate: vehicle.plate, start, end });
+        if (order) return { order, plate: vehicle.plate };
+      }
+      return null;
     }
 
-    function openRentOverlapDialog(order) {
+    function openRentOverlapDialog(overlap) {
+      const order = overlap?.order || overlap;
       const rentVehicleScreen = document.querySelector(".rent-vehicle");
       if (!rentVehicleScreen || !rentOverlapDialog || !order) return;
       const selectedEnd = calculateRentEndDate();
       if (rentOverlapMessage) {
-        rentOverlapMessage.textContent = `${order.plate} 在${order.community}已有 ${order.start} 至 ${order.end} 的月租，所选 ${rentStartDateInput?.value || "--"} 至 ${selectedEnd} 与其重叠。请调整起租日期或选择其他车辆。`;
+        const plate = overlap?.plate || orderVehicleText(order, { compact: true });
+        rentOverlapMessage.textContent = `${plate} 在${order.community}已有 ${order.start} 至 ${order.end} 的月租，所选 ${rentStartDateInput?.value || "--"} 至 ${selectedEnd} 与其重叠。请调整起租日期或选择其他车辆。`;
       }
       rentVehicleScreen.dataset.rentOverlapDialog = "open";
       rentOverlapDialog.setAttribute("aria-hidden", "false");
@@ -3258,10 +3361,37 @@
     }
 
     function syncRentVehiclePicker() {
-      if (rentCurrentPlate) rentCurrentPlate.textContent = rentVehicleState.plate || "请选择车辆";
-      if (rentCurrentMeta) rentCurrentMeta.textContent = rentVehicleState.color
-        ? rentVehicleState.color
-        : "点击选择已绑定车辆";
+      const selectedVehicles = selectedRentVehicles();
+      if (rentSelectedCount) rentSelectedCount.textContent = `已选 ${selectedVehicles.length}/${RENT_VEHICLE_LIMIT} 辆`;
+      if (rentSelectedVehicles) {
+        rentSelectedVehicles.replaceChildren();
+        if (!selectedVehicles.length) {
+          const empty = document.createElement("span");
+          empty.className = "rent-vehicle-picker-empty";
+          empty.innerHTML = '<span class="rent-vehicle-picker-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span><strong>请选择车辆</strong><span class="rent-vehicle-picker-arrow">›</span>';
+          rentSelectedVehicles.appendChild(empty);
+        } else {
+          selectedVehicles.forEach((vehicle) => {
+            const line = document.createElement("span");
+            line.className = "rent-vehicle-picker-line";
+            const icon = document.createElement("span");
+            icon.className = "rent-vehicle-picker-icon";
+            icon.innerHTML = '<svg class="icon sm"><use href="#i-car"></use></svg>';
+            const copy = document.createElement("span");
+            copy.className = "rent-vehicle-picker-copy";
+            const plate = document.createElement("strong");
+            plate.textContent = vehicle.plate;
+            const color = document.createElement("small");
+            color.textContent = vehicle.color || "车牌颜色未设置";
+            const arrow = document.createElement("span");
+            arrow.className = "rent-vehicle-picker-arrow";
+            arrow.textContent = "›";
+            copy.append(plate, color);
+            line.append(icon, copy, arrow);
+            rentSelectedVehicles.appendChild(line);
+          });
+        }
+      }
       const options = getRentVehicleOptions();
       document.querySelectorAll("[data-rent-vehicle-option]").forEach((option) => {
         const belongsToCurrentAccount = option.dataset.account === accountState.current;
@@ -3271,10 +3401,16 @@
       });
       if (rentVehicleSelectPage) rentVehicleSelectPage.dataset.rentVehicleEmpty = options.length === 0 ? "true" : "false";
       options.forEach((option) => {
-        const selected = option.dataset.plate === rentVehicleState.plate;
+        const selected = isRentVehicleSelected(option.dataset.plate || "");
         option.classList.toggle("is-selected", selected);
         option.setAttribute("aria-checked", selected ? "true" : "false");
       });
+      if (rentVehiclePickerComplete) {
+        rentVehiclePickerComplete.disabled = selectedVehicles.length === 0;
+        rentVehiclePickerComplete.textContent = selectedVehicles.length
+          ? `完成（${selectedVehicles.length}/${RENT_VEHICLE_LIMIT}）`
+          : "完成";
+      }
     }
 
     function selectRentGarage(card) {
@@ -3296,6 +3432,7 @@
       rentFlowState.selectedCommunityId = card.dataset.communityId || project.id;
       rentFlowState.selectedProjectName = card.dataset.projectName || project.projectName;
       rentFlowState.selectedProjectType = card.dataset.projectType || project.projectType;
+      rentVehicleState.vehicles = [];
       rentGarageList?.querySelectorAll(".garage-card").forEach((item) => {
         const active = item === card;
         item.classList.toggle("is-selected", active);
@@ -3327,13 +3464,12 @@
 
     function updateRentVehicleNextState() {
       if (!rentVehicleNextButton) return;
-      rentVehicleNextButton.disabled = !rentFlowState.selectedName || !rentVehicleState.plate || !rentStartDateInput?.value;
+      rentVehicleNextButton.disabled = !rentFlowState.selectedName || selectedRentVehicles().length === 0 || !rentStartDateInput?.value;
     }
 
     function syncRentConfirm() {
       if (confirmGarage) confirmGarage.textContent = rentFlowState.selectedName || "--";
-      if (confirmPlate) confirmPlate.textContent = rentVehicleState.plate || "--";
-      if (confirmColor) confirmColor.textContent = rentVehicleState.color || "--";
+      if (confirmVehicles) confirmVehicles.textContent = rentVehiclesText(selectedRentVehicles(), { includeColor: true });
       if (confirmStart) confirmStart.textContent = rentStartDateInput?.value || "--";
       if (confirmEnd) confirmEnd.textContent = calculateRentEndDate();
       if (confirmMonths) confirmMonths.textContent = String(rentTermState.months);
@@ -3350,7 +3486,7 @@
     function vehicleHasLockedMonthlyRental(plate) {
       const key = vehiclePlateKey(plate);
       return orderState.records.some((order) => {
-        return vehiclePlateKey(order.plate || "") === key &&
+        return Boolean(key) && orderHasVehicle(order, plate) &&
           ["有效", "待生效"].includes(order.rentalStatus) &&
           order.refundStatus !== "已通过";
       });
@@ -3364,7 +3500,7 @@
     function vehicleHasActiveMonthlyRental(plate) {
       const key = vehiclePlateKey(plate);
       return orderState.records.some((order) => {
-        return vehiclePlateKey(order.plate || "") === key && isActiveMonthlyOrder(order);
+        return Boolean(key) && orderHasVehicle(order, plate) && isActiveMonthlyOrder(order);
       });
     }
 
@@ -3391,11 +3527,329 @@
         .forEach((control) => { control.disabled = locked; });
       if (vehicleAppearanceInput) vehicleAppearanceInput.readOnly = locked;
       vehiclePhotoGrid?.querySelectorAll("[data-vehicle-photo-remove], [data-vehicle-photo-upload]").forEach((button) => { button.disabled = locked; });
-      if (vehicleLockedMessage) vehicleLockedMessage.hidden = !locked;
+      if (vehicleLockedMessage) vehicleLockedMessage.hidden = true;
       if (locked) {
         closePlateKeyboard();
         closePlateColorSheet();
       }
+    }
+
+    function canSwapOrderVehicle(order) {
+      return order?.rentalStatus === "有效" &&
+        !["审批中", "已通过"].includes(order.refundStatus) &&
+        getOrderVehicles(order).length > 0;
+    }
+
+    function canAddOrderVehicle(order) {
+      return canSwapOrderVehicle(order) && getOrderVehicles(order).length < RENT_VEHICLE_LIMIT;
+    }
+
+    function getVehicleSwapRelatedOrders() {
+      const sourceOrder = getOrderById(vehicleSwapState.orderId);
+      const referencePlate = vehicleSwapState.fromPlate || getOrderVehicles(sourceOrder)[0]?.plate || "";
+      if (!sourceOrder || !referencePlate) return [];
+      return orderState.records.filter((order) => {
+        return order.community === sourceOrder.community &&
+          ["有效", "待生效"].includes(order.rentalStatus) &&
+          !["审批中", "已通过"].includes(order.refundStatus) &&
+          orderHasVehicle(order, referencePlate);
+      });
+    }
+
+    function vehicleFromCard(card) {
+      return normalizeRegisteredVehicle({
+        plate: card?.dataset.plate || "",
+        color: card?.dataset.plateColor || "",
+        colorCode: card?.dataset.plateColorCode || "",
+      });
+    }
+
+    function renderVehicleSwap() {
+      const order = getOrderById(vehicleSwapState.orderId);
+      const relatedOrders = getVehicleSwapRelatedOrders();
+      if (!order) return;
+      const isUnbinding = vehicleSwapState.mode === "unbind";
+      const isAdding = vehicleSwapState.mode === "add";
+      const canUnbind = getOrderVehicles(order).length > 1;
+      const latestEnd = relatedOrders
+        .map((item) => item.end)
+        .sort((first, second) => String(second).localeCompare(String(first)))[0] || order.end;
+      if (vehicleSwapCommunity) vehicleSwapCommunity.textContent = order.community;
+      if (vehicleSwapTerm) vehicleSwapTerm.textContent = `${order.start} 至 ${latestEnd}`;
+      if (vehicleSwapFrom) vehicleSwapFrom.textContent = vehicleSwapState.fromPlate;
+      if (vehicleSwapFromRow) vehicleSwapFromRow.hidden = isAdding;
+      if (vehicleSwapTargetSection) vehicleSwapTargetSection.hidden = isUnbinding;
+      if (vehicleSwapTargetHeading) vehicleSwapTargetHeading.textContent = isAdding ? "新增办理车辆" : "变更为";
+      if (vehicleSwapUnbindNote) vehicleSwapUnbindNote.hidden = !isUnbinding;
+      const showsUnbindAction = !isUnbinding && !isAdding && canUnbind;
+      if (vehicleSwapUnbindAction) vehicleSwapUnbindAction.hidden = !showsUnbindAction;
+      if (vehicleSwapFooter) {
+        vehicleSwapFooter.dataset.vehicleSwapMode = isUnbinding ? "unbind" : isAdding ? "add" : "swap";
+        vehicleSwapFooter.dataset.hasUnbind = showsUnbindAction ? "true" : "false";
+        vehicleSwapFooter.closest(".vehicle-swap-page")?.setAttribute("data-vehicle-swap-actions", showsUnbindAction ? "two" : "one");
+      }
+      if (vehicleSwapTargetPlate) vehicleSwapTargetPlate.textContent = vehicleSwapState.toVehicle?.plate || "请选择车辆";
+      if (vehicleSwapTargetColor) {
+        vehicleSwapTargetColor.hidden = !vehicleSwapState.toVehicle?.color;
+        vehicleSwapTargetColor.textContent = vehicleSwapState.toVehicle?.color || "";
+      }
+      if (vehicleSwapSubmit) {
+        vehicleSwapSubmit.textContent = isUnbinding ? "确认移除" : isAdding ? "确认添加" : "确认变更";
+        vehicleSwapSubmit.disabled = isUnbinding ? !canUnbind : !vehicleSwapState.toVehicle;
+      }
+    }
+
+    function renderVehicleSwapSources() {
+      if (!vehicleSwapSourceOptions) return;
+      const order = getOrderById(vehicleSwapState.orderId);
+      const vehicles = getOrderVehicles(order);
+      vehicleSwapSourceOptions.innerHTML = vehicles.map((vehicle) => {
+        return `<button class="vehicle-swap-option" type="button" data-vehicle-swap-source-plate="${escapeHtml(vehicle.plate)}" data-vehicle-swap-source-color="${escapeHtml(vehicle.color || "")}" data-vehicle-swap-source-color-code="${escapeHtml(vehicle.colorCode || "")}">
+          <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+          <span class="vehicle-option-copy"><strong>${escapeHtml(vehicle.plate)}</strong><small>${escapeHtml(vehicle.color || "车牌颜色未设置")}</small></span>
+          <span class="vehicle-swap-target-arrow">›</span>
+        </button>`;
+      }).join("");
+      if (canAddOrderVehicle(order)) {
+        vehicleSwapSourceOptions.insertAdjacentHTML("beforeend", `<button class="vehicle-swap-add" type="button" data-vehicle-swap-add>
+          <span class="vehicle-option-icon">+</span>
+          <span class="vehicle-option-copy"><strong>新增办理车辆</strong></span>
+          <span class="vehicle-swap-target-arrow">›</span>
+        </button>`);
+      }
+    }
+
+    function openVehicleSwapFromOrder() {
+      if (!ensureAuthenticated()) return;
+      const order = getOrderById();
+      if (!canSwapOrderVehicle(order)) {
+        showToast("当前订单不可变更车辆");
+        return;
+      }
+      vehicleSwapState.orderId = order.id;
+      vehicleSwapState.fromPlate = "";
+      vehicleSwapState.toVehicle = null;
+      vehicleSwapState.mode = "swap";
+      renderVehicleSwapSources();
+      showTab("vehicleSwapSource");
+    }
+
+    function selectVehicleSwapSource(option) {
+      vehicleSwapState.fromPlate = option.dataset.vehicleSwapSourcePlate || "";
+      vehicleSwapState.toVehicle = null;
+      vehicleSwapState.mode = "swap";
+      renderVehicleSwap();
+      showTab("vehicleSwap");
+    }
+
+    function openAddOrderVehicle() {
+      const order = getOrderById(vehicleSwapState.orderId);
+      if (!canAddOrderVehicle(order)) {
+        showToast(`本订单最多可办理 ${RENT_VEHICLE_LIMIT} 辆车辆`);
+        return;
+      }
+      vehicleSwapState.fromPlate = "";
+      vehicleSwapState.toVehicle = null;
+      vehicleSwapState.mode = "add";
+      renderVehicleSwapOptions();
+      showTab("vehicleSwapSelect");
+    }
+
+    function prepareVehicleSwapUnbind() {
+      const order = getOrderById(vehicleSwapState.orderId);
+      if (getOrderVehicles(order).length <= 1) {
+        showToast("月租订单至少保留一辆通行车辆");
+        return;
+      }
+      vehicleSwapState.mode = "unbind";
+      vehicleSwapState.toVehicle = null;
+      renderVehicleSwap();
+    }
+
+    function returnFromVehicleSwap() {
+      renderOrderList();
+      showTab("orderList");
+    }
+
+    function eligibleVehicleSwapCards() {
+      const occupiedPlateKeys = new Set(
+        getVehicleSwapRelatedOrders().flatMap((order) => getOrderVehicles(order).map((vehicle) => vehiclePlateKey(vehicle.plate))),
+      );
+      return Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []).filter((card) => {
+        return card.dataset.account === accountState.current &&
+          !occupiedPlateKeys.has(vehiclePlateKey(card.dataset.plate || ""));
+      });
+    }
+
+    function renderVehicleSwapOptions() {
+      if (!vehicleSwapOptions) return;
+      if (vehicleSwapPickerTitle) vehicleSwapPickerTitle.textContent = vehicleSwapState.mode === "add" ? "选择办理车辆" : "选择新车辆";
+      const cards = eligibleVehicleSwapCards();
+      vehicleSwapOptions.innerHTML = "";
+      cards.forEach((card) => {
+        const vehicle = vehicleFromCard(card);
+        const overlap = findVehicleSwapOverlapFor(vehicle);
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "vehicle-swap-option";
+        option.dataset.vehicleSwapPlate = vehicle.plate;
+        option.dataset.vehicleSwapColor = vehicle.color;
+        option.dataset.vehicleSwapColorCode = vehicle.colorCode;
+        option.setAttribute("role", "radio");
+        const selected = vehiclePlateKey(vehicle.plate) === vehiclePlateKey(vehicleSwapState.toVehicle?.plate || "");
+        option.classList.toggle("is-selected", selected);
+        option.classList.toggle("is-disabled", Boolean(overlap));
+        option.disabled = Boolean(overlap);
+        option.setAttribute("aria-checked", selected && !overlap ? "true" : "false");
+        const vehicleHint = overlap
+          ? "该车辆在本小区已有重叠月租，暂不能选择"
+          : vehicle.color || "车牌颜色未设置";
+        option.innerHTML = `<span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span><span class="vehicle-option-copy"><strong>${vehicle.plate}</strong><small class="${overlap ? "is-error" : ""}">${vehicleHint}</small></span><span class="vehicle-option-check">✓</span>`;
+        vehicleSwapOptions.appendChild(option);
+      });
+      if (vehicleSwapEmpty) vehicleSwapEmpty.hidden = cards.length > 0;
+    }
+
+    function selectVehicleSwap(option) {
+      vehicleSwapState.toVehicle = normalizeRegisteredVehicle({
+        plate: option.dataset.vehicleSwapPlate,
+        color: option.dataset.vehicleSwapColor,
+        colorCode: option.dataset.vehicleSwapColorCode,
+      });
+      renderVehicleSwap();
+      showTab("vehicleSwap");
+    }
+
+    function findVehicleSwapOverlapFor(targetVehicle) {
+      if (!targetVehicle?.plate) return null;
+      for (const order of getVehicleSwapRelatedOrders()) {
+        const overlap = findMonthlyRentOverlap({
+          community: order.community,
+          plate: targetVehicle.plate,
+          start: order.start,
+          end: order.end,
+          excludeOrderId: order.id,
+        });
+        if (overlap) return overlap;
+      }
+      return null;
+    }
+
+    function findVehicleSwapOverlap() {
+      return findVehicleSwapOverlapFor(vehicleSwapState.toVehicle);
+    }
+
+    function updateOrderVehicles(order, vehicles) {
+      const primaryVehicle = vehicles[0] || { plate: "--", color: "", colorCode: "" };
+      order.vehicles = vehicles;
+      order.vehicleId = vehicles.map((vehicle) => `VEHICLE-${vehicle.plate.replace(/\s+/g, "")}`).join(",");
+      order.plate = primaryVehicle.plate;
+      order.color = primaryVehicle.color;
+      order.colorCode = primaryVehicle.colorCode;
+      order.vehicleCount = vehicles.length;
+    }
+
+    function finishVehicleOrderChange(message) {
+      resetVehicleForm();
+      updateVehicleCollection();
+      renderOrderList();
+      syncHomeMonthlyCard();
+      vehicleSwapState.fromPlate = "";
+      vehicleSwapState.toVehicle = null;
+      vehicleSwapState.mode = "swap";
+      renderVehicleSwapSources();
+      showTab("vehicleSwapSource");
+      showToast(message);
+    }
+
+    function submitVehicleOrderUnbind() {
+      const relatedOrders = getVehicleSwapRelatedOrders();
+      if (!relatedOrders.length || relatedOrders.some((order) => getOrderVehicles(order).length <= 1)) {
+        showToast("月租订单至少保留一辆通行车辆");
+        return;
+      }
+
+      const changedAt = "2026-08-25 10:30";
+      relatedOrders.forEach((order) => {
+        const nextVehicles = getOrderVehicles(order).filter((vehicle) => {
+          return vehiclePlateKey(vehicle.plate) !== vehiclePlateKey(vehicleSwapState.fromPlate);
+        });
+        updateOrderVehicles(order, nextVehicles);
+        order.vehicleChangeRecords = Array.isArray(order.vehicleChangeRecords) ? order.vehicleChangeRecords : [];
+        order.vehicleChangeRecords.push({
+          type: "unbind",
+          from: vehicleSwapState.fromPlate,
+          changedAt,
+        });
+      });
+      finishVehicleOrderChange("车辆已移除，通行权限已取消");
+    }
+
+    function submitVehicleOrderAdd() {
+      const sourceOrder = getOrderById(vehicleSwapState.orderId);
+      const relatedOrders = getVehicleSwapRelatedOrders();
+      if (!canAddOrderVehicle(sourceOrder) || !relatedOrders.length) {
+        showToast(`本订单最多可办理 ${RENT_VEHICLE_LIMIT} 辆车辆`);
+        return;
+      }
+      if (relatedOrders.some((order) => getOrderVehicles(order).length >= RENT_VEHICLE_LIMIT)) {
+        showToast(`本订单最多可办理 ${RENT_VEHICLE_LIMIT} 辆车辆`);
+        return;
+      }
+      const overlap = findVehicleSwapOverlap();
+      if (overlap) {
+        showToast("该车辆在本小区已有重叠月租，暂不能办理");
+        return;
+      }
+
+      const changedAt = "2026-08-25 10:30";
+      relatedOrders.forEach((order) => {
+        const nextVehicles = [...getOrderVehicles(order), { ...vehicleSwapState.toVehicle }];
+        updateOrderVehicles(order, nextVehicles);
+        order.vehicleChangeRecords = Array.isArray(order.vehicleChangeRecords) ? order.vehicleChangeRecords : [];
+        order.vehicleChangeRecords.push({
+          type: "add",
+          to: { ...vehicleSwapState.toVehicle },
+          changedAt,
+        });
+      });
+      finishVehicleOrderChange("办理车辆已添加，新车辆已开通月租通行");
+    }
+
+    function submitVehicleSwap() {
+      if (!ensureAuthenticated()) return;
+      if (vehicleSwapState.mode === "unbind") return submitVehicleOrderUnbind();
+      if (!vehicleSwapState.toVehicle) return;
+      if (vehicleSwapState.mode === "add") return submitVehicleOrderAdd();
+      const relatedOrders = getVehicleSwapRelatedOrders();
+      if (!relatedOrders.length) {
+        showToast("该月租当前不可变更车辆");
+        return;
+      }
+      const overlap = findVehicleSwapOverlap();
+      if (overlap) {
+        showToast("新车辆在该小区已有重叠月租，暂不能变更");
+        return;
+      }
+
+      const changedAt = "2026-08-25 10:30";
+      relatedOrders.forEach((order) => {
+        const previousVehicles = getOrderVehicles(order);
+        const nextVehicles = previousVehicles.map((vehicle) => {
+          return vehiclePlateKey(vehicle.plate) === vehiclePlateKey(vehicleSwapState.fromPlate)
+            ? { ...vehicleSwapState.toVehicle }
+            : vehicle;
+        });
+        updateOrderVehicles(order, nextVehicles);
+        order.vehicleChangeRecords = Array.isArray(order.vehicleChangeRecords) ? order.vehicleChangeRecords : [];
+        order.vehicleChangeRecords.push({
+          from: vehicleSwapState.fromPlate,
+          to: { ...vehicleSwapState.toVehicle },
+          changedAt,
+        });
+      });
+
+      finishVehicleOrderChange("车辆变更成功，新车辆已开通月租通行");
     }
 
     function remainingMonthlyDays(endDate) {
@@ -3418,7 +3872,7 @@
 
       const latestPeriod = orderState.records
         .filter((candidate) => {
-          return candidate.plate === order.plate &&
+          return sameOrderVehicleSet(candidate, order) &&
             candidate.community === order.community &&
             ["有效", "待生效"].includes(candidate.rentalStatus) &&
             candidate.refundStatus === "未申请";
@@ -3429,7 +3883,7 @@
         homeRentStatus.textContent = "月租有效";
         homeRentStatus.classList.remove("refund");
       }
-      if (homeRentPlate) homeRentPlate.textContent = order.plate;
+      if (homeRentPlate) homeRentPlate.textContent = orderVehicleText(order, { compact: true });
       if (homeRentPlace) homeRentPlace.textContent = order.community;
       if (homeRentRenew) homeRentRenew.dataset.orderRenewId = latestPeriod.id;
       if (homeRentRemaining) homeRentRemaining.textContent = `${remainingMonthlyDays(latestPeriod.end)} 天`;
@@ -3439,13 +3893,20 @@
     function createMonthlyRentOrder() {
       const sequence = String(orderState.records.length + 1).padStart(4, "0");
       const orderNo = `AS20260825${sequence}`;
+      const vehicles = selectedRentVehicles();
+      const primaryVehicle = vehicles[0] || { plate: "--", color: "", colorCode: "" };
       const order = {
         id: orderNo,
         orderNo,
         type: "新办",
         community: rentFlowState.selectedCommunity || rentFlowState.selectedName,
         garage: rentFlowState.selectedGarage || "--",
-        plate: rentVehicleState.plate,
+        vehicleId: vehicles.map((vehicle) => `VEHICLE-${vehicle.plate.replace(/\s+/g, "")}`).join(","),
+        plate: primaryVehicle.plate,
+        color: primaryVehicle.color,
+        colorCode: primaryVehicle.colorCode,
+        vehicles,
+        vehicleCount: vehicles.length,
         start: rentStartDateInput?.value || "--",
         end: calculateRentEndDate(),
         months: rentTermState.months,
@@ -3474,10 +3935,11 @@
       syncVehicleMonthlyState();
       const allCards = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []);
       const cards = allCards.filter((card) => card.dataset.account === accountState.current);
+      const keyword = vehicleSearchInput?.value.trim().toLowerCase() || "";
       let visibleCount = 0;
 
       allCards.forEach((card) => {
-        const visible = card.dataset.account === accountState.current;
+        const visible = card.dataset.account === accountState.current && (!keyword || card.textContent.toLowerCase().includes(keyword));
         card.hidden = !visible;
         if (visible) visibleCount += 1;
       });
@@ -3796,7 +4258,65 @@
     }
 
     function vehiclePlateKey(plate) {
-      return plate.replace(/\s+/g, "").toUpperCase();
+      return String(plate || "").replace(/\s+/g, "").toUpperCase();
+    }
+
+    function normalizeRegisteredVehicle(vehicle = {}) {
+      return {
+        plate: String(vehicle.plate || "").trim(),
+        color: String(vehicle.color || vehicle.plateColor || "").trim(),
+        colorCode: String(vehicle.colorCode || vehicle.plateColorCode || "").trim(),
+      };
+    }
+
+    function getOrderVehicles(order = {}) {
+      const vehicles = Array.isArray(order.vehicles) && order.vehicles.length
+        ? order.vehicles
+        : order.plate
+          ? [{ plate: order.plate, color: order.color || order.plateColor || "", colorCode: order.colorCode || order.plateColorCode || "" }]
+          : [];
+      return vehicles.map(normalizeRegisteredVehicle).filter((vehicle) => vehicle.plate);
+    }
+
+    function orderHasVehicle(order, plate) {
+      const key = vehiclePlateKey(plate);
+      return Boolean(key) && getOrderVehicles(order).some((vehicle) => vehiclePlateKey(vehicle.plate) === key);
+    }
+
+    function sameOrderVehicleSet(firstOrder, secondOrder) {
+      const firstVehicles = getOrderVehicles(firstOrder);
+      const secondVehicles = getOrderVehicles(secondOrder);
+      return firstVehicles.length === secondVehicles.length &&
+        firstVehicles.every((vehicle) => orderHasVehicle(secondOrder, vehicle.plate));
+    }
+
+    function rentVehiclesText(vehicles = [], { includeColor = false, compact = false } = {}) {
+      const normalized = vehicles.map(normalizeRegisteredVehicle).filter((vehicle) => vehicle.plate);
+      if (!normalized.length) return "--";
+      if (compact && normalized.length > 1) return `${normalized[0].plate} 等 ${normalized.length} 辆`;
+      return normalized.map((vehicle) => {
+        return includeColor && vehicle.color ? `${vehicle.plate} · ${vehicle.color}` : vehicle.plate;
+      }).join("\n");
+    }
+
+    function orderVehicleText(order, options = {}) {
+      return rentVehiclesText(getOrderVehicles(order), options);
+    }
+
+    function refundVehicleText(record, options = {}) {
+      const vehicles = Array.isArray(record?.vehicles) && record.vehicles.length
+        ? record.vehicles
+        : [{ plate: record?.plate || "" }];
+      return rentVehiclesText(vehicles, options);
+    }
+
+    function selectedRentVehicles() {
+      return rentVehicleState.vehicles.map(normalizeRegisteredVehicle).filter((vehicle) => vehicle.plate);
+    }
+
+    function isRentVehicleSelected(plate) {
+      const key = vehiclePlateKey(plate);
+      return selectedRentVehicles().some((vehicle) => vehiclePlateKey(vehicle.plate) === key);
     }
 
     function syncRentVehicleFormMode() {
@@ -3912,7 +4432,7 @@
       const option = document.createElement("button");
       option.className = "rent-vehicle-option";
       option.type = "button";
-      option.setAttribute("role", "radio");
+      option.setAttribute("role", "checkbox");
       option.setAttribute("aria-checked", "false");
       option.dataset.rentVehicleOption = "true";
       option.dataset.account = accountState.current;
@@ -4014,6 +4534,7 @@
         appendRentVehicleOption(vehicle);
       }
       resetVehicleForm();
+      if (vehicleSearchInput) vehicleSearchInput.value = "";
       updateVehicleCollection();
       const nextScreen = vehicleFormReturnScreen;
       vehicleFormReturnScreen = "vehicleManage";
@@ -4027,12 +4548,22 @@
     }
 
     function selectRentVehicle(option) {
-      rentVehicleState.plate = option.dataset.plate || "";
-      rentVehicleState.color = option.dataset.vehicleColor || "";
-      rentVehicleState.colorCode = option.dataset.vehicleColorCode || "";
+      const vehicle = normalizeRegisteredVehicle({
+        plate: option.dataset.plate,
+        color: option.dataset.vehicleColor,
+        colorCode: option.dataset.vehicleColorCode,
+      });
+      if (!vehicle.plate) return;
+      if (isRentVehicleSelected(vehicle.plate)) {
+        rentVehicleState.vehicles = selectedRentVehicles().filter((item) => vehiclePlateKey(item.plate) !== vehiclePlateKey(vehicle.plate));
+      } else if (selectedRentVehicles().length >= RENT_VEHICLE_LIMIT) {
+        showToast(`一次最多登记 ${RENT_VEHICLE_LIMIT} 辆车辆`);
+        return;
+      } else {
+        rentVehicleState.vehicles = [...selectedRentVehicles(), vehicle];
+      }
       syncRentVehiclePicker();
       updateRentVehicleNextState();
-      showTab("rentVehicle");
     }
 
     function garageDistance(card) {
@@ -4256,7 +4787,7 @@
               <span class="order-community">${order.community}</span>
               <span class="order-status ${status.className}">${status.label}</span>
             </div>
-            <div class="order-card-plate">${order.plate}</div>
+            <div class="order-card-plate">${orderVehicleText(order, { compact: true })}</div>
             <div class="order-card-meta">
               <span>${order.start} 至 ${order.end}</span>
               <strong>实付 ${formatOrderAmount(order.amount)}</strong>
@@ -4279,18 +4810,20 @@
     function orderMoreItems(order) {
       const hasOpenRefund = ["审批中", "已通过"].includes(order.refundStatus);
       const canRenew = canRenewOrder(order);
+      const canSwapVehicle = canSwapOrderVehicle(order);
       const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && !hasOpenRefund;
       const invoiceAvailable = canApplyInvoice(order);
       const items = [];
 
       if (canRenew) items.push({ action: "renew", label: "续费" });
-      if (canRefund) items.push({ action: "refund", label: "申请退款" });
+      if (canSwapVehicle) items.push({ action: "swapVehicle", label: "变更车辆" });
+      if (canRefund) items.push({ action: "refund", label: "退款" });
       if (order.refundStatus === "审批中") items.push({ label: "退款审批中", unavailable: true });
 
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
       } else if (order.invoiceStatus === "申请中" && order.refundStatus !== "审批中") {
-        items.push({ action: "invoiceProgress", label: "查看开票进度" });
+        items.push({ action: "invoiceProgress", label: "开票进度" });
       } else if (invoiceAvailable) {
         items.push({ action: "invoice", label: "申请开票" });
       }
@@ -4302,6 +4835,12 @@
       const order = getOrderById(orderId);
       if (!order || !orderDetailContent || !orderDetailFooter) return;
       orderState.activeId = order.id;
+      const vehicleChanges = Array.isArray(order.vehicleChangeRecords) ? order.vehicleChangeRecords : [];
+      const latestVehicleChange = vehicleChanges.at(-1);
+      const vehicleLabel = latestVehicleChange ? "当前通行车辆" : "办理车辆";
+      const vehicleChangeRow = latestVehicleChange
+        ? `<div class="order-detail-row"><span>最近操作</span><strong class="order-detail-vehicles">${latestVehicleChange.type === "unbind" ? `${escapeHtml(latestVehicleChange.from)} 已移除` : latestVehicleChange.type === "add" ? `${escapeHtml(latestVehicleChange.to?.plate || "--")} 已添加` : `${escapeHtml(latestVehicleChange.from)} → ${escapeHtml(latestVehicleChange.to?.plate || "--")}`}</strong></div>`
+        : "";
 
       const invoiceRecordRow = order.invoiceStatus === "已完成"
         ? `<div class="order-action-row"><span>开票信息</span><button type="button" data-order-action="viewInvoice">${invoiceViewLabel(order)}</button></div>`
@@ -4337,7 +4876,8 @@
         <section class="order-detail-section">
           <h3>月租信息</h3>
           <div class="order-detail-row"><span>小区</span><strong class="order-detail-location">${order.community}</strong></div>
-          <div class="order-detail-row"><span>办理车辆</span><strong>${order.plate}</strong></div>
+          <div class="order-detail-row"><span>${vehicleLabel}</span><strong class="order-detail-vehicles">${orderVehicleText(order, { includeColor: true })}</strong></div>
+          ${vehicleChangeRow}
           <div class="order-detail-row"><span>租期</span><strong>${order.start} 至 ${order.end}</strong></div>
           <div class="order-detail-row"><span>租赁月数</span><strong>${order.months} 个月</strong></div>
         </section>
@@ -4379,7 +4919,7 @@
       const end = addOrderMonths(start, orderState.renewMonths);
       const monthlyRate = order.amount / Math.max(order.months, 1);
       if (renewCommunity) renewCommunity.textContent = order.community;
-      if (renewPlate) renewPlate.textContent = order.plate;
+      if (renewPlate) renewPlate.textContent = orderVehicleText(order, { compact: true });
       if (renewStart) renewStart.textContent = start;
       if (renewEnd) renewEnd.textContent = end;
       if (renewAmount) renewAmount.textContent = String(Math.round(monthlyRate * orderState.renewMonths));
@@ -4471,7 +5011,7 @@
     function renderRefund(order = getOrderById()) {
       const quote = getRefundQuote(order);
       document.querySelector("[data-refund-community]").textContent = order.community;
-      document.querySelector("[data-refund-plate]").textContent = order.plate;
+      document.querySelector("[data-refund-plate]").textContent = orderVehicleText(order, { compact: true });
       document.querySelector("[data-refund-paid-amount]").textContent = String(order.amount);
       document.querySelector("[data-refund-remaining-term]").textContent = quote.remainingTerm;
       document.querySelector("[data-refund-estimate]").textContent = String(quote.estimatedAmount);
@@ -4646,7 +5186,7 @@
         card.setAttribute("aria-label", `查看${record.requestNo}退款详情`);
         card.innerHTML = `
           <div class="refund-record-top">
-            <span class="refund-record-plate">${record.plate}</span>
+            <span class="refund-record-plate">${refundVehicleText(record, { compact: true })}</span>
             <span class="refund-record-status ${status.className}">${status.label}</span>
           </div>
           <div class="refund-record-place">${record.community}</div>
@@ -4687,7 +5227,7 @@
         <section class="order-detail-section">
           <h3>原月租信息</h3>
           <div class="order-detail-row"><span>小区</span><strong>${record.community}</strong></div>
-          <div class="order-detail-row"><span>退款车辆</span><strong>${record.plate}</strong></div>
+          <div class="order-detail-row"><span>退款车辆</span><strong class="order-detail-vehicles">${refundVehicleText(record, { includeColor: true })}</strong></div>
           <div class="order-detail-row"><span>原租期</span><strong>${record.start} 至 ${record.end}</strong></div>
         </section>
         <section class="order-detail-section">
@@ -4782,7 +5322,7 @@
         ${applicationState}
         <div class="order-detail-row"><span>凭证类型</span><strong>${documentType}</strong></div>
         <div class="order-detail-row"><span>小区</span><strong class="order-detail-location">${escapeHtml(order.community)}</strong></div>
-        <div class="order-detail-row"><span>办理车辆</span><strong>${escapeHtml(order.plate)}</strong></div>
+        <div class="order-detail-row"><span>办理车辆</span><strong>${escapeHtml(orderVehicleText(order, { compact: true }))}</strong></div>
         <div class="order-detail-row"><span>${isNontax ? "收费项目" : "开票内容"}</span><strong>月租车位缴费</strong></div>
         <div class="order-detail-row"><span>${isNontax ? "票据金额" : "开票金额"}</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
         ${partyRow}
@@ -4822,6 +5362,7 @@
       const order = getOrderById();
       if (!order) return;
       if (action === "renew") return openOrderRenewal();
+      if (action === "swapVehicle") return openVehicleSwapFromOrder();
       if (action === "refund") return openOrderRefund();
       if (action === "invoice") return openOrderInvoice();
       if (action === "viewInvoice") return openInvoiceResult(order.id, "orderDetail");
@@ -4837,13 +5378,15 @@
       }
       const start = nextDate(original.end);
       const end = addOrderMonths(start, orderState.renewMonths);
-      const overlap = findMonthlyRentOverlap({
-        community: original.community,
-        plate: original.plate,
-        start,
-        end,
-        excludeOrderId: original.id,
-      });
+      const overlap = getOrderVehicles(original)
+        .map((vehicle) => findMonthlyRentOverlap({
+          community: original.community,
+          plate: vehicle.plate,
+          start,
+          end,
+          excludeOrderId: original.id,
+        }))
+        .find(Boolean);
       if (overlap) {
         showToast("该车辆在此小区已有重叠月租，不能重复续费");
         return;
@@ -4855,6 +5398,8 @@
         id: newId,
         orderNo: newId,
         type: "续费",
+        vehicles: getOrderVehicles(original),
+        vehicleCount: getOrderVehicles(original).length,
         start,
         end,
         months: orderState.renewMonths,
@@ -4874,7 +5419,7 @@
       syncVehicleMonthlyState();
       syncHomeMonthlyCard();
       showTab("home");
-      showToast("续费成功，月租有效期已延长");
+      showToast("支付成功");
     }
 
     function submitRefund() {
@@ -4909,7 +5454,8 @@
         orderNo: order.orderNo,
         community: order.community,
         garage: order.garage,
-        plate: order.plate,
+        plate: orderVehicleText(order, { compact: true }),
+        vehicles: getOrderVehicles(order),
         originalPaidAmount: order.amount,
         start: order.start,
         end: order.end,
@@ -5349,6 +5895,12 @@
       });
     });
 
+    rentVehiclePickerComplete?.addEventListener("click", () => {
+      if (rentVehiclePickerComplete.disabled) return;
+      updateRentVehicleNextState();
+      showTab("rentVehicle");
+    });
+
     rentOwnerBackActions.forEach((action) => {
       action.addEventListener("click", () => {
         showTab("rentOwner");
@@ -5420,7 +5972,7 @@
         syncVehicleMonthlyState();
         syncHomeMonthlyCard();
         showTab("home");
-        showToast(`${order.plate}月租已开通`);
+        showToast("支付成功");
       });
     }
 
@@ -5480,6 +6032,8 @@
       if (card) openVehicleForm(card);
     });
 
+    vehicleSearchInput?.addEventListener("input", updateVehicleCollection);
+
     vehiclePlateColorButtons.forEach((button) => {
       button.addEventListener("click", () => {
         vehicleFormState.plateColor = button.dataset.vehiclePlateColor || "蓝色车牌";
@@ -5510,6 +6064,48 @@
     });
 
     vehicleUnbindButton?.addEventListener("click", openVehicleUnbindDialog);
+
+    vehicleSwapSourceBackActions.forEach((button) => {
+      button.addEventListener("click", returnFromVehicleSwap);
+    });
+
+    vehicleSwapBackActions.forEach((button) => {
+      button.addEventListener("click", () => {
+        renderVehicleSwapSources();
+        showTab("vehicleSwapSource");
+      });
+    });
+
+    vehicleSwapPickerBackActions.forEach((button) => {
+      button.addEventListener("click", () => {
+        renderVehicleSwap();
+        showTab("vehicleSwap");
+      });
+    });
+
+    vehicleSwapTargetPicker?.addEventListener("click", () => {
+      renderVehicleSwapOptions();
+      showTab("vehicleSwapSelect");
+    });
+
+    vehicleSwapUnbindAction?.addEventListener("click", prepareVehicleSwapUnbind);
+
+    vehicleSwapOptions?.addEventListener("click", (event) => {
+      const option = event.target.closest("[data-vehicle-swap-plate]");
+      if (option) selectVehicleSwap(option);
+    });
+
+    vehicleSwapSourceOptions?.addEventListener("click", (event) => {
+      const addAction = event.target.closest("[data-vehicle-swap-add]");
+      if (addAction) {
+        openAddOrderVehicle();
+        return;
+      }
+      const option = event.target.closest("[data-vehicle-swap-source-plate]");
+      if (option) selectVehicleSwapSource(option);
+    });
+
+    vehicleSwapSubmit?.addEventListener("click", submitVehicleSwap);
 
     plateCharacterButtons.forEach((button) => {
       button.addEventListener("click", () => {
