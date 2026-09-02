@@ -896,11 +896,6 @@
           </header>
 
           <div class="content">
-            <label class="vehicle-search-input">
-              <svg class="icon sm"><use href="#i-search"></use></svg>
-              <input type="search" data-vehicle-search placeholder="搜索车牌号" aria-label="搜索车牌号">
-            </label>
-
             <div class="vehicle-manage-list" data-vehicle-list>
               <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 12345" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="白色" aria-label="查看闽D 12345车辆信息">
                 <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
@@ -1755,7 +1750,6 @@
     const vehicleManageBackButtons = document.querySelectorAll("[data-vehicle-manage-back]");
     const vehicleFormBackButtons = document.querySelectorAll("[data-vehicle-form-back]");
     const vehicleFormOpenButtons = document.querySelectorAll("[data-open-vehicle-form]");
-    const vehicleSearchInput = document.querySelector("[data-vehicle-search]");
     const vehicleManageScreen = document.querySelector(".vehicle-manage");
     const vehicleList = document.querySelector("[data-vehicle-list]");
     const personalVehicleCount = document.querySelector("[data-personal-vehicle-count]");
@@ -3935,11 +3929,10 @@
       syncVehicleMonthlyState();
       const allCards = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []);
       const cards = allCards.filter((card) => card.dataset.account === accountState.current);
-      const keyword = vehicleSearchInput?.value.trim().toLowerCase() || "";
       let visibleCount = 0;
 
       allCards.forEach((card) => {
-        const visible = card.dataset.account === accountState.current && (!keyword || card.textContent.toLowerCase().includes(keyword));
+        const visible = card.dataset.account === accountState.current;
         card.hidden = !visible;
         if (visible) visibleCount += 1;
       });
@@ -4534,7 +4527,6 @@
         appendRentVehicleOption(vehicle);
       }
       resetVehicleForm();
-      if (vehicleSearchInput) vehicleSearchInput.value = "";
       updateVehicleCollection();
       const nextScreen = vehicleFormReturnScreen;
       vehicleFormReturnScreen = "vehicleManage";
@@ -6031,8 +6023,6 @@
       const card = event.target.closest("[data-vehicle-card]");
       if (card) openVehicleForm(card);
     });
-
-    vehicleSearchInput?.addEventListener("input", updateVehicleCollection);
 
     vehiclePlateColorButtons.forEach((button) => {
       button.addEventListener("click", () => {
