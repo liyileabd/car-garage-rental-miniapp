@@ -6,7 +6,7 @@
   <title>湖里国投月租车位小程序</title>
   <link rel="stylesheet" href="styles.css?v=refund-account-v2">
 </head>
-<body data-current-tab="home" data-auth="guest" data-login-view="main" data-toast="hidden">
+<body data-current-tab="home" data-auth="authed" data-login-view="main" data-toast="hidden">
   <svg width="0" height="0" aria-hidden="true" focusable="false">
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.7 12 4l8.5 6.7"></path><path d="M5.5 9.8v9.5h4.3v-5.4h4.4v5.4h4.3V9.8"></path></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z"></path><path d="M4.5 20.2c1.3-3.5 4-5.2 7.5-5.2s6.2 1.7 7.5 5.2"></path></symbol>
@@ -908,11 +908,6 @@
           </header>
 
           <div class="content">
-            <label class="vehicle-search-input">
-              <svg class="icon sm"><use href="#i-search"></use></svg>
-              <input type="search" data-vehicle-search placeholder="搜索车牌号" aria-label="搜索车牌号">
-            </label>
-
             <div class="vehicle-manage-list" data-vehicle-list>
               <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 12345" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="白色" aria-label="查看闽D 12345车辆信息">
                 <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
@@ -1700,7 +1695,6 @@
     const vehicleManageBackButtons = document.querySelectorAll("[data-vehicle-manage-back]");
     const vehicleFormBackButtons = document.querySelectorAll("[data-vehicle-form-back]");
     const vehicleFormOpenButtons = document.querySelectorAll("[data-open-vehicle-form]");
-    const vehicleSearchInput = document.querySelector("[data-vehicle-search]");
     const vehicleManageScreen = document.querySelector(".vehicle-manage");
     const vehicleList = document.querySelector("[data-vehicle-list]");
     const personalVehicleCount = document.querySelector("[data-personal-vehicle-count]");
@@ -3480,11 +3474,10 @@
       syncVehicleMonthlyState();
       const allCards = Array.from(vehicleList?.querySelectorAll("[data-vehicle-card]") || []);
       const cards = allCards.filter((card) => card.dataset.account === accountState.current);
-      const keyword = vehicleSearchInput?.value.trim().toLowerCase() || "";
       let visibleCount = 0;
 
       allCards.forEach((card) => {
-        const visible = card.dataset.account === accountState.current && (!keyword || card.textContent.toLowerCase().includes(keyword));
+        const visible = card.dataset.account === accountState.current;
         card.hidden = !visible;
         if (visible) visibleCount += 1;
       });
@@ -4021,7 +4014,6 @@
         appendRentVehicleOption(vehicle);
       }
       resetVehicleForm();
-      if (vehicleSearchInput) vehicleSearchInput.value = "";
       updateVehicleCollection();
       const nextScreen = vehicleFormReturnScreen;
       vehicleFormReturnScreen = "vehicleManage";
@@ -5487,8 +5479,6 @@
       const card = event.target.closest("[data-vehicle-card]");
       if (card) openVehicleForm(card);
     });
-
-    vehicleSearchInput?.addEventListener("input", updateVehicleCollection);
 
     vehiclePlateColorButtons.forEach((button) => {
       button.addEventListener("click", () => {
