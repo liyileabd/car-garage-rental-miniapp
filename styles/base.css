@@ -6375,12 +6375,8 @@
       text-align: center;
     }
 
-    .vehicle-swap-select-page .subpage-titlebar {
-      display: grid;
-    }
-
     .vehicle-swap-select-page .content {
-      top: 56px;
+      top: 0;
       padding: 14px;
       background: #f5f7fa;
     }
