@@ -1722,7 +1722,7 @@ const screens = document.querySelectorAll("[data-screen]");
         if (isActive) dot.setAttribute("aria-current", "page");
         else dot.removeAttribute("aria-current");
       });
-      if (rentNoticePageStatus) rentNoticePageStatus.textContent = `第 ${nextPage + 1} / ${rentNoticePages.length} 页`;
+      if (rentNoticePageStatus) rentNoticePageStatus.textContent = `第 ${nextPage + 1} / ${rentNoticePages.length} 份告知书`;
       if (rentNoticePreviousPageButton) rentNoticePreviousPageButton.disabled = nextPage === 0;
       if (rentNoticeNextPageButton) rentNoticeNextPageButton.disabled = nextPage === rentNoticePages.length - 1;
       updateRentNoticeNextState();
