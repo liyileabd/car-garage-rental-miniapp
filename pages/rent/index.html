@@ -197,12 +197,6 @@
 <div class="phone-block" data-screen="rentVehicleSelect">
         <div class="screen-label">选择车辆</div>
         <article class="phone garage-list-page rent-vehicle-select-page" aria-label="选择办理车辆界面">
-          <header class="subpage-titlebar">
-            <button class="back-btn" type="button" data-rent-vehicle-picker-back aria-label="返回选择车辆和租期">‹</button>
-            选择办理车辆
-            <button class="subpage-complete" type="button" data-rent-vehicle-picker-complete disabled>完成</button>
-          </header>
-
           <div class="content">
             <div class="rent-vehicle-options" role="group" aria-label="选择办理车辆，最多两辆">
               <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
@@ -239,6 +233,9 @@
               </button>
             </div>
             <div class="rent-vehicle-empty">暂未办理车辆，请先在车辆管理中新增车辆</div>
+            <div class="rent-vehicle-picker-footer">
+              <button class="rent-next-btn" type="button" data-rent-vehicle-picker-complete disabled>完成</button>
+            </div>
           </div>
         </article>
       </div>

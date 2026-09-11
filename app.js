@@ -11,6 +11,13 @@ const screens = document.querySelectorAll("[data-screen]");
     const homeLoginActions = document.querySelectorAll("[data-home-login-action]");
     const personalLoginActions = document.querySelectorAll("[data-personal-login-action]");
     const personalInfoActions = document.querySelectorAll("[data-personal-info-action]");
+    const supportActions = document.querySelectorAll("[data-support-action]");
+    const supportBackButtons = document.querySelectorAll("[data-support-back]");
+    const supportCallButton = document.querySelector("[data-support-call]");
+    const rentReminderActions = document.querySelectorAll("[data-rent-reminder-action]");
+    const rentReminderBackButtons = document.querySelectorAll("[data-rent-reminder-back]");
+    const rentReminderEnable = document.querySelector("[data-rent-reminder-enable]");
+    const rentReminderStatus = document.querySelector("[data-rent-reminder-status]");
     const personalInfoBackButtons = document.querySelectorAll("[data-personal-info-back]");
     const aboutActions = document.querySelectorAll("[data-about-action]");
     const settingsActions = document.querySelectorAll("[data-settings-action]");
@@ -87,7 +94,7 @@ const screens = document.querySelectorAll("[data-screen]");
     const homeRentPlace = document.querySelector("[data-home-rent-place]");
     const homeRentRenew = document.querySelector("[data-home-rent-renew]");
     const homeRentRemaining = document.querySelector("[data-home-rent-remaining]");
-    const homeRentEnd = document.querySelector("[data-home-rent-end]");
+const homeRentEnd = document.querySelector("[data-home-rent-end]");
     const rentSelectedName = document.querySelector("[data-rent-selected-name]");
     const rentSelectedPrice = document.querySelector("[data-rent-selected-price]");
     const rentSelectedVehicles = document.querySelector("[data-rent-selected-vehicles]");
@@ -731,7 +738,6 @@ const screens = document.querySelectorAll("[data-screen]");
           plate: "闽D 12345",
           vehicles: [
             { plate: "闽D 12345", color: "蓝牌", colorCode: "02" },
-            { plate: "闽D 13579", color: "蓝牌", colorCode: "02" },
           ],
           start: "2026-08-07",
           end: "2026-09-06",
@@ -763,7 +769,7 @@ const screens = document.querySelectorAll("[data-screen]");
           months: 1,
           createdAt: "2026-08-07 15:02",
           paymentAt: "2026-08-07 15:05",
-          rentalStatus: "有效",
+          rentalStatus: "过期",
         },
         {
           orderNo: "AS202608250016",
@@ -775,7 +781,7 @@ const screens = document.querySelectorAll("[data-screen]");
           months: 3,
           createdAt: "2026-08-25 10:22",
           paymentAt: "2026-08-25 10:25",
-          rentalStatus: "待生效",
+          rentalStatus: "过期",
         },
         {
           orderNo: "AS202607010004",
@@ -1208,6 +1214,17 @@ const screens = document.querySelectorAll("[data-screen]");
       toastTimer = setTimeout(() => {
         document.body.dataset.toast = "hidden";
       }, 1700);
+    }
+
+    function showRentReminderPrompt(message) {
+      const overlay = document.createElement("div");
+      overlay.className = "rent-reminder-modal";
+      overlay.innerHTML = `<div class="rent-reminder-backdrop"></div><section class="rent-reminder-panel" role="dialog" aria-modal="true"><h3>开启月租到期提醒</h3><p>${message}</p><div class="rent-reminder-actions"><button type="button" data-reminder-cancel>暂不开启</button><button type="button" data-reminder-confirm>开启提醒</button></div></section>`;
+      const phone = document.querySelector('.phone-block.is-active .phone') || document.querySelector('.phone');
+      (phone || document.body).appendChild(overlay);
+      overlay.querySelector("[data-reminder-cancel]")?.addEventListener("click", () => overlay.remove());
+      overlay.querySelector(".rent-reminder-backdrop")?.addEventListener("click", () => overlay.remove());
+      overlay.querySelector("[data-reminder-confirm]")?.addEventListener("click", () => { overlay.remove(); showTab("rentReminder"); });
     }
 
     function assignInitialAccountVehicles() {
@@ -1904,11 +1921,11 @@ const screens = document.querySelectorAll("[data-screen]");
         const tag = card.querySelector(".vehicle-bind-tag");
         if (tag) {
           tag.hidden = !active;
-          tag.textContent = active ? "月租使用中" : "";
+          tag.textContent = active ? "月租生效中，不可解绑车辆" : "";
           tag.classList.toggle("monthly-active", active);
         }
         const plate = card.dataset.plate || "车辆";
-        card.setAttribute("aria-label", `${active ? "查看月租使用中" : "查看"}${plate}车辆信息`);
+        card.setAttribute("aria-label", `${active ? "月租生效中，不可解绑车辆；查看" : "查看"}${plate}车辆信息`);
       });
     }
 
@@ -3836,7 +3853,8 @@ const screens = document.querySelectorAll("[data-screen]");
       syncVehicleMonthlyState();
       syncHomeMonthlyCard();
       showTab("home");
-      showToast("支付成功");
+      showToast("续费成功");
+      showRentReminderPrompt("月租续费成功！我们将在月租到期前 7 天提醒您及时续费。是否开启提醒？");
     }
 
     function submitRefund() {
@@ -4418,6 +4436,7 @@ const screens = document.querySelectorAll("[data-screen]");
         syncHomeMonthlyCard();
         showTab("home");
         showToast("支付成功");
+        showRentReminderPrompt("月租办理成功！我们将在月租到期前 7 天提醒您及时续费。是否开启提醒？");
       });
     }
 
@@ -4768,6 +4787,17 @@ const screens = document.querySelectorAll("[data-screen]");
 
     personalInfoActions.forEach((action) => {
       action.addEventListener("click", openPersonalInfo);
+    });
+
+    supportActions.forEach((action) => action.addEventListener("click", () => showTab("support")));
+    supportBackButtons.forEach((button) => button.addEventListener("click", () => showTab("personal")));
+    rentReminderActions.forEach((action) => action.addEventListener("click", () => showTab("rentReminder")));
+    rentReminderBackButtons.forEach((button) => button.addEventListener("click", () => showTab("personal")));
+    rentReminderEnable?.addEventListener("click", () => {
+      if (rentReminderStatus) rentReminderStatus.textContent = "已开启";
+      rentReminderEnable.setAttribute("aria-pressed", "true");
+      rentReminderEnable.classList.add("is-on");
+      showToast("已开启月租到期提醒");
     });
 
     personalAvatarAction?.addEventListener("click", () => {

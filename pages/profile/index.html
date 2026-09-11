@@ -80,6 +80,7 @@
                 <button class="settings-row personal-service-row" type="button" data-order-list-action><span class="row-leading"><svg class="icon"><use href="#i-order"></use></svg>我的订单</span><span class="chevron">›</span></button>
                 <button class="settings-row personal-service-row" type="button" data-invoice-list-action><span class="row-leading"><svg class="icon"><use href="#i-invoice"></use></svg>开票记录</span><span class="chevron">›</span></button>
                 <button class="settings-row personal-service-row" type="button" data-refund-list-action><span class="row-leading"><svg class="icon"><use href="#i-refund"></use></svg>退款记录</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-support-action><span class="row-leading"><svg class="icon"><use href="#i-headset"></use></svg>联系客服</span><span class="chevron">›</span></button>
               </div>
             </section>
 
@@ -95,6 +96,39 @@
             <button class="tab" type="button" data-tab="home" aria-label="切换到首页"><svg class="icon"><use href="#i-home"></use></svg><span>首页</span></button>
             <button class="tab active" type="button" data-tab="personal" aria-label="切换到个人中心"><svg class="icon"><use href="#i-user"></use></svg><span>个人中心</span></button>
           </nav>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="support">
+        <div class="screen-label">联系客服</div>
+        <article class="phone garage-list-page support-page" aria-label="联系客服界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-support-back aria-label="返回个人中心">‹</button>
+            联系客服
+          </header>
+          <div class="content support-content">
+            <section class="support-card support-contact-card">
+              <div class="support-phone-line"><span class="support-card-label">客服电话：</span><strong>0592-1234567</strong></div>
+              <p class="support-hours">工作日 09:00–18:00 为您提供咨询服务</p>
+            </section>
+            <section class="support-qr-card">
+              <strong>扫码添加客服</strong>
+              <div class="support-qr" aria-label="客服二维码">客服二维码</div>
+              <p class="support-hours">如有疑问，也可扫码联系在线客服</p>
+            </section>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentReminder">
+        <div class="screen-label">月租到期提醒</div>
+        <article class="phone garage-list-page support-page" aria-label="月租到期提醒界面">
+          <header class="subpage-titlebar"><button class="back-btn" type="button" data-rent-reminder-back aria-label="返回个人中心">‹</button>月租到期提醒</header>
+          <div class="content support-content">
+            <section class="settings-group reminder-settings-group">
+              <button class="settings-row reminder-switch-row" type="button" data-rent-reminder-enable aria-pressed="false"><span>月租到期提醒</span><i class="reminder-switch"><b></b></i></button>
+            </section>
+          </div>
         </article>
       </div>
 
@@ -141,6 +175,9 @@
             <section class="settings-group">
               <button class="settings-row" type="button" data-account-manage-action>
                 <span>账号管理</span><span class="chevron">›</span>
+              </button>
+              <button class="settings-row" type="button" data-rent-reminder-action>
+                <span>订阅管理</span><span class="chevron">›</span>
               </button>
             </section>
 

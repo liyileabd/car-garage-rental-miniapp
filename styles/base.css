@@ -717,6 +717,7 @@
       padding: 12px;
     }
 
+
     .home-rent-empty {
       min-height: 72px;
       display: flex;
@@ -2349,6 +2350,12 @@
       display: grid;
       grid-template-columns: repeat(4, 72px);
       gap: 8px;
+    }
+
+    .vehicle-photo-item {
+      position: relative;
+      width: 72px;
+      height: 72px;
     }
 
     .vehicle-photo-upload,
@@ -4276,31 +4283,20 @@
       display: none;
     }
 
-    .rent-vehicle-select-page .subpage-titlebar {
-      display: grid;
-    }
-
     .rent-vehicle-select-page .content {
-      top: 56px;
+      top: 0;
+      bottom: 0;
+      padding-bottom: 16px;
     }
 
-    .rent-vehicle-select-page .subpage-complete {
-      position: absolute;
-      top: 50%;
-      right: 14px;
-      min-width: 52px;
-      min-height: 34px;
-      transform: translateY(-50%);
-      border: 0;
-      color: var(--primary);
-      background: transparent;
-      font: inherit;
-      font-size: 15px;
-      font-weight: 800;
+    .rent-vehicle-picker-footer {
+      position: static;
+      margin-top: 16px;
+      padding: 0;
     }
 
-    .rent-vehicle-select-page .subpage-complete:disabled {
-      color: #a7b2c1;
+    .rent-vehicle-picker-footer .rent-next-btn {
+      width: 100%;
     }
 
     .login .content,
@@ -4934,6 +4930,23 @@
       width: 30px;
       height: 30px;
     }
+
+    .support-content { padding: 24px 16px; background: #f5f7fa; }
+    .support-card, .support-qr-card { border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(37, 69, 111, 0.08); }
+    .support-contact-card { gap: 10px; }
+    .support-hours { margin: -4px 0 2px; color: #8996a8; font-size: 13px; text-align: left; }
+    .support-qr-card .support-hours { margin: 0; text-align: center; }
+    .support-icon { width: 58px; height: 58px; margin: 0 auto 12px; border-radius: 50%; display: grid; place-items: center; color: var(--primary); background: #dceaff; }
+    .support-icon .icon { width: 30px; height: 30px; }
+    .support-card { margin-top: 14px; padding: 18px; display: grid; gap: 10px; }
+    .support-card-label { color: #8996a8; font-size: 13px; }
+    .support-phone-line { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+    .support-phone-line .support-card-label { color: #718097; font-size: 15px; font-weight: 700; }
+    .support-phone-line strong { color: #2f7cf6; font-size: 18px; letter-spacing: .5px; font-weight: 800; }
+    .support-call-button { width: 100%; height: 42px; border: 0; border-radius: 10px; color: #fff; background: var(--primary); font: inherit; font-weight: 750; }
+    .support-qr-card { margin-top: 14px; padding: 20px; text-align: center; color: #26354b; }
+    .support-qr-card > strong { display: block; margin-bottom: 12px; color: #26354b; font-size: 16px; }
+    .support-qr { position: relative; display: grid; place-items: center; width: 128px; height: 128px; margin: 0 auto 14px; border: 1px solid #d9e0e8; border-radius: 4px; color: #8996a8; background: #f8fafc; font-size: 13px; }
 
     .rent-prerequisite-section {
       margin-top: 12px;
@@ -6582,3 +6595,21 @@
       }
     }
   
+
+    .phone { position: relative; }
+    .rent-reminder-modal { position: absolute; inset: 0; z-index: 50; display: grid; align-items: end; overflow: hidden; border-radius: inherit; }
+    .rent-reminder-backdrop { position: absolute; inset: 0; background: rgba(15, 25, 40, 0.46); }
+    .rent-reminder-panel { position: relative; width: 100%; padding: 22px 18px calc(18px + env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0; background: #fff; box-shadow: 0 -8px 30px rgba(20, 40, 70, 0.16); }
+    .rent-reminder-panel h3 { margin: 0; color: #172033; font-size: 18px; }
+    .rent-reminder-panel p { margin: 10px 0 18px; color: #718097; font-size: 14px; line-height: 1.6; }
+    .rent-reminder-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .rent-reminder-actions button { height: 42px; border: 0; border-radius: 10px; font: inherit; font-weight: 750; }
+    .rent-reminder-actions [data-reminder-cancel] { color: #5e6e84; background: #eef2f7; }
+    .rent-reminder-actions [data-reminder-confirm] { color: #fff; background: var(--primary); }
+
+    .settings-group-title { padding: 0 14px 8px; color: #8996a8; font-size: 13px; }
+    .reminder-switch-row { width: 100%; min-height: 54px; padding: 0 14px; border: 0; display: flex; align-items: center; justify-content: space-between; color: #26354b; background: #fff; font: inherit; font-weight: 750; text-align: left; }
+    .reminder-switch { position: relative; width: 48px; height: 28px; border-radius: 16px; background: #c9d2df; }
+    .reminder-switch b { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.18); transition: transform .2s; }
+    .reminder-switch-row.is-on .reminder-switch { background: var(--primary); }
+    .reminder-switch-row.is-on .reminder-switch b { transform: translateX(20px); }
