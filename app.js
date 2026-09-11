@@ -3714,9 +3714,6 @@ const screens = document.querySelectorAll("[data-screen]");
         <div class="order-detail-row"><span>凭证类型</span><strong>${documentType}</strong></div>
         <div class="order-detail-row"><span>小区</span><strong class="order-detail-location">${escapeHtml(order.community)}</strong></div>
         <div class="order-detail-row"><span>办理车辆</span><strong>${escapeHtml(orderVehicleText(order, { compact: true }))}</strong></div>
-        <div class="order-detail-row"><span>${isNontax ? "收费项目" : "开票内容"}</span><strong>月租车位缴费</strong></div>
-        <div class="order-detail-row"><span>${isNontax ? "票据金额" : "开票金额"}</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
-        ${partyRow}
         ${!isDone ? `<div class="order-detail-row"><span>处理状态</span><strong>${invoiceProcessingLabel(order)}</strong></div>` : ""}`;
       invoiceResultFile.hidden = !isDone;
       if (isDone) {
