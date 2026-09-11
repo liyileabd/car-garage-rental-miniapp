@@ -3726,7 +3726,7 @@ const screens = document.querySelectorAll("[data-screen]");
         const files = Array.isArray(order.invoiceFiles) && order.invoiceFiles.length
           ? order.invoiceFiles
           : (order.invoiceNumber ? [{ number: order.invoiceNumber, completedAt: order.invoiceCompletedAt, type: order.invoiceType }] : []);
-        invoiceResultFile.innerHTML = files.map((file) => `<button class="invoice-result-file-card" type="button" data-invoice-file-action><span class="icon-tile"><svg class="icon"><use href="#i-file"></use></svg></span><div><strong>${invoiceViewLabel(order)}</strong><span>${file.number || "电子凭证"}</span></div><span class="invoice-result-file-arrow">›</span></button>`).join("");
+        invoiceResultFile.innerHTML = files.map((file) => `<div class="invoice-result-file-item" data-invoice-file-action><span class="icon-tile"><svg class="icon"><use href="#i-file"></use></svg></span><div><strong>${invoiceViewLabel(order)}</strong><span>${file.number || "电子凭证"}</span></div><button type="button">查看</button></div>`).join("");
       }
     }
 
