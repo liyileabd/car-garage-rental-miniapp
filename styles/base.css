@@ -4818,6 +4818,7 @@
     }
 
     .personal-avatar-control {
+      justify-self: start;
       min-width: 0;
       margin-left: 0;
       padding: 0;
