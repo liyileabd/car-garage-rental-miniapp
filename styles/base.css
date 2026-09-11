@@ -4897,7 +4897,7 @@
       border: 0;
       display: inline-flex;
       align-items: center;
-      gap: 9px;
+      gap: 12px;
       color: #8b98a8;
       background: transparent;
       font: inherit;
@@ -4919,19 +4919,20 @@
     }
 
     .personal-avatar-preview {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       display: grid;
       place-items: center;
       overflow: hidden;
       color: var(--primary);
-      background: #eef5ff;
+      background: #dceaff;
+      box-shadow: inset 0 0 0 1px rgba(47, 124, 246, 0.08);
     }
 
     .personal-avatar-preview .icon {
-      width: 24px;
-      height: 24px;
+      width: 30px;
+      height: 30px;
     }
 
     .rent-prerequisite-section {
