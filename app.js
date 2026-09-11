@@ -4842,6 +4842,6 @@ const screens = document.querySelectorAll("[data-screen]");
     renderOrderList();
     renderOrderDetail();
     renderInvoiceList();
-    const initialTab = document.body.dataset.auth === "authed" ? "home" : "login";
+    const initialTab = "home";
     history.replaceState({ screen: initialTab, loginView: "main" }, "", location.href);
     showTab(initialTab, { pushHistory: false });
