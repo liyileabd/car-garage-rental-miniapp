@@ -1,0 +1,298 @@
+<div class="phone-block" data-screen="orderList">
+        <div class="screen-label">我的订单</div>
+        <article class="phone order-list-page" data-order-empty="false" aria-label="我的订单界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-order-list-back aria-label="返回上一页">‹</button>
+            我的订单
+          </header>
+
+          <div class="content">
+<nav class="order-tabs" aria-label="订单状态筛选">
+<button class="order-tab is-active" type="button" data-order-filter="all">全部</button>
+<button class="order-tab" type="button" data-order-filter="active">进行中</button>
+<button class="order-tab" type="button" data-order-filter="afterSales">售后</button>
+<button class="order-tab" type="button" data-order-filter="completed">已结束</button>
+</nav>
+<nav class="order-subtabs" data-order-subtabs aria-label="订单状态细分" hidden></nav>
+
+            <div class="order-list" data-order-list></div>
+            <div class="order-empty" data-order-empty>暂无符合条件的订单</div>
+          </div>
+
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="orderDetail">
+        <div class="screen-label">订单详情</div>
+        <article class="phone order-detail-page" aria-label="订单详情界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-order-detail-back aria-label="返回订单列表">‹</button>
+            订单详情
+          </header>
+
+          <div class="content">
+            <div data-order-detail-content></div>
+          </div>
+
+          <footer class="order-detail-footer" data-order-detail-footer></footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="orderRenew">
+        <div class="screen-label">月租续费</div>
+        <article class="phone order-workflow-page" aria-label="月租续费界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-order-workflow-back aria-label="返回订单详情">‹</button>
+            月租续费
+          </header>
+
+          <div class="content">
+            <section class="order-detail-section" aria-label="本次续费月租信息">
+              <h3>月租信息</h3>
+              <div class="order-detail-row"><span>小区</span><strong class="order-detail-location" data-renew-community>--</strong></div>
+              <div class="order-detail-row"><span>办理车辆</span><strong data-renew-plate>--</strong></div>
+            </section>
+
+            <section class="order-workflow-section">
+              <h3>选择续费期限</h3>
+              <input class="rent-input" type="number" data-renew-months min="1" max="12" step="1" value="1" inputmode="numeric" aria-label="续费月数">
+              <div class="renew-choice-grid" role="group" aria-label="续费月数">
+                <button class="renew-choice is-active" type="button" data-renew-month="1">1个月</button>
+                <button class="renew-choice" type="button" data-renew-month="3">3个月</button>
+                <button class="renew-choice" type="button" data-renew-month="6">半年</button>
+                <button class="renew-choice" type="button" data-renew-month="12">1年</button>
+              </div>
+            </section>
+
+            <section class="order-workflow-section">
+              <h3>续费明细</h3>
+              <div class="order-field-row"><span>续费开始日期</span><strong data-renew-start>--</strong></div>
+              <div class="order-field-row"><span>续费截止日期</span><strong data-renew-end>--</strong></div>
+              <div class="order-field-row"><span>应付金额</span><strong class="amount"><span data-renew-amount>--</span> 元</strong></div>
+            </section>
+          </div>
+
+          <footer class="order-workflow-footer">
+            <button class="order-workflow-submit" type="button" data-renew-submit>提交并支付</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="orderRefund">
+        <div class="screen-label">申请退款</div>
+        <article class="phone order-workflow-page" aria-label="申请退款界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-order-workflow-back aria-label="返回订单详情">‹</button>
+            申请退款
+          </header>
+
+          <div class="content">
+            <section class="order-detail-section" aria-label="本次退款月租信息">
+              <h3>月租信息</h3>
+              <div class="order-detail-row"><span>小区</span><strong class="order-detail-location" data-refund-community>--</strong></div>
+              <div class="order-detail-row"><span>办理车辆</span><strong data-refund-plate>--</strong></div>
+            </section>
+
+            <section class="order-workflow-section">
+              <h3>退款明细</h3>
+              <div class="order-field-row"><span>原支付金额</span><strong><span data-refund-paid-amount>--</span> 元</strong></div>
+              <div class="order-field-row"><span>剩余租期</span><strong data-refund-remaining-term>--</strong></div>
+              <div class="order-field-row"><span>预计退款金额</span><strong class="amount"><span data-refund-estimate>--</span> 元</strong></div>
+            </section>
+
+            <section class="order-workflow-section">
+              <h3>退款原因 <span style="color:#dc6047">*</span></h3>
+              <div class="refund-reason-grid" role="group" aria-label="选择退款原因">
+                <button class="refund-reason is-active" type="button" data-refund-reason="不再使用月租">不再使用月租</button>
+                <button class="refund-reason" type="button" data-refund-reason="车辆已更换">车辆已更换</button>
+                <button class="refund-reason" type="button" data-refund-reason="搬离小区">搬离小区</button>
+                <button class="refund-reason" type="button" data-refund-reason="其他原因">其他原因</button>
+              </div>
+              <textarea class="refund-note-input" data-refund-note maxlength="100" placeholder="补充说明（选填，最多100字）"></textarea>
+            </section>
+
+            <section class="order-workflow-section" aria-label="退款收款信息">
+              <button class="refund-account-entry" type="button" data-refund-account-open>
+                <span>退款账户</span>
+                <span class="refund-account-entry-value"><b data-refund-account-summary>请填写</b><i>›</i></span>
+              </button>
+            </section>
+
+            <p class="order-workflow-tip">实际退款金额以后台审批结果和后续财务线下处理为准。</p>
+          </div>
+
+          <footer class="order-workflow-footer">
+            <button class="order-workflow-submit" type="button" data-refund-submit>提交退款申请</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="refundAccount">
+        <div class="screen-label">退款收款信息</div>
+        <article class="phone personal-info-page refund-account-page" aria-label="退款账户界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-refund-account-back aria-label="返回申请退款">‹</button>
+            退款收款信息
+          </header>
+
+          <div class="content">
+            <h2 class="personal-info-head">收款信息</h2>
+            <section class="personal-info-section">
+              <div class="personal-info-field refund-account-payer-field">
+                <label>收款人</label>
+                <strong data-refund-account-payer>--</strong>
+              </div>
+              <div class="personal-info-field">
+                <label for="refund-bank-input">开户行 <em>*</em></label>
+                <input id="refund-bank-input" class="personal-info-input" data-refund-bank-input maxlength="60" placeholder="请填写开户行及支行" aria-label="开户行">
+              </div>
+              <div class="personal-info-field">
+                <label for="refund-bank-account-input">银行卡号 <em>*</em></label>
+                <input id="refund-bank-account-input" class="personal-info-input" data-refund-bank-account-input inputmode="numeric" maxlength="30" placeholder="请输入银行卡号" aria-label="银行卡号">
+              </div>
+              <div class="personal-info-field">
+                <label for="refund-account-phone-input">联系电话 <em>*</em></label>
+                <input id="refund-account-phone-input" class="personal-info-input" data-refund-account-phone-input inputmode="tel" maxlength="11" placeholder="请输入联系电话" aria-label="联系电话">
+              </div>
+            </section>
+            <p class="refund-account-note">收款人已按订单付款人锁定，账户信息仅用于线下退款处理。核对不一致时，将提示修改后重新提交。</p>
+          </div>
+
+          <footer class="personal-info-footer">
+            <button class="personal-info-save" type="button" data-refund-account-save>保存</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="orderInvoice">
+        <div class="screen-label" data-invoice-screen-label>申请开票</div>
+        <article class="phone order-workflow-page" data-invoice-page aria-label="申请开票界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-order-workflow-back aria-label="返回订单详情">‹</button>
+            <span data-invoice-page-title>申请开票</span>
+          </header>
+
+          <div class="content">
+            <section class="order-workflow-section">
+              <h3 data-invoice-summary-title>开票内容</h3>
+              <div class="order-field-row"><span>凭证类型</span><strong data-invoice-voucher-type>--</strong></div>
+              <div class="order-field-row"><span data-invoice-content-label>开票内容</span><strong>月租车位缴费</strong></div>
+              <div class="order-field-row"><span data-invoice-amount-label>开票金额</span><strong class="amount" data-invoice-system-amount>--</strong></div>
+            </section>
+
+            <section class="order-workflow-section" data-invoice-vat-section>
+              <h3>发票类型</h3>
+              <div class="invoice-type-grid" role="group" aria-label="选择发票类型">
+                <button class="invoice-type-button is-active" type="button" data-invoice-type="personal">个人普票<small>填写个人抬头</small></button>
+                <button class="invoice-type-button" type="button" data-invoice-type="company">企业专票<small>填写企业开票资料</small></button>
+              </div>
+            </section>
+
+            <section class="order-workflow-section invoice-personal-fields" data-invoice-personal-fields>
+              <h3>个人开票信息</h3>
+              <label class="order-field-row"><span>个人抬头 <em class="invoice-required">*</em></span><input class="order-field-input" data-invoice-personal-name maxlength="50" aria-label="个人抬头"></label>
+              <label class="order-field-row"><span>联系手机号</span><input class="order-field-input" data-invoice-phone inputmode="tel" maxlength="11" aria-label="联系手机号"></label>
+            </section>
+
+            <section class="order-workflow-section invoice-company-fields" data-invoice-company-fields hidden>
+              <h3 data-invoice-company-title>企业开票信息</h3>
+              <p class="invoice-company-tip" data-invoice-company-tip></p>
+              <div class="invoice-company-form">
+                <label class="invoice-company-row"><span>企业名称<em class="invoice-required">*</em></span><input class="order-field-input" data-invoice-company-field="name" data-invoice-company-required="base" data-invoice-company-label="企业名称" maxlength="100" placeholder="请输入企业名称" aria-label="企业名称"></label>
+                <label class="invoice-company-row"><span>统一社会信用代码<em class="invoice-required">*</em></span><input class="order-field-input" data-invoice-company-field="taxId" data-invoice-company-required="base" data-invoice-company-label="统一社会信用代码" maxlength="18" autocapitalize="characters" placeholder="请输入统一社会信用代码" aria-label="统一社会信用代码"></label>
+                <label class="invoice-company-row"><span>企业地址<em class="invoice-required" data-invoice-special-required hidden>*</em></span><input class="order-field-input" data-invoice-company-field="address" data-invoice-company-required="special" data-invoice-company-label="企业地址" maxlength="100" placeholder="" aria-label="企业地址"></label>
+                <label class="invoice-company-row"><span>企业电话<em class="invoice-required" data-invoice-special-required hidden>*</em></span><input class="order-field-input" data-invoice-company-field="phone" data-invoice-company-required="special" data-invoice-company-label="企业电话" maxlength="20" placeholder="" inputmode="tel" aria-label="企业电话"></label>
+                <label class="invoice-company-row"><span>开户银行<em class="invoice-required" data-invoice-special-required hidden>*</em></span><input class="order-field-input" data-invoice-company-field="bank" data-invoice-company-required="special" data-invoice-company-label="开户银行" maxlength="50" placeholder="" aria-label="开户银行"></label>
+                <label class="invoice-company-row"><span>银行账号<em class="invoice-required" data-invoice-special-required hidden>*</em></span><input class="order-field-input" data-invoice-company-field="account" data-invoice-company-required="special" data-invoice-company-label="银行账号" maxlength="30" placeholder="" inputmode="numeric" aria-label="银行账号"></label>
+              </div>
+            </section>
+
+            <section class="order-workflow-section invoice-nontax-section" data-invoice-nontax-section hidden>
+              <h3>缴款人信息</h3>
+              <div class="order-field-row"><span>缴款人</span><strong data-invoice-nontax-name>--</strong></div>
+              <div class="order-field-row"><span>联系手机号</span><strong data-invoice-nontax-phone>--</strong></div>
+              <p class="order-workflow-tip">票据将按当前缴款人信息开具，完成后可查看电子票据。</p>
+            </section>
+          </div>
+
+          <footer class="order-workflow-footer">
+            <button class="order-workflow-submit" type="button" data-invoice-submit>提交开票申请</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="invoiceList">
+        <div class="screen-label">开票记录</div>
+        <article class="phone invoice-list-page" data-invoice-empty="false" aria-label="开票记录界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-invoice-list-back aria-label="返回上一页">‹</button>
+            开票记录
+          </header>
+
+          <div class="content">
+            <nav class="invoice-tabs" aria-label="开票状态筛选">
+              <button class="invoice-tab is-active" type="button" data-invoice-filter="all">全部</button>
+              <button class="invoice-tab" type="button" data-invoice-filter="processing">处理中</button>
+              <button class="invoice-tab" type="button" data-invoice-filter="done">已完成</button>
+            </nav>
+            <nav class="invoice-type-tabs" aria-label="票据类型筛选">
+              <button class="invoice-type-tab is-active" type="button" data-invoice-type-filter="all">全部</button>
+              <button class="invoice-type-tab" type="button" data-invoice-type-filter="nontax">非税票据</button>
+              <button class="invoice-type-tab" type="button" data-invoice-type-filter="vat">增值税发票</button>
+            </nav>
+            <div class="invoice-record-list" data-invoice-record-list></div>
+            <div class="invoice-empty" data-invoice-empty>暂无开票记录</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="invoiceResult">
+        <div class="screen-label" data-invoice-result-screen-label>开票申请详情</div>
+        <article class="phone invoice-result-page" data-invoice-result-page aria-label="开票申请详情界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-invoice-result-back aria-label="返回开票记录">‹</button>
+            <span data-invoice-result-title>开票申请详情</span>
+          </header>
+
+          <div class="content">
+            <section class="order-detail-section" data-invoice-result-detail></section>
+            <section class="invoice-result-file" data-invoice-result-file></section>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="refundList">
+        <div class="screen-label">退款记录</div>
+        <article class="phone refund-list-page" data-refund-empty="false" aria-label="退款记录界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-refund-list-back aria-label="返回上一页">‹</button>
+            退款记录
+          </header>
+
+          <div class="content">
+            <nav class="refund-tabs" aria-label="退款状态筛选">
+              <button class="refund-tab is-active" type="button" data-refund-filter="all">全部</button>
+              <button class="refund-tab" type="button" data-refund-filter="pending">审批中</button>
+              <button class="refund-tab" type="button" data-refund-filter="approved">已通过</button>
+              <button class="refund-tab" type="button" data-refund-filter="rejected">未通过</button>
+            </nav>
+            <div class="refund-record-list" data-refund-record-list></div>
+            <div class="refund-empty" data-refund-empty>暂无退款记录</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="refundDetail">
+        <div class="screen-label">退款详情</div>
+        <article class="phone refund-detail-page" aria-label="退款详情界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-refund-detail-back aria-label="返回退款记录">‹</button>
+            退款详情
+          </header>
+
+          <div class="content">
+            <div data-refund-detail-content></div>
+          </div>
+          <footer class="order-workflow-footer refund-detail-footer" data-refund-detail-footer hidden></footer>
+        </article>
+      </div>

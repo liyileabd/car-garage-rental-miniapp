@@ -1,0 +1,88 @@
+<div class="phone-block" data-screen="login">
+        <div class="screen-label">登录</div>
+        <article class="phone login" aria-label="登录界面">
+          <div class="mini-capsule"><span></span><i></i><b></b></div>
+          <div class="status-bar">
+            <div>09:41</div>
+            <div class="status-icons">
+              <div class="signal"><i></i><i></i><i></i><i></i></div>
+              <div class="wifi"></div>
+              <div class="battery"></div>
+            </div>
+          </div>
+          <header class="login-titlebar">
+            <button class="back-btn" type="button" data-back-home aria-label="返回首页">‹</button>
+            <span class="title-main">登录安商房月租车缴费</span>
+            <span class="title-bind">手机号验证</span>
+            <span class="title-sms">验证码登录</span>
+          </header>
+
+          <div class="content">
+            <div class="login-wrap">
+              <section class="login-view is-active" data-login-view="main">
+                <div class="login-brand-center">
+                  <div class="brand-mark"><svg class="icon lg"><use href="#i-parking"></use></svg></div>
+                  <div class="brand-copy">
+                    <h1>安商房月租车缴费</h1>
+                    <p>小区车库月租名额线上办理</p>
+                  </div>
+                </div>
+
+                <div class="agreement inline login-main-agreement" data-agreement-toggle>
+                  <i class="agree-check"></i>
+                  <span>我已阅读并同意 <strong>《个人信息保护政策》</strong> <strong>《用户服务协议》</strong>，未注册手机号将自动注册</span>
+                </div>
+
+                <div class="login-actions">
+                  <button class="login-action" type="button" data-quick-login>微信快捷登录</button>
+                  <button class="login-action outline" type="button" data-open-sms>
+                    <svg class="icon sm"><use href="#i-user"></use></svg>
+                    验证码登录
+                  </button>
+                </div>
+              </section>
+
+              <section class="login-view" data-login-view="bind">
+                <div class="phone-form">
+                  <h1>首次微信快捷登录需要关联您的手机号</h1>
+                  <p>用于月租办理、订单查询和服务通知</p>
+                  <div class="phone-field">
+                    <div class="country-code">+86 <span>⌄</span></div>
+                    <input placeholder="请输入手机号" inputmode="tel" maxlength="11" value="13800006688" data-login-phone="bind">
+                  </div>
+                  <div class="phone-field code">
+                    <input placeholder="请输入验证码" inputmode="numeric" maxlength="6" value="123456" data-login-code="bind">
+                    <button class="code-link" type="button" data-login-code-action="bind">获取验证码</button>
+                  </div>
+                  <div class="agreement inline is-checked" data-agreement-toggle>
+                    <i class="agree-check"></i>
+                    <span>我已阅读并同意 <strong>《个人信息保护政策》</strong> <strong>《用户服务协议》</strong>，未注册手机号将自动注册</span>
+                  </div>
+                  <button class="login-action form-action" type="button" data-login-action>关联</button>
+                </div>
+              </section>
+
+              <section class="login-view" data-login-view="sms">
+                <div class="phone-form">
+                  <h1>验证码登录</h1>
+                  <p>未注册的手机号验证后将自动注册</p>
+                  <div class="phone-field">
+                    <div class="country-code">+86 <span>⌄</span></div>
+                    <input placeholder="请输入手机号" inputmode="tel" maxlength="11" value="13900008899" data-login-phone="sms">
+                  </div>
+                  <div class="phone-field code">
+                    <input placeholder="请输入验证码" inputmode="numeric" maxlength="6" value="123456" data-login-code="sms">
+                    <button class="code-link" type="button" data-login-code-action="sms">获取验证码</button>
+                  </div>
+                  <div class="agreement inline" data-agreement-toggle>
+                    <i class="agree-check"></i>
+                    <span>我已阅读并同意 <strong>《个人信息保护政策》</strong> <strong>《用户服务协议》</strong></span>
+                  </div>
+                  <button class="login-action form-action" type="button" data-login-action>注册/登录</button>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="toast" aria-live="polite">请先勾选并同意协议</div>
+        </article>
+      </div>

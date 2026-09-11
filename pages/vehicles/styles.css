@@ -1,0 +1,19 @@
+.vehicle-swap-guide {
+  margin: 2px 0 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f4f8ff;
+  color: #35506f;
+}
+.vehicle-swap-guide strong {
+  display: block;
+  color: #1f3552;
+  font-size: 14px;
+  line-height: 20px;
+}
+.vehicle-swap-guide p {
+  margin: 4px 0 0;
+  color: #6d8098;
+  font-size: 12px;
+  line-height: 18px;
+}

@@ -1,0 +1,189 @@
+<div class="phone-block" data-screen="personalInfo">
+        <div class="screen-label">个人信息</div>
+        <article class="phone personal-info-page" aria-label="个人信息界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-personal-info-back aria-label="返回个人中心">‹</button>
+            个人信息
+          </header>
+
+          <div class="content">
+            <h2 class="personal-info-head">个人信息</h2>
+            <section class="personal-info-section">
+              <div class="personal-info-field personal-avatar-field">
+                <label>头像</label>
+                <button class="personal-avatar-control" type="button" data-personal-avatar-action aria-label="更换头像">
+                  <span class="personal-avatar-preview" data-profile-avatar>
+                    <svg class="icon"><use href="#i-user"></use></svg>
+                    <img alt="用户头像" hidden>
+                  </span>
+                  <span>更换头像 <b>›</b></span>
+                </button>
+                <input type="file" accept="image/*" data-personal-avatar-file hidden>
+              </div>
+              <div class="personal-info-field">
+                <label for="personal-nickname-input">昵称</label>
+                <input id="personal-nickname-input" class="personal-info-input" data-personal-nickname-input value="湖里车主" maxlength="16" placeholder="请输入昵称" autocomplete="nickname">
+              </div>
+              <div class="personal-info-field">
+                <label for="personal-name-input">真实姓名 <em>*</em></label>
+                <input id="personal-name-input" class="personal-info-input" data-personal-name-input value="张先生" maxlength="20" placeholder="请输入真实姓名" autocomplete="name">
+              </div>
+              <div class="personal-info-field">
+                <label for="personal-phone-input">手机号 <em>*</em></label>
+                <input id="personal-phone-input" class="personal-info-input" data-personal-phone-input value="13800006688" placeholder="请输入手机号" inputmode="tel" maxlength="11" autocomplete="tel">
+              </div>
+              <div class="personal-info-field">
+                <label for="personal-id-input">身份证号 <em>*</em></label>
+                <input id="personal-id-input" class="personal-info-input" data-personal-id-input value="350211199001011234" placeholder="请输入身份证号" maxlength="18" autocomplete="off">
+              </div>
+            </section>
+          </div>
+
+          <footer class="personal-info-footer">
+            <button class="personal-info-save" type="button" data-personal-info-save>保存修改</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="personal">
+        <div class="screen-label">个人中心</div>
+        <article class="phone personal" aria-label="个人中心界面">
+          <div class="mini-capsule"><span></span><i></i><b></b></div>
+          <div class="status-bar">
+            <div>09:41</div>
+            <div class="status-icons">
+              <div class="signal"><i></i><i></i><i></i><i></i></div>
+              <div class="wifi"></div>
+              <div class="battery"></div>
+            </div>
+          </div>
+          <div class="content">
+            <section class="personal-hero">
+              <section class="card profile-card" data-personal-login-action>
+                <div class="avatar" data-profile-avatar>
+                  <svg class="icon lg"><use href="#i-user"></use></svg>
+                  <img alt="用户头像" hidden>
+                </div>
+                <div>
+                  <div class="profile-main">
+                    <h2><span class="authed-name">湖里车主</span><span class="guest-name">登录/注册</span></h2>
+                  </div>
+                  <div class="phone-mask"><span class="authed-phone">138****6688</span><span class="guest-tip">点击登录/注册，开启更多功能</span></div>
+                </div>
+              </section>
+            </section>
+
+            <section class="personal-services" aria-label="我的服务">
+              <h3 class="service-title">我的服务</h3>
+              <div class="personal-service-list">
+                <button class="settings-row personal-service-row" type="button" data-personal-info-action><span class="row-leading"><svg class="icon"><use href="#i-user"></use></svg>个人信息</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-vehicle-manage-action><span class="row-leading"><svg class="icon"><use href="#i-car"></use></svg>车辆管理</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-order-list-action><span class="row-leading"><svg class="icon"><use href="#i-order"></use></svg>我的订单</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-invoice-list-action><span class="row-leading"><svg class="icon"><use href="#i-invoice"></use></svg>开票记录</span><span class="chevron">›</span></button>
+                <button class="settings-row personal-service-row" type="button" data-refund-list-action><span class="row-leading"><svg class="icon"><use href="#i-refund"></use></svg>退款记录</span><span class="chevron">›</span></button>
+              </div>
+            </section>
+
+            <section class="personal-settings-entry" aria-label="设置入口">
+              <button class="personal-settings-row" type="button" data-settings-action>
+                <span class="row-leading"><svg class="icon"><use href="#i-settings"></use></svg>设置</span>
+                <span class="chevron">›</span>
+              </button>
+            </section>
+          </div>
+
+          <nav class="tabbar" aria-label="底部导航">
+            <button class="tab" type="button" data-tab="home" aria-label="切换到首页"><svg class="icon"><use href="#i-home"></use></svg><span>首页</span></button>
+            <button class="tab active" type="button" data-tab="personal" aria-label="切换到个人中心"><svg class="icon"><use href="#i-user"></use></svg><span>个人中心</span></button>
+          </nav>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="about">
+        <div class="screen-label">关于小程序</div>
+        <article class="phone garage-list-page about-page" aria-label="关于小程序界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-about-back aria-label="返回个人中心">‹</button>
+            关于小程序
+          </header>
+
+          <div class="content">
+            <section class="about-brand">
+              <div class="about-brand-mark"><svg class="icon lg"><use href="#i-parking"></use></svg></div>
+              <strong>安商房月租车缴费</strong>
+              <span>版本 1.0.0</span>
+            </section>
+
+            <p class="about-description">为安商房小区已开放服务的车库提供月租办理、车辆管理、订单查询与电子票据服务。</p>
+
+            <section class="about-list">
+              <button class="about-row" type="button" data-policy-action="service">
+                <span>用户服务协议</span><span class="chevron">›</span>
+              </button>
+              <button class="about-row" type="button" data-policy-action="privacy">
+                <span>个人信息保护政策</span><span class="chevron">›</span>
+              </button>
+            </section>
+
+            <p class="about-copyright">Copyright © 2026 安商房小区月租车缴费</p>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="settings">
+        <div class="screen-label">设置</div>
+        <article class="phone garage-list-page settings-page" aria-label="设置界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-settings-back aria-label="返回个人中心">‹</button>
+            设置
+          </header>
+
+          <div class="content">
+            <section class="settings-group">
+              <button class="settings-row" type="button" data-account-manage-action>
+                <span>账号管理</span><span class="chevron">›</span>
+              </button>
+            </section>
+
+            <section class="settings-group">
+              <button class="settings-row" type="button" data-about-action>
+                <span>关于小程序</span><span class="chevron">›</span>
+              </button>
+            </section>
+
+            <section class="settings-group">
+              <button class="settings-row logout-row" type="button" data-logout-action>退出登录</button>
+            </section>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="accountManage">
+        <div class="screen-label">账号管理</div>
+        <article class="phone garage-list-page account-manage-page" aria-label="账号管理界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-account-manage-back aria-label="返回设置">‹</button>
+            账号管理
+          </header>
+
+          <div class="content">
+            <section class="settings-group">
+              <button class="settings-row account-delete-row" type="button" data-account-delete-action>
+                <span>注销账号</span><span class="chevron">›</span>
+              </button>
+            </section>
+          </div>
+
+          <section class="account-delete-dialog" data-account-delete-dialog aria-hidden="true" aria-label="注销账号确认">
+            <button class="account-delete-backdrop" type="button" data-account-delete-close aria-label="关闭注销账号确认"></button>
+            <div class="account-delete-panel" role="dialog" aria-modal="true" aria-labelledby="account-delete-title">
+              <h3 id="account-delete-title">确认注销账号？</h3>
+              <p>注销后将无法使用当前账号办理月租、查询订单，且无法恢复。</p>
+              <div class="account-delete-actions">
+                <button class="account-delete-cancel" type="button" data-account-delete-close>取消</button>
+                <button class="account-delete-confirm" type="button" data-account-delete-confirm>确认注销</button>
+              </div>
+            </div>
+          </section>
+        </article>
+      </div>

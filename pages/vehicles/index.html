@@ -1,0 +1,255 @@
+<div class="phone-block" data-screen="vehicleManage">
+        <div class="screen-label">车辆管理</div>
+        <article class="phone garage-list-page vehicle-manage" aria-label="车辆管理界面" data-vehicle-empty="false">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-manage-back aria-label="返回个人中心">‹</button>
+            车辆管理
+            <button class="title-icon-action" type="button" data-open-vehicle-form aria-label="新增车辆" title="新增车辆"><svg class="icon"><use href="#i-plus"></use></svg></button>
+          </header>
+
+          <div class="content">
+            <div class="vehicle-manage-list" data-vehicle-list>
+              <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 12345" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="白色" aria-label="查看闽D 12345车辆信息">
+                <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
+                <div class="vehicle-card-copy">
+                  <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 12345</strong><span class="vehicle-plate-tag">蓝牌</span></div>
+                  <div class="vehicle-meta-line">小型车 · 白色</div>
+                  <span class="vehicle-bind-tag" hidden></span>
+                </div>
+                <span class="vehicle-card-arrow">›</span>
+              </button>
+              <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 67890" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="黑色" aria-label="查看闽D 67890车辆信息">
+                <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
+                <div class="vehicle-card-copy">
+                  <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 67890</strong><span class="vehicle-plate-tag">蓝牌</span></div>
+                  <div class="vehicle-meta-line">小型车 · 黑色</div>
+                  <span class="vehicle-bind-tag" hidden></span>
+                </div>
+                <span class="vehicle-card-arrow">›</span>
+              </button>
+              <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D A24680" data-plate-color="绿牌" data-plate-color-code="26" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="银灰色" aria-label="查看闽D A24680车辆信息">
+                <div class="vehicle-card-visual green"><svg class="icon"><use href="#i-car"></use></svg></div>
+                <div class="vehicle-card-copy">
+                  <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D A24680</strong><span class="vehicle-plate-tag green">绿牌</span></div>
+                  <div class="vehicle-meta-line">新能源小型车 · 银灰色</div>
+                  <span class="vehicle-bind-tag" hidden></span>
+                </div>
+                <span class="vehicle-card-arrow">›</span>
+              </button>
+              <button class="vehicle-manage-card" type="button" data-vehicle-card data-plate="闽D 13579" data-plate-color="蓝牌" data-plate-color-code="02" data-grade="小型车" data-grade-code="1" data-vehicle-type-code="1" data-appearance="灰色" aria-label="查看闽D 13579车辆信息">
+                <div class="vehicle-card-visual"><svg class="icon"><use href="#i-car"></use></svg></div>
+                <div class="vehicle-card-copy">
+                  <div class="vehicle-plate-line"><strong class="vehicle-plate">闽D 13579</strong><span class="vehicle-plate-tag">蓝牌</span></div>
+                  <div class="vehicle-meta-line">小型车 · 灰色</div>
+                  <span class="vehicle-bind-tag" hidden></span>
+                </div>
+                <span class="vehicle-card-arrow">›</span>
+              </button>
+            </div>
+            <div class="vehicle-empty">未找到匹配的车辆</div>
+          </div>
+
+          <footer class="vehicle-add-footer">
+            <button class="vehicle-add-button" type="button" data-open-vehicle-form><svg class="icon sm"><use href="#i-plus"></use></svg>新增车辆</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="vehicleForm">
+        <div class="screen-label">新增车辆</div>
+        <article class="phone garage-list-page vehicle-form" aria-label="新增车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-form-back aria-label="返回车辆管理">‹</button>
+            <span data-vehicle-form-title>新增车辆</span>
+          </header>
+
+          <div class="content">
+            <section class="card vehicle-form-section vehicle-rent-profile-section" data-rent-vehicle-profile-section hidden>
+              <h3 class="vehicle-form-section-heading">个人信息</h3>
+              <label class="rent-prerequisite-field">
+                <span>真实姓名 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-name placeholder="请输入真实姓名" maxlength="20" autocomplete="name">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>手机号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-phone placeholder="请输入手机号" inputmode="tel" maxlength="11" autocomplete="tel">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>身份证号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-vehicle-profile-id-card placeholder="请输入身份证号" maxlength="18" autocomplete="off">
+              </label>
+            </section>
+
+            <section class="card vehicle-form-section">
+              <h3 class="vehicle-form-section-heading" data-rent-vehicle-bind-heading hidden>办理车辆</h3>
+              <div class="vehicle-field">
+                <label for="vehicle-plate-input">车牌号 <em>*</em></label>
+                <div class="plate-input-shell" data-plate-input-shell aria-label="车牌号码">
+                  <button class="plate-number-slot" type="button" data-plate-character="province" aria-label="选择省份简称"><span data-plate-character-value="province">闽</span></button>
+                  <button class="plate-number-slot" type="button" data-plate-character="letter" aria-label="选择地区字母"><span data-plate-character-value="letter">D</span></button>
+                  <span class="plate-separator" aria-hidden="true">·</span>
+                  <span class="plate-tail-field">
+                    <span class="plate-tail-cells" aria-hidden="true">
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell></span>
+                      <span class="plate-tail-cell is-empty" data-plate-tail-cell hidden></span>
+                    </span>
+                    <input id="vehicle-plate-input" class="plate-tail-input" type="text" data-vehicle-plate-input placeholder="请输入后5位" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="none" readonly aria-label="输入车牌后续号码">
+                  </span>
+                </div>
+              </div>
+
+              <div class="vehicle-field">
+                <span class="vehicle-field-label">车牌颜色 <em>*</em></span>
+                <button class="vehicle-select-row" type="button" data-open-plate-color-sheet aria-label="选择车牌颜色"><span class="vehicle-select-value"><i class="plate-color-dot" data-plate-color-dot></i><b data-plate-color-label>蓝色车牌</b></span><span class="chevron">›</span></button>
+              </div>
+
+              <div class="vehicle-field">
+                <span class="vehicle-field-label">车辆大小类型</span>
+                <div class="vehicle-choice-grid" role="group" aria-label="选择车辆大小类型">
+                  <button class="vehicle-choice" type="button" data-vehicle-grade="其他" data-vehicle-grade-code="0">其他</button>
+                  <button class="vehicle-choice is-active" type="button" data-vehicle-grade="小型车" data-vehicle-grade-code="1">小型车</button>
+                  <button class="vehicle-choice" type="button" data-vehicle-grade="大型车" data-vehicle-grade-code="2">大型车</button>
+                  <button class="vehicle-choice" type="button" data-vehicle-grade="中型车" data-vehicle-grade-code="3">中型车</button>
+                </div>
+              </div>
+
+              <div class="vehicle-field">
+                <label for="vehicle-appearance-input">车辆外观颜色</label>
+                <input id="vehicle-appearance-input" class="vehicle-text-input" data-vehicle-appearance-input maxlength="20" placeholder="如白色、黑色、银灰色">
+              </div>
+
+              <div class="vehicle-field">
+                <div class="vehicle-photo-head"><span class="vehicle-field-label">车辆照片</span><span class="vehicle-photo-count" data-vehicle-photo-count>0/6</span></div>
+                <div class="vehicle-photo-grid" data-vehicle-photo-grid>
+                  <button class="vehicle-photo-upload" type="button" data-vehicle-photo-upload><svg class="icon"><use href="#i-camera"></use></svg><span>上传</span></button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="plate-keyboard" data-plate-keyboard aria-label="车牌专用键盘">
+            <div class="plate-keyboard-head"><span data-plate-keyboard-title>输入车牌后续号码</span><span class="plate-keyboard-count" data-plate-keyboard-count>0/5</span></div>
+            <div class="plate-keyboard-grid" data-plate-keyboard-keys></div>
+            <div class="plate-keyboard-actions">
+              <button class="plate-keyboard-action clear" type="button" data-plate-key-clear>清空</button>
+              <button class="plate-keyboard-action delete" type="button" data-plate-key-delete aria-label="删除一位">⌫</button>
+              <button class="plate-keyboard-action done" type="button" data-plate-key-done>完成</button>
+            </div>
+          </section>
+
+          <section class="plate-color-sheet" data-plate-color-sheet aria-label="选择车牌颜色">
+            <div class="plate-sheet-backdrop" data-plate-color-close></div>
+            <div class="plate-region-panel">
+              <div class="plate-sheet-head"><strong>选择车牌颜色</strong><button class="plate-sheet-close" type="button" data-plate-color-close aria-label="关闭车牌颜色选择">×</button></div>
+              <div class="plate-color-option-grid" role="group" aria-label="车牌颜色选项">
+                <button class="plate-color-option is-active" type="button" data-vehicle-plate-color="蓝色车牌" data-vehicle-plate-color-code="02">蓝色车牌</button>
+                <button class="plate-color-option" type="button" data-vehicle-plate-color="黄色车牌" data-vehicle-plate-color-code="01">黄色车牌</button>
+                <button class="plate-color-option" type="button" data-vehicle-plate-color="小型新能源" data-vehicle-plate-color-code="26">小型新能源</button>
+                <button class="plate-color-option" type="button" data-vehicle-plate-color="大型新能源" data-vehicle-plate-color-code="26">大型新能源</button>
+                <button class="plate-color-option" type="button" data-vehicle-plate-color="黑色车牌" data-vehicle-plate-color-code="03">黑色车牌</button>
+                <button class="plate-color-option" type="button" data-vehicle-plate-color="白色车牌" data-vehicle-plate-color-code="20">白色车牌</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="vehicle-claim-dialog" data-vehicle-claim-overlay aria-hidden="true" aria-label="车辆已被绑定提示">
+            <div class="vehicle-claim-backdrop" data-vehicle-claim-close></div>
+            <div class="vehicle-claim-panel" role="dialog" aria-modal="true" aria-labelledby="vehicle-claim-title">
+              <h3 id="vehicle-claim-title" data-vehicle-claim-title>该车辆已被绑定</h3>
+              <p class="vehicle-claim-plate" data-vehicle-claim-plate>闽D 88888</p>
+              <p data-vehicle-claim-message>该车牌已完成绑定，暂不能重复添加。请核对车牌号和颜色；如需处理绑定问题，请联系客服。</p>
+              <div class="vehicle-claim-actions">
+                <button class="vehicle-claim-cancel" type="button" data-vehicle-claim-close data-vehicle-claim-secondary>返回修改</button>
+                <button class="vehicle-claim-support" type="button" data-vehicle-claim-primary>联系客服</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="vehicle-photo-preview" data-vehicle-photo-preview aria-hidden="true">
+            <button class="vehicle-photo-preview-close" type="button" data-vehicle-photo-preview-close aria-label="关闭照片预览">×</button>
+            <div class="vehicle-photo-preview-image photo-sample-1" data-vehicle-photo-preview-image></div>
+            <span class="vehicle-photo-preview-label" data-vehicle-photo-preview-label>车辆照片 1/1</span>
+          </section>
+
+          <footer class="vehicle-form-footer">
+            <button class="vehicle-save-button" type="button" data-save-vehicle>保存车辆</button>
+            <button class="vehicle-unbind-button" type="button" data-unbind-vehicle>解绑车辆</button>
+            <p class="vehicle-locked-footer-message" data-vehicle-locked-message hidden>该车辆已关联月租，月租结束前不可修改或解绑</p>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="vehicleSwapSource">
+        <div class="screen-label">变更月租车辆</div>
+        <article class="phone garage-list-page vehicle-swap-select-page" aria-label="订单绑定车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-source-back aria-label="返回订单">‹</button>
+            订单绑定车辆
+          </header>
+
+          <div class="content">
+            <section class="vehicle-swap-guide" aria-label="变更车辆说明">
+              <strong>先选择本订单当前办理的车辆</strong>
+              <p>选择后可替换为您名下的其他车辆，变更完成后将同步更新停车权限。</p>
+            </section>
+            <div class="vehicle-swap-option-list" data-vehicle-swap-source-options></div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="vehicleSwap">
+        <div class="screen-label">变更月租车辆</div>
+        <article class="phone order-workflow-page vehicle-swap-page" aria-label="变更月租车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-back aria-label="返回订单">‹</button>
+            变更月租车辆
+          </header>
+
+          <div class="content">
+            <section class="order-workflow-section">
+              <h3>关联月租</h3>
+              <div class="order-field-row"><span>小区</span><strong class="order-detail-location" data-vehicle-swap-community>--</strong></div>
+              <div class="order-field-row"><span>有效期</span><strong data-vehicle-swap-term>--</strong></div>
+              <div class="order-field-row" data-vehicle-swap-from-row><span>本次变更车辆</span><strong data-vehicle-swap-from>--</strong></div>
+            </section>
+
+            <section class="order-workflow-section" data-vehicle-swap-target-section>
+              <h3 data-vehicle-swap-target-heading>变更为</h3>
+              <button class="vehicle-swap-target" type="button" data-open-vehicle-swap-picker aria-label="选择新车辆">
+                <span class="vehicle-swap-target-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-swap-target-copy"><strong data-vehicle-swap-target-plate>请选择车辆</strong><small data-vehicle-swap-target-color hidden></small></span>
+                <span class="vehicle-swap-target-arrow">›</span>
+              </button>
+            </section>
+
+            <section class="order-workflow-section vehicle-swap-unbind-note" data-vehicle-swap-unbind-note hidden>
+              <h3>移除车辆</h3>
+              <p>移除后，该车辆不再享有本月租订单的通行权限。</p>
+            </section>
+          </div>
+
+          <footer class="order-workflow-footer vehicle-swap-footer" data-vehicle-swap-footer>
+            <button class="order-workflow-submit" type="button" data-vehicle-swap-submit disabled>确认变更</button>
+            <button class="vehicle-swap-unbind" type="button" data-vehicle-swap-unbind hidden>移除该车辆</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="vehicleSwapSelect">
+        <div class="screen-label">选择车辆</div>
+        <article class="phone garage-list-page vehicle-swap-select-page" aria-label="选择新车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-vehicle-swap-picker-back aria-label="返回变更月租车辆">‹</button>
+            <span data-vehicle-swap-picker-title>选择新车辆</span>
+          </header>
+
+          <div class="content">
+            <div class="vehicle-swap-option-list" data-vehicle-swap-options></div>
+            <div class="vehicle-swap-empty" data-vehicle-swap-empty hidden>暂无可变更车辆</div>
+          </div>
+        </article>
+      </div>

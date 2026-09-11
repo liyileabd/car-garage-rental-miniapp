@@ -1,0 +1,512 @@
+<div class="phone-block" data-screen="garageList">
+        <div class="screen-label">车库列表</div>
+        <article class="phone garage-list-page" data-list-empty="false" aria-label="可办理车库列表界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-back-home aria-label="返回首页">‹</button>
+            可办理车库
+          </header>
+
+          <div class="content">
+            <div class="garage-list-tools" aria-label="车库筛选排序">
+              <div class="garage-tool-row" role="group" aria-label="状态筛选">
+                <span class="tool-label">状态</span>
+                <button class="garage-tool-btn is-active" type="button" data-garage-filter="all">全部</button>
+                <button class="garage-tool-btn" type="button" data-garage-filter="available">可办理</button>
+                <button class="garage-tool-btn" type="button" data-garage-filter="full">已满</button>
+              </div>
+              <div class="garage-tool-row" role="group" aria-label="排序">
+                <span class="tool-label">排序</span>
+                <button class="garage-tool-btn is-active" type="button" data-garage-sort="distance">距离最近</button>
+                <button class="garage-tool-btn" type="button" data-garage-sort="priceAsc">价格低到高</button>
+                <button class="garage-tool-btn" type="button" data-garage-sort="priceDesc">价格高到低</button>
+              </div>
+            </div>
+            <div class="garage-list" data-full-garage-list></div>
+            <div class="garage-list-empty">暂无符合条件的车库</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentFlow">
+        <div class="screen-label">办理月租</div>
+        <article class="phone garage-list-page rent-flow" aria-label="办理月租界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-back-home aria-label="返回首页">‹</button>
+            办理月租
+          </header>
+
+          <div class="content">
+            <section class="card rent-flow-summary">
+              <div class="card-head">
+                <h3>先选择小区</h3>
+                <span class="tag">第一步</span>
+              </div>
+              <p>请选择一个可办理小区，再继续填写车辆信息和缴费。</p>
+              <div class="rent-flow-stepper" aria-label="办理步骤">
+                <span class="rent-flow-step active"><i>1</i><b>选择小区</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step"><i>2</i><b>车辆与租期</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step"><i>3</i><b>确认支付信息</b></span>
+              </div>
+            </section>
+
+            <div class="garage-list-tools rent-garage-filter-tools" aria-label="按地理位置筛选办理小区">
+              <div class="garage-tool-row" role="group" aria-label="选择区域">
+                <span class="tool-label">区域</span>
+                <button class="garage-tool-btn is-active" type="button" data-rent-area="all">全部</button>
+                <button class="garage-tool-btn" type="button" data-rent-area="湖里区">湖里区</button>
+                <button class="garage-tool-btn" type="button" data-rent-area="思明区">思明区</button>
+              </div>
+            </div>
+            <div class="garage-list" data-rent-garage-list></div>
+            <div class="rent-garage-empty">没有找到相关小区</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentOwner">
+        <div class="screen-label">补全办理资料</div>
+        <article class="phone garage-list-page rent-owner" aria-label="补齐个人信息界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择小区">‹</button>
+            补全办理资料
+          </header>
+
+          <div class="content">
+            <section class="rent-prerequisite-section" data-rent-prereq-personal>
+              <h3>个人信息</h3>
+              <label class="rent-prerequisite-field">
+                <span>真实姓名 <em>*</em></span>
+                <input class="personal-info-input" data-rent-owner-name placeholder="请输入真实姓名" maxlength="20" autocomplete="name">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>手机号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-owner-phone placeholder="请输入手机号" inputmode="tel" maxlength="11" autocomplete="tel">
+              </label>
+              <label class="rent-prerequisite-field">
+                <span>身份证号 <em>*</em></span>
+                <input class="personal-info-input" data-rent-owner-id-card placeholder="请输入身份证号" maxlength="18" autocomplete="off">
+              </label>
+            </section>
+
+            <div class="rent-flow-bottom" data-rent-prereq-footer>
+              <button class="rent-next-btn" type="button" data-rent-owner-next disabled>保存并继续</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentVehicle">
+        <div class="screen-label">车辆信息</div>
+        <article class="phone garage-list-page rent-vehicle" aria-label="填写车辆信息界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-rent-flow-back aria-label="返回选择小区">‹</button>
+            选择车辆
+          </header>
+
+          <div class="content">
+            <section class="card rent-vehicle-summary">
+              <div class="card-head">
+                <h3>办理车辆与租期</h3>
+                <span class="tag">第二步</span>
+              </div>
+              <p>登记本次办理车辆，并填写月租开始日期和租赁月数。</p>
+              <div class="rent-flow-stepper" aria-label="办理步骤">
+                <span class="rent-flow-step"><i>1</i><b>选择小区</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step active"><i>2</i><b>车辆与租期</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step"><i>3</i><b>确认支付信息</b></span>
+              </div>
+              <div class="rent-selected-garage">
+                <span class="icon-tile"><svg class="icon sm"><use href="#i-parking"></use></svg></span>
+                <div class="rent-selected-copy">
+                  <strong data-rent-selected-name>请先选择小区</strong>
+                  <span class="rent-selected-price"><strong data-rent-selected-price>--</strong> 元/月</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="card rent-form-card">
+              <div class="rent-form-field">
+                <span class="rent-form-label rent-form-label-row"><span>办理车辆 <em>*</em></span><b data-rent-selected-count>已选 0/2 辆</b></span>
+                <button class="rent-vehicle-picker" type="button" data-open-rent-vehicle-picker aria-label="打开车辆选择">
+                  <span class="rent-vehicle-picker-list" data-rent-selected-vehicles><span class="rent-vehicle-picker-empty"><span class="rent-vehicle-picker-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span><strong>请选择车辆</strong><span class="rent-vehicle-picker-arrow">›</span></span></span>
+                </button>
+              </div>
+
+              <div class="rent-form-field rent-date-field">
+                <span class="rent-form-label">开始日期 <em>*</em></span>
+                <input type="hidden" data-rent-start-date value="2026-08-24">
+                <button class="rent-date-picker-trigger" type="button" data-open-rent-date-picker aria-label="选择开始日期">
+                  <span data-rent-start-date-display>2026-08-24</span>
+                  <svg class="icon sm"><use href="#i-calendar"></use></svg>
+                </button>
+              </div>
+
+              <div class="rent-form-field">
+                <span class="rent-form-label">租赁月数 <em>*</em></span>
+                <input class="rent-input" type="number" data-rent-months min="1" max="12" step="1" value="1" inputmode="numeric">
+                <div class="rent-month-options" role="group" aria-label="快捷选择租赁月数">
+                  <button class="rent-month-option is-active" type="button" data-rent-month-option="1">1个月</button>
+                  <button class="rent-month-option" type="button" data-rent-month-option="3">3个月</button>
+                  <button class="rent-month-option" type="button" data-rent-month-option="6">半年</button>
+                  <button class="rent-month-option" type="button" data-rent-month-option="12">1年</button>
+                </div>
+              </div>
+
+              <div class="rent-form-field">
+                <span class="rent-form-label">截止日期</span>
+                <div class="rent-end-date" data-rent-end-date>2026-09-23</div>
+              </div>
+            </section>
+
+            <div class="rent-flow-bottom">
+              <div class="rent-term-price"><strong data-rent-term-price>300</strong>元</div>
+              <button class="rent-next-btn" type="button" data-rent-vehicle-next disabled>确认支付信息</button>
+            </div>
+          </div>
+
+          <div class="rent-date-sheet" data-rent-date-sheet aria-hidden="true">
+            <div class="rent-date-panel" role="dialog" aria-modal="true" aria-label="选择开始日期">
+              <div class="rent-date-panel-head">
+                <button class="rent-date-panel-action" type="button" data-rent-date-cancel>取消</button>
+                <strong>选择开始日期</strong>
+                <button class="rent-date-panel-action confirm" type="button" data-rent-date-confirm>确定</button>
+              </div>
+              <div class="rent-date-columns" data-rent-date-columns>
+                <div class="rent-date-column" data-rent-date-year-list></div>
+                <div class="rent-date-column" data-rent-date-month-list></div>
+                <div class="rent-date-column" data-rent-date-day-list></div>
+              </div>
+            </div>
+          </div>
+
+          <section class="rent-overlap-dialog" data-rent-overlap-dialog aria-hidden="true" aria-label="月租重叠提示">
+            <button class="rent-overlap-backdrop" type="button" data-rent-overlap-close aria-label="关闭提示"></button>
+            <div class="rent-overlap-panel" role="dialog" aria-modal="true" aria-labelledby="rent-overlap-title">
+              <h3 id="rent-overlap-title">该车辆已有月租</h3>
+              <p data-rent-overlap-message>所选租期与已有月租重叠，请调整起租日期或选择其他车辆。</p>
+              <button class="rent-overlap-action" type="button" data-rent-overlap-close>调整信息</button>
+            </div>
+          </section>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentVehicleSelect">
+        <div class="screen-label">选择车辆</div>
+        <article class="phone garage-list-page rent-vehicle-select-page" aria-label="选择办理车辆界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-rent-vehicle-picker-back aria-label="返回选择车辆和租期">‹</button>
+            选择办理车辆
+            <button class="subpage-complete" type="button" data-rent-vehicle-picker-complete disabled>完成</button>
+          </header>
+
+          <div class="content">
+            <div class="rent-vehicle-options" role="group" aria-label="选择办理车辆，最多两辆">
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 12345" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+                <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-option-copy">
+                  <strong>闽D 12345</strong>
+                  <small>蓝牌</small>
+                </span>
+                <span class="vehicle-option-check">✓</span>
+              </button>
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 67890" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+                <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-option-copy">
+                  <strong>闽D 67890</strong>
+                  <small>蓝牌</small>
+                </span>
+                <span class="vehicle-option-check">✓</span>
+              </button>
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D A24680" data-vehicle-color="绿牌" data-vehicle-color-code="26">
+                <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-option-copy">
+                  <strong>闽D A24680</strong>
+                  <small>绿牌</small>
+                </span>
+                <span class="vehicle-option-check">✓</span>
+              </button>
+              <button class="rent-vehicle-option" type="button" role="checkbox" aria-checked="false" data-rent-vehicle-option data-account="wechat" data-plate="闽D 13579" data-vehicle-color="蓝牌" data-vehicle-color-code="02">
+                <span class="vehicle-option-icon"><svg class="icon sm"><use href="#i-car"></use></svg></span>
+                <span class="vehicle-option-copy">
+                  <strong>闽D 13579</strong>
+                  <small>蓝牌</small>
+                </span>
+                <span class="vehicle-option-check">✓</span>
+              </button>
+            </div>
+            <div class="rent-vehicle-empty">暂未办理车辆，请先在车辆管理中新增车辆</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentNotice">
+        <div class="screen-label">月租办理须知</div>
+        <article class="phone garage-list-page rent-notice-page" aria-label="月租办理须知界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-rent-vehicle-back aria-label="返回选择车辆和租期">‹</button>
+            月租办理须知
+          </header>
+
+          <div class="content">
+            <article class="notice-pdf-page">
+              <h2>湖里国投月租车位办理告知书</h2>
+              <p class="notice-pdf-version">版本号：V2026.08</p>
+              <p>尊敬的车主：</p>
+              <p>欢迎使用湖里国投月租车位线上办理服务。请在办理前仔细阅读本告知书，确认了解月租办理、车辆通行及后续服务的相关约定。</p>
+              <p>本次办理为小区车库月租名额，不分配固定车位。月卡仅限本次登记车辆在有效期内使用，车辆识别以已绑定车牌信息为准。</p>
+              <p>月租费用按照所选小区、起租日期、租赁月数及当期收费标准计算，支付前将向您展示订单金额与有效期限。</p>
+              <p>支付成功后，系统将为已登记车辆开通相应车库的月租通行权限。退款、开票等后续事项，请在订单详情中按规则申请办理。</p>
+              <p class="notice-pdf-sign">请确认已阅读并理解以上内容。</p>
+            </article>
+          </div>
+          <footer class="notice-footer">
+            <button class="notice-agreement" type="button" data-rent-notice-agreement aria-pressed="false">
+              <i class="notice-agreement-check"></i>
+              <span>我已阅读并同意《月租车位办理告知书》</span>
+            </button>
+            <button class="rent-next-btn" type="button" data-rent-notice-next disabled>请阅读 5 秒</button>
+          </footer>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="rentConfirm">
+        <div class="screen-label">确认支付信息</div>
+        <article class="phone garage-list-page rent-vehicle" aria-label="确认支付信息界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-rent-notice-back aria-label="返回办理告知书">‹</button>
+            确认支付信息
+          </header>
+
+          <div class="content">
+            <section class="card rent-vehicle-summary">
+              <div class="card-head">
+                <h3>确认办理信息</h3>
+                <span class="tag">确认支付</span>
+              </div>
+              <div class="rent-flow-stepper" aria-label="办理步骤">
+                <span class="rent-flow-step"><i>1</i><b>选择小区</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step"><i>2</i><b>车辆与租期</b></span>
+                <span class="rent-flow-line" aria-hidden="true"></span>
+                <span class="rent-flow-step active"><i>3</i><b>确认支付信息</b></span>
+              </div>
+            </section>
+
+            <section class="card rent-form-card">
+              <div class="list-row">
+                <span class="list-label">办理小区</span>
+                <strong data-confirm-garage>--</strong>
+              </div>
+              <div class="list-row rent-confirm-vehicle-row">
+                <span class="list-label">登记车辆</span>
+                <strong class="rent-confirm-vehicles" data-confirm-vehicles>--</strong>
+              </div>
+              <div class="list-row">
+                <span class="list-label">开始日期</span>
+                <strong data-confirm-start>--</strong>
+              </div>
+              <div class="list-row">
+                <span class="list-label">截止日期</span>
+                <strong data-confirm-end>--</strong>
+              </div>
+              <div class="list-row">
+                <span class="list-label">租赁月数</span>
+                <strong><span data-confirm-months>1</span> 个月</strong>
+              </div>
+              <div class="list-row">
+                <span class="list-label">办理告知书</span>
+                <strong data-confirm-notice>待阅读</strong>
+              </div>
+              <div class="list-row">
+                <span class="list-label">应付金额</span>
+                <strong class="confirm-price"><span data-confirm-price>--</span> 元</strong>
+              </div>
+            </section>
+
+            <div class="rent-flow-bottom">
+              <div class="rent-flow-price">微信支付</div>
+              <div class="rent-confirm-actions">
+                <button class="rent-cancel-pay-btn" type="button" data-rent-cancel-payment>取消支付</button>
+                <button class="rent-next-btn" type="button" data-rent-submit disabled>确认支付</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="city">
+        <div class="screen-label">选择城市</div>
+        <article class="phone city" aria-label="选择城市界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-back-home aria-label="返回首页">‹</button>
+            选择城市
+          </header>
+
+          <div class="content">
+            <label class="city-search-input">
+              <svg class="icon sm"><use href="#i-search"></use></svg>
+              <input type="search" placeholder="请输入城市名称或拼音" aria-label="请输入城市名称或拼音">
+            </label>
+
+            <section class="city-section">
+              <div class="city-row-head">
+                <span>当前城市</span>
+                <button class="refresh-city" type="button" data-refresh-city>点击刷新</button>
+              </div>
+              <button class="city-button" type="button" data-select-city="厦门">厦门</button>
+              <div class="city-tip">如当前城市不准确，请手动修改</div>
+            </section>
+
+            <section class="city-section">
+              <div class="city-row-head">历史城市</div>
+              <button class="city-button" type="button" data-select-city="厦门">厦门</button>
+            </section>
+
+            <section class="city-section">
+              <div class="city-row-head">热门城市</div>
+              <div class="hot-city-grid">
+                <button class="hot-city" type="button" data-select-city="北京">北京</button>
+                <button class="hot-city" type="button" data-select-city="天津">天津</button>
+                <button class="hot-city" type="button" data-select-city="上海">上海</button>
+                <button class="hot-city" type="button" data-select-city="南京">南京</button>
+                <button class="hot-city" type="button" data-select-city="杭州">杭州</button>
+                <button class="hot-city" type="button" data-select-city="武汉">武汉</button>
+                <button class="hot-city" type="button" data-select-city="广州">广州</button>
+                <button class="hot-city" type="button" data-select-city="深圳">深圳</button>
+                <button class="hot-city" type="button" data-select-city="成都">成都</button>
+              </div>
+            </section>
+
+            <section class="alpha-group">
+              <div class="alpha-letter">A</div>
+              <div class="city-list-item" data-select-city="阿拉善">阿拉善</div>
+              <div class="city-list-item" data-select-city="鞍山">鞍山</div>
+              <div class="city-list-item" data-select-city="安庆">安庆</div>
+              <div class="city-list-item" data-select-city="安阳">安阳</div>
+              <div class="city-list-item" data-select-city="阿坝">阿坝</div>
+            </section>
+          </div>
+
+          <div class="alpha-index" aria-hidden="true">
+            <span>#</span><span>历</span><span>热</span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span><span>M</span><span>N</span><span>P</span><span>Q</span><span>R</span><span>S</span><span>T</span><span>W</span><span>X</span><span>Y</span><span>Z</span>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="globalSearch">
+        <div class="screen-label">搜索</div>
+        <article class="phone garage-search global-search" data-search-empty="false" data-search-started="false" aria-label="全局搜索界面">
+          <header class="subpage-titlebar">
+            <button class="back-btn" type="button" data-back-home aria-label="返回首页">‹</button>
+            搜索
+          </header>
+
+          <div class="content">
+            <label class="garage-search-input">
+              <svg class="icon sm"><use href="#i-search"></use></svg>
+              <input type="search" placeholder="搜索功能" aria-label="搜索小程序内容" data-garage-query>
+            </label>
+
+            <div class="search-tags" aria-label="常用搜索">
+              <button class="search-tag" type="button" data-search-keyword="月租办理">月租办理</button>
+              <button class="search-tag" type="button" data-search-keyword="订单">订单</button>
+              <button class="search-tag" type="button" data-search-keyword="开票">开票</button>
+              <button class="search-tag" type="button" data-search-keyword="客服">客服</button>
+            </div>
+
+            <div class="search-section-title">搜索结果</div>
+            <div class="search-result-list">
+              <section class="search-result-card" data-search-result data-keywords="月租办理 办理 续费 车库 缴费" data-select-garage>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-parking"></use></svg>月租办理</div>
+                  <div class="search-result-meta">选择小区车库，提交车辆信息并完成缴费</div>
+                </div>
+                <span class="search-result-status">功能</span>
+              </section>
+              <section class="search-result-card" data-search-result data-keywords="车辆管理 车牌 车辆 添加 修改 删除" data-vehicle-manage-action>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-car"></use></svg>车辆管理</div>
+                  <div class="search-result-meta">添加车牌、维护车辆信息和绑定关系</div>
+                </div>
+                <span class="search-result-status">功能</span>
+              </section>
+              <section class="search-result-card" data-search-result data-keywords="我的订单 订单 订单详情 支付记录 月租订单" data-order-list-action>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-order"></use></svg>我的订单</div>
+                  <div class="search-result-meta">查看支付记录、订单详情和月租状态</div>
+                </div>
+                <span class="search-result-status">功能</span>
+              </section>
+              <section class="search-result-card" data-search-result data-keywords="开票 发票 开票记录 电子发票" data-invoice-list-action>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-invoice"></use></svg>开票记录</div>
+                  <div class="search-result-meta">申请发票，查看开票进度和历史记录</div>
+                </div>
+                <span class="search-result-status">功能</span>
+              </section>
+              <section class="search-result-card" data-search-result data-keywords="退款 退款记录 退费 申请退款" data-select-garage>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-refund"></use></svg>退款记录</div>
+                  <div class="search-result-meta">查看退款申请、审核进度和到账状态</div>
+                </div>
+                <span class="search-result-status">功能</span>
+              </section>
+              <section class="search-result-card" data-search-result data-keywords="湖里安商房小区 车库 停车场 湖里 月租" data-select-garage>
+                <div>
+                  <div class="search-result-name"><svg class="icon sm"><use href="#i-parking"></use></svg>湖里安商房小区</div>
+                  <div class="search-result-meta">小区车库 · 地下停车场 A 区 · 可办理</div>
+                </div>
+                <span class="search-result-status">车库</span>
+              </section>
+            </div>
+            <div class="search-empty">暂无匹配的小程序内容</div>
+          </div>
+        </article>
+      </div>
+
+<div class="phone-block" data-screen="garageMap">
+        <div class="screen-label">车库位置</div>
+        <article class="phone garage-map" aria-label="车库位置地图界面">
+          <button class="map-back-button" type="button" data-garage-map-back aria-label="返回车库列表">‹</button>
+
+          <div class="content">
+            <div class="map-canvas" aria-label="车库位置地图">
+              <div class="map-green"></div>
+              <div class="map-water"></div>
+              <div class="map-block one"></div>
+              <div class="map-block two"></div>
+              <div class="map-block three"></div>
+              <div class="map-block four"></div>
+              <div class="map-block five"></div>
+              <div class="map-block six"></div>
+              <div class="map-block seven"></div>
+              <div class="map-block eight"></div>
+              <div class="map-road major one"></div>
+              <div class="map-road major two"></div>
+              <div class="map-road minor three"></div>
+              <div class="map-road minor four"></div>
+              <div class="map-road minor five"></div>
+              <div class="map-road minor six"></div>
+              <span class="map-label one">仙岳路</span>
+              <span class="map-label two">金湖路</span>
+              <span class="map-label three">枋湖片区</span>
+              <div class="map-location-marker">
+                <span class="map-location-pin"><svg class="icon"><use href="#i-parking"></use></svg></span>
+                <span class="map-location-name" data-map-garage-name>湖里安商房小区</span>
+              </div>
+            </div>
+            <button class="map-locate-button" type="button" aria-label="回到当前位置">◎</button>
+
+            <section class="map-bottom-sheet">
+              <div class="map-drag-handle"></div>
+              <div class="map-place-row"><h3 data-map-garage-title>湖里安商房小区</h3><span data-map-garage-distance>距你 1.2km</span></div>
+              <p data-map-garage-location>地下停车场 A 区</p>
+              <button class="map-navigate-button" type="button" data-map-navigate>导航到这里</button>
+            </section>
+          </div>
+        </article>
+      </div>
