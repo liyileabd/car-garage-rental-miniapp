@@ -71,6 +71,11 @@ const screens = document.querySelectorAll("[data-screen]");
     const rentEndDateLabel = document.querySelector("[data-rent-end-date]");
     const rentNoticeNextButton = document.querySelector("[data-rent-notice-next]");
     const rentNoticeAgreementAction = document.querySelector("[data-rent-notice-agreement]");
+    const rentNoticePages = document.querySelectorAll("[data-rent-notice-page]");
+    const rentNoticePreviousPageButton = document.querySelector("[data-rent-notice-prev]");
+    const rentNoticeNextPageButton = document.querySelector("[data-rent-notice-next-page]");
+    const rentNoticePageDots = document.querySelectorAll("[data-rent-notice-page-dot]");
+    const rentNoticePageStatus = document.querySelector("[data-rent-notice-page-status]");
     const rentTermPrice = document.querySelector("[data-rent-term-price]");
     const rentCancelPaymentButton = document.querySelector("[data-rent-cancel-payment]");
     const rentSubmitButton = document.querySelector("[data-rent-submit]");
@@ -341,6 +346,7 @@ const screens = document.querySelectorAll("[data-screen]");
       secondsLeft: 0,
       read: false,
       agreed: false,
+      page: 0,
     };
     const rentDateMinimum = new Date();
     rentDateMinimum.setHours(0, 0, 0, 0);
@@ -1693,13 +1699,33 @@ const screens = document.querySelectorAll("[data-screen]");
 
     function updateRentNoticeNextState() {
       if (!rentNoticeNextButton) return;
-      const readyToContinue = rentNoticeReadState.read && rentNoticeReadState.agreed;
+      const isLastPage = rentNoticeReadState.page === rentNoticePages.length - 1;
+      const readyToContinue = rentNoticeReadState.read && isLastPage && rentNoticeReadState.agreed;
       rentNoticeNextButton.disabled = !readyToContinue;
       rentNoticeNextButton.textContent = !rentNoticeReadState.read
         ? `请阅读 ${rentNoticeReadState.secondsLeft} 秒`
-        : rentNoticeReadState.agreed ? "同意并继续" : "请勾选并同意";
+        : !isLastPage ? "请阅读至最后一页" : rentNoticeReadState.agreed ? "同意并继续" : "请勾选并同意";
       rentNoticeAgreementAction?.classList.toggle("is-checked", rentNoticeReadState.agreed);
       rentNoticeAgreementAction?.setAttribute("aria-pressed", String(rentNoticeReadState.agreed));
+    }
+
+    function updateRentNoticePage(pageIndex) {
+      if (!rentNoticePages.length) return;
+      const nextPage = Math.min(rentNoticePages.length - 1, Math.max(0, pageIndex));
+      rentNoticeReadState.page = nextPage;
+      rentNoticePages.forEach((page, index) => {
+        page.classList.toggle("is-active", index === nextPage);
+      });
+      rentNoticePageDots.forEach((dot, index) => {
+        const isActive = index === nextPage;
+        dot.classList.toggle("is-active", isActive);
+        if (isActive) dot.setAttribute("aria-current", "page");
+        else dot.removeAttribute("aria-current");
+      });
+      if (rentNoticePageStatus) rentNoticePageStatus.textContent = `第 ${nextPage + 1} / ${rentNoticePages.length} 页`;
+      if (rentNoticePreviousPageButton) rentNoticePreviousPageButton.disabled = nextPage === 0;
+      if (rentNoticeNextPageButton) rentNoticeNextPageButton.disabled = nextPage === rentNoticePages.length - 1;
+      updateRentNoticeNextState();
     }
 
     function startRentNoticeReading() {
@@ -1708,6 +1734,8 @@ const screens = document.querySelectorAll("[data-screen]");
       rentNoticeReadState.secondsLeft = 5;
       rentNoticeReadState.read = false;
       rentNoticeReadState.agreed = false;
+      rentNoticeReadState.page = 0;
+      updateRentNoticePage(0);
       updateRentNoticeNextState();
 
       const tick = () => {
@@ -4334,6 +4362,34 @@ const screens = document.querySelectorAll("[data-screen]");
       rentNoticeReadState.agreed = !rentNoticeReadState.agreed;
       updateRentNoticeNextState();
     });
+
+    rentNoticePreviousPageButton?.addEventListener("click", () => {
+      updateRentNoticePage(rentNoticeReadState.page - 1);
+    });
+
+    rentNoticeNextPageButton?.addEventListener("click", () => {
+      updateRentNoticePage(rentNoticeReadState.page + 1);
+    });
+
+    rentNoticePageDots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        updateRentNoticePage(Number(dot.dataset.rentNoticePageDot || 0));
+      });
+    });
+
+    const rentNoticeViewport = document.querySelector(".notice-page-viewport");
+    let rentNoticeTouchStartX = null;
+    rentNoticeViewport?.addEventListener("touchstart", (event) => {
+      rentNoticeTouchStartX = event.touches[0]?.clientX ?? null;
+    }, { passive: true });
+    rentNoticeViewport?.addEventListener("touchend", (event) => {
+      if (rentNoticeTouchStartX === null) return;
+      const touchEndX = event.changedTouches[0]?.clientX;
+      const deltaX = touchEndX === undefined ? 0 : touchEndX - rentNoticeTouchStartX;
+      rentNoticeTouchStartX = null;
+      if (Math.abs(deltaX) < 40) return;
+      updateRentNoticePage(rentNoticeReadState.page + (deltaX < 0 ? 1 : -1));
+    }, { passive: true });
 
     if (rentNoticeNextButton) {
       rentNoticeNextButton.addEventListener("click", () => {

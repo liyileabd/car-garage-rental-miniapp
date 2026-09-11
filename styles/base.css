@@ -3825,7 +3825,74 @@
       top: 0;
       bottom: 112px;
       padding: 24px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       background: #fff;
+    }
+
+    .notice-pager {
+      min-height: 0;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) 24px;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .notice-page-viewport {
+      min-width: 0;
+      min-height: 0;
+      height: auto;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .notice-page-arrow {
+      width: 24px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 12px;
+      color: var(--primary);
+      background: #eef5ff;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .notice-page-arrow:disabled {
+      color: #c5cfdb;
+      background: #f5f7fa;
+    }
+
+    .notice-pagination {
+      min-height: 24px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .notice-page-dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #d4deeb;
+    }
+
+    .notice-page-dot.is-active {
+      width: 18px;
+      border-radius: 5px;
+      background: var(--primary);
+    }
+
+    .notice-page-count {
+      margin-left: 4px;
+      color: #8b98a8;
+      font-size: 12px;
     }
 
     .notice-footer {
@@ -3891,8 +3958,13 @@
     }
 
     .notice-pdf-page {
+      display: none;
       min-height: 100%;
       padding: 4px 0 20px;
+    }
+
+    .notice-pdf-page.is-active {
+      display: block;
     }
 
     .notice-pdf-page h2 {
