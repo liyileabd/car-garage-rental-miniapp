@@ -4819,7 +4819,7 @@
 
     .personal-avatar-control {
       min-width: 0;
-      margin-left: auto;
+      margin-left: 0;
       padding: 0;
       border: 0;
       display: inline-flex;
