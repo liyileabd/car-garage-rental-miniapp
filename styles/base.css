@@ -6107,13 +6107,8 @@
 
     .invoice-result-file {
       margin-top: 10px;
-      padding: 14px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #344256;
-      background: #fff;
+      padding: 0;
+      display: block;
     }
 
     .invoice-result-file .icon-tile {
@@ -6146,6 +6141,52 @@
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
+    }
+
+    .invoice-result-file-card {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #344256;
+      background: #fff;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .invoice-result-file-card:first-child {
+      margin-top: 0;
+    }
+
+    .invoice-result-file-card .icon-tile {
+      flex: 0 0 auto;
+    }
+
+    .invoice-result-file-card strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .invoice-result-file-card > div > span {
+      display: block;
+      margin-top: 3px;
+      color: #8995a5;
+      font-size: 13px;
+    }
+
+    .invoice-result-file-arrow {
+      flex: 0 0 auto;
+      margin-left: auto;
+      color: #a4afbd;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
     }
 
     .order-workflow-footer {

@@ -706,6 +706,9 @@ const screens = document.querySelectorAll("[data-screen]");
         invoiceCompletedAt: invoice.completedAt,
         invoiceType: invoice.type,
         invoiceTitle: invoice.title,
+        invoiceFiles: Array.isArray(invoice.files) && invoice.files.length
+          ? invoice.files
+          : (invoice.number ? [{ number: invoice.number, completedAt: invoice.completedAt, type: invoice.type }] : []),
         payerNameSnapshot: invoice.payerName || "张先生",
         payerPhoneSnapshot: invoice.payerPhone || "13800006688",
         ownerNameSnapshot: "张先生",
@@ -779,7 +782,7 @@ const screens = document.querySelectorAll("[data-screen]");
           createdAt: "2026-07-01 11:28",
           paymentAt: "2026-07-01 11:32",
           rentalStatus: "过期",
-          invoice: { status: "已完成", requestNo: "KP202607010004", number: "厦非税电202607010004", appliedAt: "2026-07-01 11:34", completedAt: "2026-07-03 15:20", type: "非税电子票据", title: "张先生" },
+          invoice: { status: "已完成", requestNo: "KP202607010004", number: "厦非税电202607010004", appliedAt: "2026-07-01 11:34", completedAt: "2026-07-03 15:20", type: "非税电子票据", title: "张先生", files: [{ number: "厦非税电202607010004", completedAt: "2026-07-03 15:20", type: "非税电子票据" }, { number: "厦非税电202607010005", completedAt: "2026-07-03 15:21", type: "非税电子票据" }] },
         },
         {
           orderNo: "AS202606180046",
@@ -793,7 +796,7 @@ const screens = document.querySelectorAll("[data-screen]");
           paymentAt: "2026-06-18 09:31",
           rentalStatus: "终止",
           refundStatus: "已通过",
-          invoice: { status: "已完成", requestNo: "KP202606180046", number: "厦税电开202606180046", appliedAt: "2026-06-18 09:33", completedAt: "2026-06-19 15:20", type: "增值税专用发票", title: "厦门湖里国投物业管理有限公司" },
+          invoice: { status: "已完成", requestNo: "KP202606180046", number: "厦税电开202606180046", appliedAt: "2026-06-18 09:33", completedAt: "2026-06-19 15:20", type: "增值税专用发票", title: "厦门湖里国投物业管理有限公司", files: [{ number: "厦税电开202606180046", completedAt: "2026-06-19 15:20", type: "增值税专用发票" }, { number: "厦税电开202606180047", completedAt: "2026-06-19 15:21", type: "增值税专用发票" }, { number: "厦税电开202606180048", completedAt: "2026-06-19 15:22", type: "增值税专用发票" }] },
         },
         {
           orderNo: "AS202605160032",
@@ -834,7 +837,7 @@ const screens = document.querySelectorAll("[data-screen]");
           createdAt: "2026-03-16 10:08",
           paymentAt: "2026-03-16 10:11",
           rentalStatus: "过期",
-          invoice: { status: "已完成", requestNo: "KP202603160007", number: "厦税电开202603160007", appliedAt: "2026-03-16 10:13", completedAt: "2026-03-18 14:36", type: "增值税普通发票", title: "张先生" },
+          invoice: { status: "已完成", requestNo: "KP202603160007", number: "厦税电开202603160007", appliedAt: "2026-03-16 10:13", completedAt: "2026-03-18 14:36", type: "增值税普通发票", title: "张先生", files: [{ number: "厦税电开202603160007", completedAt: "2026-03-18 14:36", type: "增值税普通发票" }, { number: "厦税电开202603160008", completedAt: "2026-03-18 14:37", type: "增值税普通发票" }] },
         },
         {
           orderNo: "AS202602180012",
@@ -3720,7 +3723,10 @@ const screens = document.querySelectorAll("[data-screen]");
         ${isDone ? `<div class="order-detail-row"><span>${voucher === "增值税发票" ? "发票号码" : "票据号码"}</span><strong>${order.invoiceNumber || "--"}</strong></div><div class="order-detail-row"><span>开具日期</span><strong>${order.invoiceCompletedAt || "--"}</strong></div>` : ""}`;
       invoiceResultFile.hidden = !isDone;
       if (isDone) {
-        invoiceResultFile.innerHTML = `<span class="icon-tile"><svg class="icon"><use href="#i-file"></use></svg></span><div><strong>${invoiceViewLabel(order)}</strong><span>${order.invoiceNumber || "电子凭证"}</span></div><button type="button" data-invoice-file-action>查看</button>`;
+        const files = Array.isArray(order.invoiceFiles) && order.invoiceFiles.length
+          ? order.invoiceFiles
+          : (order.invoiceNumber ? [{ number: order.invoiceNumber, completedAt: order.invoiceCompletedAt, type: order.invoiceType }] : []);
+        invoiceResultFile.innerHTML = files.map((file) => `<button class="invoice-result-file-card" type="button" data-invoice-file-action><span class="icon-tile"><svg class="icon"><use href="#i-file"></use></svg></span><div><strong>${invoiceViewLabel(order)}</strong><span>${file.number || "电子凭证"}</span></div><span class="invoice-result-file-arrow">›</span></button>`).join("");
       }
     }
 
