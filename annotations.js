@@ -29,10 +29,10 @@
      screen  必填  挂在哪个屏，值 = .phone-block 上的 data-screen
      anchor  必填  CSS 选择器，会在该屏内部查找
      nth     选填  同一选择器匹配到多个时取第几个（0 起，默认 0）
-     title   必填  弹层标题
+     title   选填  弹层标题，留空则不显示标题行（正文够清楚就别写）
      body    必填  正文，支持 **加粗** 和 `代码`，用 L(...) 手动分行
-     meta    选填  补充信息，如 { "接口": "...", "数据表": "..." }
-     tags    选填  小标签，如 ["交互", "接口"]
+     meta    选填  补充信息，如 { "接口": "...", "数据表": "..." }，不写不显示
+     tags    选填  小标签，如 ["交互", "接口"]，不写不显示
      ======================================================================== */
 
   const L = (...lines) => lines.join("\n");
@@ -43,18 +43,13 @@
       id: "loginDataAccount",
       screen: "login",
       anchor: ".login-actions",
-      title: "微信登录 = 有数据，验证码登录 = 无数据",
       body: L(
         "· **微信快捷登录** → **有数据**（先跳「关联手机号」页）",
         "  订单、退款、车辆、开票记录都完整",
         "",
         "· **验证码登录** → **无数据**",
         "  资料、订单、退款均为空"
-      ),
-      meta: {
-        演示数据: "app.js:959 · accountState（setCurrentAccount 切换）"
-      },
-      tags: ["登录", "演示数据"]
+      )
     }
   ];
 
@@ -200,7 +195,7 @@
     popup.innerHTML =
       '<div class="ann-popup__head">' +
       `<span class="ann-popup__no">${index}</span>` +
-      `<div class="ann-popup__title">${fmt(item.title)}</div>` +
+      (item.title ? `<div class="ann-popup__title">${fmt(item.title)}</div>` : "") +
       '<button class="ann-popup__close" type="button" aria-label="关闭">×</button>' +
       "</div>" +
       `<div class="ann-popup__body">${fmt(item.body)}</div>` +
