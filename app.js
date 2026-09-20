@@ -708,7 +708,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
         createdAt: seed.createdAt,
         paymentAt: seed.paymentAt,
         rentalStatus: seed.rentalStatus,
-        passStatus: seed.passStatus || (seed.refundStatus === "审批中"
+        passStatus: seed.passStatus || (["审批中", "待确认"].includes(seed.refundStatus)
           ? (seed.rentalStatus === "有效" ? "已暂停" : "待生效")
           : seed.rentalStatus === "有效" ? "已开通" : seed.rentalStatus === "待生效" ? "待生效" : "已结束"),
         refundStatus: seed.refundStatus || "未申请",
@@ -758,6 +758,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           createdAt: "2026-08-01 09:12",
           paymentAt: "2026-08-01 09:16",
           rentalStatus: "有效",
+          refundStatus: "待确认",
         },
         {
           orderNo: "AS202608070015",
@@ -894,6 +895,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
         remainingTerm: seed.remainingTerm,
         estimatedAmount: seed.estimatedAmount,
         approvedAmount: seed.approvedAmount ?? null,
+        adjustmentReason: seed.adjustmentReason || "",
+        userConfirmationStatus: seed.userConfirmationStatus || "",
+        confirmedAt: seed.confirmedAt || "",
         status: seed.status,
         reason: seed.reason,
         note: seed.note || "",
@@ -906,6 +910,19 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     orderState.records = buildDemoOrderRecords();
     orderState.activeId = orderState.records[0].id;
     refundState.records = [
+      createDemoRefund("AS202608100018", {
+        requestNo: "TK202608240005",
+        status: "待确认",
+        reason: "不再使用月租",
+        remainingTerm: "159 天",
+        estimatedAmount: 1659,
+        approvedAmount: 1600,
+        adjustmentReason: "按剩余整月折算，不足整月的天数不计入退款范围。",
+        userConfirmationStatus: "待确认",
+        note: "工作调动，无法继续使用月租车位。",
+        submittedAt: "2026-08-22 10:12",
+        approvedAt: "2026-08-24 15:40",
+      }),
       createDemoRefund("AS202606180046", {
         requestNo: "TK202607120021",
         status: "已通过",
@@ -1946,7 +1963,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
 
     function canSwapOrderVehicle(order) {
       return order?.rentalStatus === "有效" &&
-        !["审批中", "已通过"].includes(order.refundStatus) &&
+        !["审批中", "待确认", "已通过"].includes(order.refundStatus) &&
         getOrderVehicles(order).length > 0;
     }
 
@@ -1961,7 +1978,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       return orderState.records.filter((order) => {
         return order.community === sourceOrder.community &&
           ["有效", "待生效"].includes(order.rentalStatus) &&
-          !["审批中", "已通过"].includes(order.refundStatus) &&
+          !["审批中", "待确认", "已通过"].includes(order.refundStatus) &&
           orderHasVehicle(order, referencePlate);
       });
     }
@@ -3077,6 +3094,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function orderStatusMeta(order) {
+      if (order.refundStatus === "待确认") {
+        return { label: "退款金额待确认", className: "confirming", panelClass: "is-pending", icon: "i-info", description: "工作人员已核定退款金额，确认后才会终止月租并执行退款。" };
+      }
       if (order.refundStatus === "审批中") {
         const description = order.rentalStatus === "待生效"
           ? "退款申请正在审核中，待生效月租暂不会开通。"
@@ -3134,13 +3154,13 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       if (order.hiddenFromUser === true) return false;
       const isCompleted = ["过期", "终止"].includes(order.rentalStatus) || order.refundStatus === "已通过";
       if (orderState.filter === "active") {
-        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && !["审批中", "已通过"].includes(order.refundStatus);
+        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && !["审批中", "待确认", "已通过"].includes(order.refundStatus);
         if (!isActive) return false;
         if (orderState.subFilter === "effective") return order.rentalStatus === "有效";
         if (orderState.subFilter === "upcoming") return order.rentalStatus === "待生效";
         return true;
       }
-      if (orderState.filter === "afterSales") return order.refundStatus === "审批中";
+      if (orderState.filter === "afterSales") return ["审批中", "待确认"].includes(order.refundStatus);
       if (orderState.filter === "completed") {
         if (!isCompleted) return false;
         if (orderState.subFilter === "expired") return order.rentalStatus === "过期";
@@ -3162,12 +3182,13 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     function canApplyInvoice(order) {
       return Boolean(order.paymentAt) &&
         order.invoiceStatus === "未申请" &&
-        !["审批中", "已通过"].includes(order.refundStatus) &&
+        !["审批中", "待确认", "已通过"].includes(order.refundStatus) &&
         !isVatInvoiceApplicationExpired(order);
     }
 
     function invoiceUnavailableMessage(order) {
       if (order.refundStatus === "审批中") return "退款审批中，暂不可申请开票";
+      if (order.refundStatus === "待确认") return "退款金额待确认，暂不可申请开票";
       if (order.refundStatus === "已通过") {
         return order.invoiceStatus === "已完成"
           ? "退款已完成，已开具票据将由财务线下处理"
@@ -3217,11 +3238,11 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function canRenewOrder(order) {
-      return order?.rentalStatus === "有效" && !["审批中", "已通过"].includes(order.refundStatus);
+      return order?.rentalStatus === "有效" && !["审批中", "待确认", "已通过"].includes(order.refundStatus);
     }
 
     function orderMoreItems(order) {
-      const hasOpenRefund = ["审批中", "已通过"].includes(order.refundStatus);
+      const hasOpenRefund = ["审批中", "待确认", "已通过"].includes(order.refundStatus);
       const canRenew = canRenewOrder(order);
       const canSwapVehicle = canSwapOrderVehicle(order);
       const canRefund = ["有效", "待生效"].includes(order.rentalStatus) && !hasOpenRefund;
@@ -3232,10 +3253,11 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       if (canSwapVehicle) items.push({ action: "swapVehicle", label: "变更车辆" });
       if (canRefund) items.push({ action: "refund", label: "退款" });
       if (order.refundStatus === "审批中") items.push({ label: "退款审批中", unavailable: true });
+      if (order.refundStatus === "待确认") items.push({ label: "退款金额待确认", unavailable: true });
 
       if (order.invoiceStatus === "已完成") {
         items.push({ action: "viewInvoice", label: invoiceViewLabel(order) });
-      } else if (order.invoiceStatus === "申请中" && order.refundStatus !== "审批中") {
+      } else if (order.invoiceStatus === "申请中" && !["审批中", "待确认"].includes(order.refundStatus)) {
         items.push({ action: "invoiceProgress", label: "开票进度" });
       } else if (invoiceAvailable) {
         items.push({ action: "invoice", label: "申请开票" });
@@ -3248,7 +3270,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       return Boolean(order) &&
         !order.hiddenFromUser &&
         ["过期", "终止"].includes(order.rentalStatus) &&
-        order.refundStatus !== "审批中";
+        !["审批中", "待确认"].includes(order.refundStatus);
     }
 
     function deleteOrderFromUserView() {
@@ -3291,15 +3313,17 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       const accessExceptionRows = order.passStatus === "未开通"
         ? '<div class="order-detail-row"><span>通行授权</span><strong>处理中</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">停车平台正在同步，请稍候</strong></div>'
         : order.passStatus === "已暂停"
-          ? '<div class="order-detail-row"><span>通行状态</span><strong>已暂停</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">退款审批中，当前不可通行</strong></div>'
+          ? `<div class="order-detail-row"><span>通行状态</span><strong>已暂停</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">${order.refundStatus === "待确认" ? "退款金额待确认，当前不可通行" : "退款审批中，当前不可通行"}</strong></div>`
           : "";
-      const refundStatusRow = order.refundStatus === "审批中"
-        ? '<div class="order-detail-row"><span>退款申请</span><strong>审批中</strong></div>'
-        : order.refundStatus === "已通过"
-          ? '<div class="order-detail-row"><span>退款申请</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
-          : order.refundStatus === "未通过"
-            ? '<div class="order-detail-row"><span>退款申请</span><strong>审核未通过</strong></div>'
-            : "";
+      const refundStatusRow = order.refundStatus === "待确认"
+        ? '<div class="order-detail-row"><span>退款申请</span><strong>金额已核定</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">等待您确认核定金额，确认前不终止月租</strong></div>'
+        : order.refundStatus === "审批中"
+          ? '<div class="order-detail-row"><span>退款申请</span><strong>审批中</strong></div>'
+          : order.refundStatus === "已通过"
+            ? '<div class="order-detail-row"><span>退款申请</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
+            : order.refundStatus === "未通过"
+              ? '<div class="order-detail-row"><span>退款申请</span><strong>审核未通过</strong></div>'
+              : "";
       const serviceSection = `<section class="order-detail-section">
           <h3>服务状态</h3>
           <div class="order-detail-row"><span>月租状态</span><strong>${monthlyStatus}</strong></div>
@@ -3540,6 +3564,15 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function refundRecordStatusMeta(record) {
+      if (record.status === "待确认") {
+        return {
+          label: "退款金额待确认",
+          className: "confirming",
+          panelClass: "is-pending",
+          icon: "i-info",
+          description: "工作人员已核定退款金额，确认后才会终止月租并执行退款。",
+        };
+      }
       if (record.status === "已通过") {
         return {
           label: "审核已通过",
@@ -3577,6 +3610,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function refundRecordMatchesFilter(record) {
+      if (refundState.filter === "confirming") return record.status === "待确认";
       if (refundState.filter === "pending") return record.status === "审批中";
       if (refundState.filter === "approved") return record.status === "已通过";
       if (refundState.filter === "rejected") return record.status === "未通过";
@@ -3586,7 +3620,8 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     function cancelRefundApplication() {
       if (!ensureAuthenticated()) return;
       const record = getRefundRecord();
-      if (!record || record.status !== "审批中") return;
+      if (!record || !["审批中", "待确认"].includes(record.status)) return;
+      const wasConfirming = record.status === "待确认";
       const order = orderState.records.find((item) => item.orderNo === record.orderNo);
       record.status = "已撤销";
       if (order) {
@@ -3600,10 +3635,32 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       }
       renderRefundDetail(record.id);
       renderRefundRecordList();
-      showToast("退款申请已撤销");
+      showToast(wasConfirming ? "退款申请已取消" : "退款申请已撤销");
+    }
+
+    function confirmRefundAmount() {
+      if (!ensureAuthenticated()) return;
+      const record = getRefundRecord();
+      if (!record || record.status !== "待确认") return;
+      const order = orderState.records.find((item) => item.orderNo === record.orderNo);
+      record.status = "已通过";
+      if (order) {
+        order.refundStatus = "已通过";
+        renderOrderDetail(order.id);
+        renderOrderList();
+        renderInvoiceList();
+        syncVehicleMonthlyState();
+        syncHomeMonthlyCard();
+      }
+      renderRefundDetail(record.id);
+      renderRefundRecordList();
+      showToast("已确认核定退款金额");
     }
 
     function refundRecordAmountLabel(record) {
+      if (record.status === "待确认" && Number.isFinite(record.approvedAmount)) {
+        return `核定退款 ${formatOrderAmount(record.approvedAmount)}`;
+      }
       if (record.status === "已通过" && Number.isFinite(record.approvedAmount)) {
         return `退款金额 ${formatOrderAmount(record.approvedAmount)}`;
       }
@@ -3627,7 +3684,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
             <span class="refund-record-status ${status.className}">${status.label}</span>
           </div>
           <div class="refund-record-place">${record.community}</div>
-          <div class="refund-record-info"><span>${refundRecordAmountLabel(record)}</span><strong>${record.reason}</strong></div>
+          <div class="refund-record-info"><span>${refundRecordAmountLabel(record)}</span></div>
           <div class="refund-record-foot"><span>${record.submittedAt}</span><span>查看详情</span></div>`;
         refundRecordList.appendChild(card);
       });
@@ -3647,11 +3704,15 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       const record = getRefundRecord(refundId);
       if (!record || !refundDetailContent) return;
       refundState.activeId = record.id;
-      const resultRows = record.status === "已通过"
-        ? '<div class="order-detail-row"><span>审核状态</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
-        : record.status === "未通过"
-          ? '<div class="order-detail-row"><span>审核状态</span><strong>审核未通过</strong></div>'
-          : '<div class="order-detail-row"><span>审核状态</span><strong>审批中</strong></div>';
+      const resultRows = record.status === "待确认"
+        ? '<div class="order-detail-row"><span>审核状态</span><strong>金额已核定</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">等待您确认核定金额，确认前不终止月租、不执行退款</strong></div>'
+        : record.status === "已通过"
+          ? '<div class="order-detail-row"><span>审核状态</span><strong>审核已通过</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">工作人员将联系您确认退款金额及方式</strong></div>'
+          : record.status === "未通过"
+            ? '<div class="order-detail-row"><span>审核状态</span><strong>审核未通过</strong></div>'
+            : record.status === "已撤销"
+              ? '<div class="order-detail-row"><span>审核状态</span><strong>已取消</strong></div><div class="order-detail-row"><span>处理说明</span><strong class="order-detail-location">退款申请已取消，月租通行已恢复</strong></div>'
+              : '<div class="order-detail-row"><span>审核状态</span><strong>审批中</strong></div>';
       refundDetailContent.innerHTML = `
         <section class="order-detail-section">
           <h3>退款申请</h3>
@@ -3659,6 +3720,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           <div class="order-detail-row"><span>提交时间</span><strong>${record.submittedAt}</strong></div>
           ${resultRows}
           ${["已通过", "未通过"].includes(record.status) ? `<div class="order-detail-row"><span>审批时间</span><strong>${record.approvedAt || "--"}</strong></div>` : ""}
+          ${record.status === "待确认" ? `<div class="order-detail-row"><span>核定时间</span><strong>${record.approvedAt || "--"}</strong></div>` : ""}
         </section>
         <section class="order-detail-section">
           <h3>原月租信息</h3>
@@ -3672,6 +3734,8 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           <div class="order-detail-row"><span>剩余租期</span><strong>${record.remainingTerm}</strong></div>
           <div class="order-detail-row"><span>预计退款金额</span><strong class="amount">${formatOrderAmount(record.estimatedAmount)}</strong></div>
           ${record.status === "已通过" ? `<div class="order-detail-row"><span>审批通过金额</span><strong class="amount">${formatOrderAmount(record.approvedAmount)}</strong></div>` : ""}
+          ${record.status === "待确认" ? `<div class="order-detail-row"><span>核定退款金额</span><strong class="amount">${formatOrderAmount(record.approvedAmount)}</strong></div>` : ""}
+          ${record.status === "待确认" && record.adjustmentReason ? `<div class="order-detail-row refund-note-row"><span>金额调整原因</span><strong class="refund-note-value">${escapeHtml(record.adjustmentReason)}</strong></div>` : ""}
         </section>
         <section class="order-detail-section">
           <h3>退款原因</h3>
@@ -3679,10 +3743,15 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           <div class="order-detail-row refund-note-row"><span>补充说明</span><strong class="refund-note-value">${escapeHtml(record.note || "--")}</strong></div>
         </section>`;
       if (refundDetailFooter) {
-        refundDetailFooter.hidden = record.status !== "审批中";
-        refundDetailFooter.innerHTML = record.status === "审批中"
-          ? '<button class="order-workflow-submit order-secondary-action" type="button" data-refund-cancel>撤销退款申请</button>'
-          : "";
+        const showFooter = ["审批中", "待确认"].includes(record.status);
+        refundDetailFooter.hidden = !showFooter;
+        refundDetailFooter.dataset.mode = record.status === "待确认" ? "dual" : "single";
+        refundDetailFooter.innerHTML = record.status === "待确认"
+          ? '<button class="order-workflow-submit" type="button" data-refund-confirm>确认核定退款金额</button>'
+            + '<button class="order-workflow-submit order-secondary-action" type="button" data-refund-cancel>取消退款申请</button>'
+          : record.status === "审批中"
+            ? '<button class="order-workflow-submit order-secondary-action" type="button" data-refund-cancel>撤销退款申请</button>'
+            : "";
       }
     }
 
@@ -3864,9 +3933,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       const savedAccount = getSavedRefundAccount();
       const payerName = getOrderPayerName(order);
       const hasPendingRefund = refundState.records.some((record) => {
-        return record.orderNo === order.orderNo && record.status === "审批中";
+        return record.orderNo === order.orderNo && ["审批中", "待确认"].includes(record.status);
       });
-      if (order.refundStatus === "审批中" || hasPendingRefund) {
+      if (["审批中", "待确认"].includes(order.refundStatus) || hasPendingRefund) {
         showToast("该订单已有退款申请，不能重复提交");
         return;
       }
@@ -4203,7 +4272,11 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     });
 
     document.querySelector("[data-refund-detail-footer]")?.addEventListener("click", (event) => {
-      if (event.target.closest("[data-refund-cancel]")) cancelRefundApplication();
+      if (event.target.closest("[data-refund-cancel]")) {
+        cancelRefundApplication();
+        return;
+      }
+      if (event.target.closest("[data-refund-confirm]")) confirmRefundAmount();
     });
 
     orderOpenButtons.forEach((button) => {

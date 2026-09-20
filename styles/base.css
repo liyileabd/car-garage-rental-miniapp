@@ -5301,6 +5301,11 @@
       background: #eff2f5;
     }
 
+    .order-status.confirming {
+      color: #2F7CF6;
+      background: #EAF2FF;
+    }
+
     .order-card-plate {
       margin-top: 13px;
       color: #172033;
@@ -5891,7 +5896,7 @@
     }
 
     .refund-tabs {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .invoice-tab,
@@ -6105,6 +6110,11 @@
     .refund-record-status.cancelled {
       color: #7f8b9a;
       background: #eff2f5;
+    }
+
+    .refund-record-status.confirming {
+      color: #2F7CF6;
+      background: #EAF2FF;
     }
 
     .refund-record-place {
@@ -6475,6 +6485,16 @@
     .order-secondary-action {
       color: #627287;
       background: #f0f3f7;
+    }
+
+    .refund-detail-footer:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .refund-detail-page:has(.refund-detail-footer[data-mode="dual"]:not([hidden])) .content {
+      bottom: 120px;
     }
 
     .icon { width: 19px; height: 19px; stroke: currentColor; stroke-width: 2.05; stroke-linecap: round; stroke-linejoin: round; fill: none; }
