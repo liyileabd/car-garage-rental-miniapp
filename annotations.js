@@ -3,12 +3,13 @@
    --------------------------------------------------------------------------
    给开发看的说明层，和原型本身完全解耦：
      · 不修改任何原型内容，不改 DOM 结构，不碰 app.js
-     · 默认关闭，点右上角「标注」才出现，平时原型外观和以前一模一样
+     · 默认打开：打开页面就能看到圆点，不需要先找开关
+     · 想临时关掉：点手机画布正下方居中的「标注」按钮
      · 标注内容全部集中在下面「一、标注内容配置」里，加标注只改那一段
 
    怎么用：
-     1. 打开原型 → 右上角点「标注」
-     2. 每个被标注的元素右侧会出现一个带编号的圆点
+     1. 打开原型即有标注（默认开启）
+     2. 每个被标注的元素右侧有一个带编号的圆点
      3. 点圆点看说明；再点一次关闭
      4. 换屏（tab / 返回）会自动重新定位
 
@@ -136,7 +137,7 @@
     toggle.innerHTML =
       '<span class="ann-toggle__dot"></span><span>标注</span>' +
       '<span class="ann-toggle__count">0</span>';
-    toggle.addEventListener("click", () => setMode(!state.on));
+    toggle.addEventListener("click", () => setMode(!state.on, true));
     document.body.appendChild(toggle);
     countEl = toggle.querySelector(".ann-toggle__count");
 
@@ -420,7 +421,8 @@
 
   /* ---------- 开关 ---------- */
 
-  function setMode(on) {
+  // fromUser=true 时才弹提示，默认自动开启时保持安静
+  function setMode(on, fromUser) {
     state.on = on;
     toggle.classList.toggle("is-on", on);
     layer.hidden = !on;
@@ -432,6 +434,8 @@
     }
 
     layout();
+
+    if (!fromUser) return;
 
     const total = ANNOTATIONS.filter((item) => item.screen === activeScreen()).length;
     if (!total) {
@@ -482,6 +486,7 @@
     buildChrome();
     bindTriggers();
     updateCount();
+    setMode(true); // 默认打开：打开页面即可看到圆点
   }
 
   // 等 app.js 跑完再初始化（loader.js 会在 app.js onload 时置 ready）
