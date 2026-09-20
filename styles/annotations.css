@@ -190,6 +190,7 @@
 
 .ann-popup__close {
   flex: none;
+  margin-left: auto; /* 没有标题行时也始终靠右 */
   width: 22px;
   height: 22px;
   padding: 0;
