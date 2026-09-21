@@ -43,11 +43,7 @@
       screen: "home",
       anchor: ".shortcut[data-rent-flow-action]",
       waitFor: "[data-rent-flow-action]",
-      body: L(
-        "办月租从这儿进 —— 点「**月租办理**」。",
-        "",
-        "（没登录会先让你登录，登录完再回来。）"
-      )
+      body: L("办月租从这儿进 —— 点「**月租办理**」。")
     },
     {
       screen: "rentFlow",

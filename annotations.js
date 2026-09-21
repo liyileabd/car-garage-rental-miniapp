@@ -37,6 +37,17 @@
   const L = (...lines) => lines.join("\n");
 
   const ANNOTATIONS = [
+    /* ---------------- 首页 ---------------- */
+    {
+      id: "homeRentEntryLogin",
+      screen: "home",
+      anchor: ".shortcut[data-rent-flow-action]",
+      body: L(
+        "**未登录**时点这里会先跳登录页。",
+        "登录完是回首页 —— 要再点一次「月租办理」才进得来。"
+      )
+    },
+
     /* ---------------- 登录 ---------------- */
     {
       id: "loginDataAccount",
