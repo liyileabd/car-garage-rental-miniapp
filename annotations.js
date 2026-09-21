@@ -165,6 +165,32 @@
     });
   }
 
+  /* ---------- 工具条定位 ---------- */
+
+  // 宽屏：贴到手机画布右侧、垂直居中；窄屏放不下就回落到正下方居中
+  function positionDock() {
+    if (!dock) return;
+    const screenEl = document.querySelector(".phone-block.is-active");
+    const phone = screenEl && screenEl.querySelector(".phone");
+    if (!phone) return;
+
+    const rect = phone.getBoundingClientRect();
+    const gap = 18;                                  // 和手机的间距
+    const width = dock.offsetWidth || 150;
+    const fits = rect.right + gap + width <= window.innerWidth - 12;
+
+    if (!fits) {
+      dock.classList.remove("is-side");
+      dock.style.left = "";
+      dock.style.top = "";
+      return;
+    }
+
+    dock.classList.add("is-side");
+    dock.style.left = Math.round(rect.right + gap) + "px";
+    dock.style.top = Math.round(rect.top + rect.height / 2) + "px";
+  }
+
   function toast(text) {
     if (!toastEl) return;
     toastEl.textContent = text;
@@ -449,6 +475,16 @@
     requestAnimationFrame(layout);
   }
 
+  let dockFrame = 0;
+
+  function scheduleDock() {
+    if (dockFrame) return;
+    dockFrame = requestAnimationFrame(() => {
+      dockFrame = 0;
+      positionDock();
+    });
+  }
+
   function bindTriggers() {
     // 切屏：app.js 的 showTab / showLoginView 是全局函数，包一层即可
     ["showTab", "showLoginView"].forEach((name) => {
@@ -458,20 +494,26 @@
         const result = original.apply(this, args);
         state.sig = "";
         schedule();
+        scheduleDock();
         return result;
       };
     });
 
     // 屏内滚动 / 窗口尺寸变化
-    document.addEventListener("scroll", schedule, true);
+    document.addEventListener("scroll", () => {
+      schedule();
+      scheduleDock();
+    }, true);
     window.addEventListener("resize", () => {
       state.sig = "";
       schedule();
+      scheduleDock();
     });
 
     // 兜底巡检：列表被重新渲染（如 renderOrderList）时也能跟上
     setInterval(() => {
       if (state.on) layout();
+      positionDock();
     }, 700);
   }
 
@@ -481,7 +523,8 @@
     buildChrome();
     bindTriggers();
     updateCount();
-    // 默认不开：点手机下方「注释」按钮才出现编号圆点
+    scheduleDock(); // 等按钮渲染出来再算位置（要量宽度）
+    // 默认不开：点手机右侧的「注释」按钮才出现编号圆点
   }
 
   // 等 app.js 跑完再初始化（loader.js 会在 app.js onload 时置 ready）
