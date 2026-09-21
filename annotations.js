@@ -27,6 +27,8 @@
      id      必填  唯一标识（用于去重和 __annReport 排查）
      screen  必填  挂在哪个屏，值 = .phone-block 上的 data-screen
      anchor  必填  CSS 选择器，会在该屏内部查找
+     loginView 选填 仅登录页用：只在指定视图显示
+                    （main = 登录 / bind = 关联手机号 / sms = 验证码登录）
      nth     选填  同一选择器匹配到多个时取第几个（0 起，默认 0）
      title   选填  弹层标题，留空则不显示标题行（正文够清楚就别写）
      body    必填  正文，支持 **加粗** 和 `代码`，用 L(...) 手动分行
@@ -49,9 +51,12 @@
     },
 
     /* ---------------- 登录 ---------------- */
+    /* 只在「登录」这个视图（main）出现 —— 讲的就是这两个登录入口。
+       关联手机号（bind）、验证码登录（sms）两个视图不挂任何注释 */
     {
       id: "loginDataAccount",
       screen: "login",
+      loginView: "main",
       anchor: ".login-actions",
       body: L(
         "· **微信快捷登录** → **有数据**（先跳「关联手机号」页）",
@@ -106,6 +111,20 @@
 
   /* ---------- 锚点解析 ---------- */
 
+  // 真的看得见吗？
+  // 只看"有没有布局盒"是不够的 —— 原型里同一屏的多个视图常常是
+  // position:absolute + opacity:0 叠在一起（登录页 main / bind / sms 就是这样），
+  // 非激活视图里的元素照样有盒模型，注释就会飘到不该出现的页面上。
+  function isVisible(el) {
+    if (!el.getClientRects().length) return false;
+    for (let node = el; node && node !== document.documentElement; node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (style.display === "none" || style.visibility === "hidden") return false;
+      if (parseFloat(style.opacity) < 0.05) return false;
+    }
+    return true;
+  }
+
   function resolveAnchor(screenEl, item) {
     let matches;
     try {
@@ -122,9 +141,9 @@
       });
       return null;
     }
-    // getClientRects 为空 = 元素或祖先 display:none。
-    // 这不算写错，多半是当前登录态/状态看不到它，单独记一笔用于提示
-    if (!el.getClientRects().length) return { hidden: true };
+    // 不可见（含"视图叠着但没激活"的情况）不算写错，多半是当前状态看不到它，
+    // 单独记一笔用于提示
+    if (!isVisible(el)) return { hidden: true };
     return { el };
   }
 
@@ -474,7 +493,8 @@
 
     if (!fromUser) return;
 
-    const total = ANNOTATIONS.filter((item) => item.screen === activeScreen()).length;
+    // 用 screenItems() 而不是只看 screen：登录页还有 main / bind / sms 三个视图
+    const total = screenItems().length;
     if (!total) {
       toast("本屏暂无标注，换一屏看看");
     } else if (state.missed.length) {
@@ -563,9 +583,9 @@
       if (onScreen) {
         if (!screenEl) status = "找不到当前屏容器";
         else if (screenEl.querySelectorAll(item.anchor)[item.nth || 0]) {
-          status = screenEl.querySelectorAll(item.anchor)[item.nth || 0].getClientRects().length
+          status = isVisible(screenEl.querySelectorAll(item.anchor)[item.nth || 0])
             ? "✓ 已挂上"
-            : "锚点存在但被隐藏";
+            : "锚点存在但当前状态不可见";
         } else status = "✗ 锚点未找到";
       }
       return { id: item.id, screen: item.screen, anchor: item.anchor, status };
