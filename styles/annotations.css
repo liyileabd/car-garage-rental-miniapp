@@ -68,6 +68,11 @@
   box-shadow: 0 6px 20px rgba(47, 124, 246, 0.32);
 }
 
+/* hidden 属性得压过上面的 display: inline-flex，否则藏不住 */
+.dev-btn[hidden] {
+  display: none;
+}
+
 .dev-btn__dot {
   width: 7px;
   height: 7px;

@@ -529,6 +529,8 @@
     // 兜底巡检：列表被重新渲染（如 renderOrderList）时也能跟上
     setInterval(() => {
       if (state.on) layout();
+      // 引导入口的显隐跟登录态绑定，顺手同步一次（登录 / 退出后不用等别的事件）
+      if (typeof window.__guideSyncBtn === "function") window.__guideSyncBtn();
       positionDock();
     }, 700);
   }
@@ -580,4 +582,6 @@
   window.__devAnnOff = () => {
     if (state.on) setMode(false);
   };
+  // 工具条位置重算（引导按钮显隐后工具条高度会变）
+  window.__devSyncDock = scheduleDock;
 })();

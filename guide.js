@@ -199,8 +199,17 @@
   }
 
   // 按钮跟着播放状态走：没播叫「引导」，播着叫「结束引导」
+  // 另外：引导演示的是「登录后的办理流程」，未登录（guest）时整个入口不出现 ——
+  // 未登录点办理入口会被 ensureAuthenticated() 拦到登录页，流程走不下去
   function syncBtn() {
     if (!btn) return;
+    const show = document.body.dataset.auth === "authed";
+    if (btn.hidden !== !show) {
+      btn.hidden = !show;
+      if (!show && state.on) stop();
+      // 按钮显隐会改变工具条高度，位置要重算
+      if (typeof window.__devSyncDock === "function") window.__devSyncDock();
+    }
     btn.classList.toggle("is-on", state.on);
     btn.title = state.on ? "退出引导" : "播放办理流程引导";
     if (labelEl) labelEl.textContent = state.on ? "结束引导" : "引导";
@@ -407,6 +416,7 @@
   function boot() {
     build();
     mountButton();
+    syncBtn(); // 按当前登录态决定引导入口出不出现（未登录时不出现）
     bind();
     // 默认不自动播放：点手机右侧工具条里的「引导」按钮才开始
   }
@@ -421,8 +431,12 @@
   /* ---------- 手动重播 ---------- */
 
   window.__guideStart = () => {
+    // 未登录不给播：流程第一步就会撞上登录拦截
+    if (document.body.dataset.auth !== "authed") return false;
     stop();
-    start();
+    return start();
   };
   window.__guideSteps = () => STEPS;
+  // 给注释层用：工具条巡检时顺手同步一次入口显隐（登录态可能变了）
+  window.__guideSyncBtn = syncBtn;
 })();
