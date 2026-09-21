@@ -238,9 +238,46 @@
   }
 
   /* ---------- 工具条定位 ----------
-     工具条固定在窗口右上角，位置完全由 CSS 决定 —— 不跟随手机画布、
-     不避让弹层，所以这里没有任何定位代码（原来那套跟着手机算坐标的
-     逻辑已删，2026-09-21 人类：「为什么还跟着动的」）。 */
+     钉在原型手机的右上角外侧：右边缘留 12px，与手机顶边对齐。
+     只在"手机位置变了"时重算 —— 加载 / resize / 切屏。
+     弹层开关、页面滚动一律不动它（人类要的是它别再跟着跑）。
+     窄屏（手机铺满视口）时退化：贴到手机内部的右上角。
+     ---------------------------------- */
+
+  function positionDock() {
+    if (!dock) return;
+    const block = document.querySelector(".phone-block.is-active");
+    const phone = block && block.querySelector(".phone");
+    if (!phone) return;
+
+    const rect = phone.getBoundingClientRect();
+    const gap = 12;
+    const width = dock.offsetWidth || 80;
+    const left = Math.round(rect.right + gap);
+
+    dock.style.right = "auto";
+    if (left + width <= window.innerWidth - 8) {
+      dock.style.top = Math.round(rect.top) + "px";
+      dock.style.left = left + "px";
+      dock.classList.remove("is-inside");
+    } else {
+      // 窄屏：手机铺满视口，没地方放外面了，贴到手机内部的右上角
+      dock.style.top = Math.round(rect.top + gap) + "px";
+      dock.style.left = Math.round(rect.right - width - gap) + "px";
+      dock.classList.add("is-inside");
+    }
+    dock.classList.add("is-placed"); // 定位算完了，可以显示了
+  }
+
+  let dockFrame = 0;
+
+  function scheduleDock() {
+    if (dockFrame) return;
+    dockFrame = requestAnimationFrame(() => {
+      dockFrame = 0;
+      positionDock();
+    });
+  }
 
   function toast(text) {
     if (!toastEl) return;
@@ -525,15 +562,17 @@
         const result = original.apply(this, args);
         state.sig = "";
         schedule();
+        scheduleDock(); // 切屏后手机位置可能变（比如从首页切到全屏页）
         return result;
       };
     });
 
-    // 屏内滚动 / 窗口尺寸变化
+    // 屏内滚动 / 窗口尺寸变化（滚动不动工具条，只有尺寸变了才重算）
     document.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", () => {
       state.sig = "";
       schedule();
+      scheduleDock();
     });
 
     // 兜底巡检：列表被重新渲染（如 renderOrderList）时也能跟上
@@ -549,7 +588,12 @@
   function start() {
     buildChrome();
     bindTriggers();
-    // 默认不开：点右上角的「注释」按钮才出现编号圆点
+    // 等按钮渲染出来、手机量得出尺寸后再定位（要量宽高）
+    scheduleDock();
+    setTimeout(scheduleDock, 300);
+    // 兜底：万一一直量不到手机，1.2s 后也让它显出来（回到 CSS 里的右上角）
+    setTimeout(() => dock.classList.add("is-placed"), 1200);
+    // 默认不开：点手机右上角的「注释」按钮才出现编号圆点
   }
 
   // 等 app.js 跑完再初始化（loader.js 会在 app.js onload 时置 ready）
@@ -593,5 +637,6 @@
   window.__devAnnOff = () => {
     if (state.on) setMode(false);
   };
-  // 工具条固定在右上角，位置不用重算，所以不再导出 __devSyncDock
+  // 工具条宽度变了（引导按钮显隐）→ 重算一次位置。guide.js 会调它。
+  window.__devSyncDock = scheduleDock;
 })();
