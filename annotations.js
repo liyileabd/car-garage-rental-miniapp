@@ -177,6 +177,7 @@
     const rect = phone.getBoundingClientRect();
     const gap = 18;                                  // 和手机的间距
     const width = dock.offsetWidth || 150;
+    const height = dock.offsetHeight || 34;
     const fits = rect.right + gap + width <= window.innerWidth - 12;
 
     if (!fits) {
@@ -186,9 +187,24 @@
       return;
     }
 
+    const left = Math.round(rect.right + gap);
+    let top = rect.top + rect.height / 2;
+
+    // 注释弹层也伸到手机右侧这片地，撞上就让开：优先往下挪，下面放不下就改往上
+    const pop = popup && !popup.hidden ? popup.getBoundingClientRect() : null;
+    if (pop && left < pop.right && left + width > pop.left) {
+      const half = height / 2;
+      const margin = 8;
+      if (top + half > pop.top - margin && top - half < pop.bottom + margin) {
+        const below = pop.bottom + margin + half;
+        const above = pop.top - margin - half;
+        top = below + half <= window.innerHeight - 10 ? below : above;
+      }
+    }
+
     dock.classList.add("is-side");
-    dock.style.left = Math.round(rect.right + gap) + "px";
-    dock.style.top = Math.round(rect.top + rect.height / 2) + "px";
+    dock.style.left = left + "px";
+    dock.style.top = Math.round(top) + "px";
   }
 
   function toast(text) {
@@ -208,6 +224,7 @@
     popup.hidden = true;
     state.openId = null;
     badgeBox.querySelectorAll(".ann-badge.is-open").forEach((el) => el.classList.remove("is-open"));
+    scheduleDock();
   }
 
   function openPopup(item, index, badgeX, badgeY) {
@@ -252,6 +269,7 @@
 
     popup.style.left = `${Math.round(x)}px`;
     popup.style.top = `${Math.round(y)}px`;
+    scheduleDock(); // 工具条也在右侧，弹层一开就要重算避让
   }
 
   /* ---------- 布局 ---------- */
