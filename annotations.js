@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    给开发看的说明层，和原型本身完全解耦：
      · 不修改任何原型内容，不改 DOM 结构，不碰 app.js
-     · 默认关闭：手机画布正下方有「注释」按钮，点了才出现编号圆点
+     · 默认关闭：手机画布右侧有「注释」总开关，点了才出现编号圆点
      · 标注内容全部集中在下面「一、标注内容配置」里，加标注只改那一段
 
    怎么用：
@@ -79,7 +79,7 @@
     hidden: 0                // 锚点存在但当前状态看不到的数量
   };
 
-  let layer, svg, badgeBox, popup, toastEl, dock, toggle, countEl, toastTimer;
+  let layer, svg, badgeBox, popup, toastEl, dock, toggle, toastTimer;
 
   /* ---------- 小工具 ---------- */
 
@@ -140,12 +140,10 @@
     toggle.type = "button";
     toggle.className = "dev-btn dev-btn--ann";
     toggle.title = "在原型上显示 / 隐藏编号注释";
-    toggle.innerHTML =
-      '<span class="dev-btn__dot"></span><span>注释</span>' +
-      '<span class="dev-btn__count">0</span>';
+    // 总开关，只表达开 / 关，不显示任何计数
+    toggle.innerHTML = '<span class="dev-btn__dot"></span><span>注释</span>';
     toggle.addEventListener("click", () => setMode(!state.on, true));
     dock.appendChild(toggle);
-    countEl = toggle.querySelector(".dev-btn__count");
 
     layer = document.createElement("div");
     layer.className = "ann-layer";
@@ -347,7 +345,6 @@
     ].join("|");
 
     if (sig === state.sig) {
-      updateCount();
       if (state.openId) repositionOpenPopup();
       return;
     }
@@ -359,7 +356,6 @@
     clearLayer(true);
 
     if (!blobs.length) {
-      updateCount();
       closePopup();
       return;
     }
@@ -425,8 +421,6 @@
     nodes.forEach((node) => badgeBox.appendChild(node));
     state.rows = blobs;
 
-    updateCount();
-
     // 重建后把原来开着的弹层按新坐标贴回去
     if (keepOpenId) {
       const still = blobs.find((blob) => blob.item.id === keepOpenId);
@@ -460,13 +454,6 @@
     badgeBox.innerHTML = "";
     state.rows = [];
     if (!keepPopup) closePopup();
-  }
-
-  function updateCount() {
-    if (!countEl) return;
-    const total = ANNOTATIONS.filter((item) => item.screen === activeScreen()).length;
-    countEl.textContent = String(total);
-    countEl.style.display = total ? "" : "none";
   }
 
   /* ---------- 开关 ---------- */
@@ -551,7 +538,6 @@
   function start() {
     buildChrome();
     bindTriggers();
-    updateCount();
     scheduleDock(); // 等按钮渲染出来再算位置（要量宽度）
     // 默认不开：点手机右侧的「注释」按钮才出现编号圆点
   }
