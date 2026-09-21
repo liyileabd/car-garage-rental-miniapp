@@ -103,6 +103,60 @@
       )
     },
 
+    /* ---------------- 办理月租 · 车辆与租期 ----------------
+       这一屏是表单，5 个字段自上而下排开，各自一个圆点（纵向排列不会
+       出现首页那种斜线缠绕问题）。文案只讲「这块是干嘛的」，不写流程。 */
+    {
+      id: "rentVehiclePicker",
+      screen: "rentVehicle",
+      auth: "authed",
+      anchor: "[data-open-rent-vehicle-picker]",
+      body: L(
+        "本次办理的车辆，从「**车辆管理**」已登记的车辆中选择。",
+        "最多可选 2 辆，已选数量显示在右侧。"
+      )
+    },
+    {
+      id: "rentStartDate",
+      screen: "rentVehicle",
+      auth: "authed",
+      anchor: "[data-open-rent-date-picker]",
+      body: L(
+        "月租的起租日期，点此处选择。",
+        "它同时是费用与截止日期的计算基准。"
+      )
+    },
+    {
+      id: "rentMonths",
+      screen: "rentVehicle",
+      auth: "authed",
+      anchor: "[data-rent-months]",
+      body: L(
+        "本次租赁的月数，可直接填写，或用下方快捷选项选择。",
+        "可填 1 – 12 个月。"
+      )
+    },
+    {
+      id: "rentEndDate",
+      screen: "rentVehicle",
+      auth: "authed",
+      anchor: "[data-rent-end-date]",
+      body: L(
+        "月租的到期日期。",
+        "由开始日期与租赁月数自动算出，不能直接修改。"
+      )
+    },
+    {
+      id: "rentTermPrice",
+      screen: "rentVehicle",
+      auth: "authed",
+      anchor: ".rent-term-price",
+      body: L(
+        "本次月租的费用，按所选小区的月租单价与租赁月数计算。",
+        "随开始日期、租赁月数变化实时更新。"
+      )
+    },
+
     /* ---------------- 登录 ---------------- */
     /* 只在「登录」这个视图（main）出现 —— 讲的就是这两个登录入口。
        关联手机号（bind）、验证码登录（sms）两个视图不挂任何注释 */
