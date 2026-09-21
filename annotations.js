@@ -237,47 +237,10 @@
     });
   }
 
-  /* ---------- 工具条定位 ---------- */
-
-  // 宽屏：贴到手机画布右侧、垂直居中；窄屏放不下就回落到正下方居中
-  function positionDock() {
-    if (!dock) return;
-    const screenEl = document.querySelector(".phone-block.is-active");
-    const phone = screenEl && screenEl.querySelector(".phone");
-    if (!phone) return;
-
-    const rect = phone.getBoundingClientRect();
-    const gap = 18;                                  // 和手机的间距
-    const width = dock.offsetWidth || 150;
-    const height = dock.offsetHeight || 34;
-    const fits = rect.right + gap + width <= window.innerWidth - 12;
-
-    if (!fits) {
-      dock.classList.remove("is-side");
-      dock.style.left = "";
-      dock.style.top = "";
-      return;
-    }
-
-    const left = Math.round(rect.right + gap);
-    let top = rect.top + rect.height / 2;
-
-    // 注释弹层也伸到手机右侧这片地，撞上就让开：优先往下挪，下面放不下就改往上
-    const pop = popup && !popup.hidden ? popup.getBoundingClientRect() : null;
-    if (pop && left < pop.right && left + width > pop.left) {
-      const half = height / 2;
-      const margin = 8;
-      if (top + half > pop.top - margin && top - half < pop.bottom + margin) {
-        const below = pop.bottom + margin + half;
-        const above = pop.top - margin - half;
-        top = below + half <= window.innerHeight - 10 ? below : above;
-      }
-    }
-
-    dock.classList.add("is-side");
-    dock.style.left = left + "px";
-    dock.style.top = Math.round(top) + "px";
-  }
+  /* ---------- 工具条定位 ----------
+     工具条固定在窗口右上角，位置完全由 CSS 决定 —— 不跟随手机画布、
+     不避让弹层，所以这里没有任何定位代码（原来那套跟着手机算坐标的
+     逻辑已删，2026-09-21 人类：「为什么还跟着动的」）。 */
 
   function toast(text) {
     if (!toastEl) return;
@@ -296,7 +259,6 @@
     popup.hidden = true;
     state.openId = null;
     badgeBox.querySelectorAll(".ann-badge.is-open").forEach((el) => el.classList.remove("is-open"));
-    scheduleDock();
   }
 
   function openPopup(item, index, badgeX, badgeY) {
@@ -341,7 +303,6 @@
 
     popup.style.left = `${Math.round(x)}px`;
     popup.style.top = `${Math.round(y)}px`;
-    scheduleDock(); // 工具条也在右侧，弹层一开就要重算避让
   }
 
   /* ---------- 布局 ---------- */
@@ -555,16 +516,6 @@
     requestAnimationFrame(layout);
   }
 
-  let dockFrame = 0;
-
-  function scheduleDock() {
-    if (dockFrame) return;
-    dockFrame = requestAnimationFrame(() => {
-      dockFrame = 0;
-      positionDock();
-    });
-  }
-
   function bindTriggers() {
     // 切屏：app.js 的 showTab / showLoginView 是全局函数，包一层即可
     ["showTab", "showLoginView"].forEach((name) => {
@@ -574,20 +525,15 @@
         const result = original.apply(this, args);
         state.sig = "";
         schedule();
-        scheduleDock();
         return result;
       };
     });
 
     // 屏内滚动 / 窗口尺寸变化
-    document.addEventListener("scroll", () => {
-      schedule();
-      scheduleDock();
-    }, true);
+    document.addEventListener("scroll", schedule, true);
     window.addEventListener("resize", () => {
       state.sig = "";
       schedule();
-      scheduleDock();
     });
 
     // 兜底巡检：列表被重新渲染（如 renderOrderList）时也能跟上
@@ -595,7 +541,6 @@
       if (state.on) layout();
       // 引导入口的显隐跟登录态绑定，顺手同步一次（登录 / 退出后不用等别的事件）
       if (typeof window.__guideSyncBtn === "function") window.__guideSyncBtn();
-      positionDock();
     }, 700);
   }
 
@@ -604,8 +549,7 @@
   function start() {
     buildChrome();
     bindTriggers();
-    scheduleDock(); // 等按钮渲染出来再算位置（要量宽度）
-    // 默认不开：点手机右侧的「注释」按钮才出现编号圆点
+    // 默认不开：点右上角的「注释」按钮才出现编号圆点
   }
 
   // 等 app.js 跑完再初始化（loader.js 会在 app.js onload 时置 ready）
@@ -649,6 +593,5 @@
   window.__devAnnOff = () => {
     if (state.on) setMode(false);
   };
-  // 工具条位置重算（引导按钮显隐后工具条高度会变）
-  window.__devSyncDock = scheduleDock;
+  // 工具条固定在右上角，位置不用重算，所以不再导出 __devSyncDock
 })();

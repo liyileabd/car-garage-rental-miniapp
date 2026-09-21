@@ -207,8 +207,6 @@
     if (btn.hidden !== !show) {
       btn.hidden = !show;
       if (!show && state.on) stop();
-      // 按钮显隐会改变工具条高度，位置要重算
-      if (typeof window.__devSyncDock === "function") window.__devSyncDock();
     }
     btn.classList.toggle("is-on", state.on);
     btn.title = state.on ? "退出引导" : "播放办理流程引导";
