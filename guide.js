@@ -8,8 +8,9 @@
    引导内容全部集中在下面「一、引导步骤配置」里，改文案只动那一段。
 
    怎么用：
-     · 打开原型停在首页 → 引导自动开始，从第 1 块走到最后一块
+     · 打开原型 → 点手机画布正下方的「引导」按钮才开始（默认不自动播）
      · 「下一步」推进，「上一步」回退，右上角「跳过」直接结束
+     · 播放中按钮变成「结束引导」，再点一次就收起
      · 想重看：控制台执行 __guideStart()
    ========================================================================== */
 (() => {
@@ -94,7 +95,7 @@
 
   const state = { on: false, index: 0, steps: [] };
 
-  let layer, ring, tip;
+  let layer, ring, tip, btn, labelEl;
 
   /* ---------- 小工具 ---------- */
 
@@ -108,6 +109,10 @@
   const activeScreen = () => document.body.dataset.currentTab;
 
   const screenEl = () => document.querySelector(".phone-block.is-active");
+
+  // 当前屏「看得见」的步骤：未登录就没有「我的月租」，登录后就没有「授权登录」卡
+  const collect = () =>
+    STEPS.filter((step) => step.screen === activeScreen() && findTarget(step));
 
   /* ---------- 找锚点 ---------- */
 
@@ -155,6 +160,37 @@
       else if (event.key === "ArrowRight" || event.key === "Enter") go(1);
       else if (event.key === "ArrowLeft") go(-1);
     });
+  }
+
+  /* ---------- 触发按钮 ---------- */
+
+  // 挂到手机画布正下方的工具条里，和「注释」按钮并排
+  function mountButton() {
+    let dock = document.querySelector(".dev-dock");
+    if (!dock) {
+      // 万一标注层没建出工具条，自己补一个，保证按钮一定在
+      dock = document.createElement("div");
+      dock.className = "dev-dock";
+      document.body.appendChild(dock);
+    }
+
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dev-btn dev-btn--guide";
+    btn.title = "播放首页新手引导";
+    btn.innerHTML =
+      '<span class="dev-btn__play"></span><span class="dev-btn__label">引导</span>';
+    btn.addEventListener("click", () => (state.on ? stop() : play()));
+    dock.appendChild(btn);
+    labelEl = btn.querySelector(".dev-btn__label");
+  }
+
+  // 按钮跟着播放状态走：没播叫「引导」，播着叫「结束引导」
+  function syncBtn() {
+    if (!btn) return;
+    btn.classList.toggle("is-on", state.on);
+    btn.title = state.on ? "退出引导" : "播放首页新手引导";
+    if (labelEl) labelEl.textContent = state.on ? "结束引导" : "引导";
   }
 
   /* ---------- 定位 ---------- */
@@ -242,26 +278,36 @@
     render();
   }
 
+  // 点按钮才开始；当前屏没有可讲的模块就提示一句
+  function play() {
+    if (state.on) return stop();
+    if (!start() && typeof window.__devToast === "function") {
+      window.__devToast("引导只覆盖首页，先切回首页再点");
+    }
+  }
+
   function start() {
-    if (state.on) return;
-    // 只保留当前屏「看得见」的模块：未登录就没有「我的月租」，
-    // 登录后就没有「授权登录」卡 —— 序号跟着重新连续编号
-    const steps = STEPS.filter(
-      (step) => step.screen === activeScreen() && findTarget(step)
-    );
-    if (!steps.length) return;
+    if (state.on) return false;
+    const steps = collect();
+    if (!steps.length) return false;
+
     state.steps = steps;
     state.index = 0;
     state.on = true;
     layer.hidden = false;
-    document.body.classList.add("gd-on"); // 引导期间藏起标注开关
+    document.body.classList.add("gd-on"); // 引导期间把「注释」按钮让出来
+    // 两个浮层不叠加：开引导时先把注释收起来
+    if (typeof window.__devAnnOff === "function") window.__devAnnOff();
+    syncBtn();
     render();
+    return true;
   }
 
   function stop() {
     state.on = false;
     if (layer) layer.hidden = true;
     document.body.classList.remove("gd-on");
+    syncBtn();
   }
 
   /* ---------- 重定位触发 ---------- */
@@ -274,9 +320,7 @@
       window[name] = function wrapped(...args) {
         const result = original.apply(this, args);
         if (state.on) {
-          const visible = STEPS.filter(
-            (step) => step.screen === activeScreen() && findTarget(step)
-          );
+          const visible = collect();
           if (!visible.length) stop();
           else {
             state.steps = visible;
@@ -305,8 +349,9 @@
 
   function boot() {
     build();
+    mountButton();
     bind();
-    start(); // 停在首页就直接开演
+    // 默认不自动播放：点手机画布正下方的「引导」按钮才开始
   }
 
   (function whenReady() {

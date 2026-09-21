@@ -3,14 +3,13 @@
    --------------------------------------------------------------------------
    给开发看的说明层，和原型本身完全解耦：
      · 不修改任何原型内容，不改 DOM 结构，不碰 app.js
-     · 默认打开：打开页面就能看到圆点，不需要先找开关
-     · 想临时关掉：点手机画布正下方居中的「标注」按钮
+     · 默认关闭：手机画布正下方有「注释」按钮，点了才出现编号圆点
      · 标注内容全部集中在下面「一、标注内容配置」里，加标注只改那一段
 
    怎么用：
-     1. 打开原型即有标注（默认开启）
-     2. 每个被标注的元素右侧有一个带编号的圆点
-     3. 点圆点看说明；再点一次关闭
+     1. 打开原型 → 点手机下方居中的「注释」按钮
+     2. 被标注的元素右侧出现一个带编号的圆点
+     3. 点圆点看说明；再点「注释」按钮整体收起
      4. 换屏（tab / 返回）会自动重新定位
 
    想核对标注有没有挂空：控制台执行 __annReport()，会列出当前屏每条标注
@@ -69,7 +68,7 @@
     hidden: 0                // 锚点存在但当前状态看不到的数量
   };
 
-  let layer, svg, badgeBox, popup, toastEl, toggle, countEl, toastTimer;
+  let layer, svg, badgeBox, popup, toastEl, dock, toggle, countEl, toastTimer;
 
   /* ---------- 小工具 ---------- */
 
@@ -121,16 +120,21 @@
   /* ---------- 建 UI ---------- */
 
   function buildChrome() {
+    // 工具条：手机画布正下方居中，注释 / 引导两个按钮并排放在这里
+    dock = document.createElement("div");
+    dock.className = "dev-dock";
+    document.body.appendChild(dock);
+
     toggle = document.createElement("button");
     toggle.type = "button";
-    toggle.className = "ann-toggle";
-    toggle.title = "显示 / 隐藏开发标注";
+    toggle.className = "dev-btn dev-btn--ann";
+    toggle.title = "在原型上显示 / 隐藏编号注释";
     toggle.innerHTML =
-      '<span class="ann-toggle__dot"></span><span>标注</span>' +
-      '<span class="ann-toggle__count">0</span>';
+      '<span class="dev-btn__dot"></span><span>注释</span>' +
+      '<span class="dev-btn__count">0</span>';
     toggle.addEventListener("click", () => setMode(!state.on, true));
-    document.body.appendChild(toggle);
-    countEl = toggle.querySelector(".ann-toggle__count");
+    dock.appendChild(toggle);
+    countEl = toggle.querySelector(".dev-btn__count");
 
     layer = document.createElement("div");
     layer.className = "ann-layer";
@@ -477,7 +481,7 @@
     buildChrome();
     bindTriggers();
     updateCount();
-    setMode(true); // 默认打开：打开页面即可看到圆点
+    // 默认不开：点手机下方「注释」按钮才出现编号圆点
   }
 
   // 等 app.js 跑完再初始化（loader.js 会在 app.js onload 时置 ready）
@@ -509,4 +513,13 @@
   };
 
   window.__annList = () => ANNOTATIONS;
+
+  /* ---------- 给工具条 / 引导层共用的小接口 ---------- */
+
+  // 提示条：guide.js 想弹同样风格的提示时用它，免得各写一套
+  window.__devToast = toast;
+  // 整体关掉注释（引导开始时调，避免两个浮层打架）
+  window.__devAnnOff = () => {
+    if (state.on) setMode(false);
+  };
 })();

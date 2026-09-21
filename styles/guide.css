@@ -147,10 +147,20 @@
   border-color: #2468d8;
 }
 
-/* 引导播放期间把标注开关收起来，避免两个浮层打架 */
-body.gd-on .ann-toggle {
-  opacity: 0;
-  pointer-events: none;
+/* 引导播放期间「注释」按钮的让位规则在 annotations.css 里（.dev-btn--ann） */
+
+/* 引导按钮上的小三角（和「注释」按钮的小圆点对称） */
+.dev-btn__play {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 0 4px 7px;
+  border-color: transparent transparent transparent currentColor;
+  opacity: 0.45;
+}
+
+.dev-btn.is-on .dev-btn__play {
+  opacity: 1;
 }
 
 /* ---------- 窄屏 ---------- */

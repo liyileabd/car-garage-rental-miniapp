@@ -2,18 +2,29 @@
    原型标注层 · annotations.css
    --------------------------------------------------------------------------
    这一层只服务于"给开发看的标注"，不参与原型本身的任何样式。
-   默认是打开的 —— 打开页面即可看到圆点，不用先找开关。
-   位于手机画布正下方的「标注」按钮用于临时关掉它。
+   默认是关闭的 —— 手机画布正下方有一个「注释」按钮，点了才出现编号圆点。
    宿主 DOM 由 annotations.js 动态创建，类名统一以 .ann- 开头，避免与原型冲突。
+   按钮和工具条用 .dev- 前缀（与 guide.css 共用同一套按钮外观）。
    ========================================================================== */
 
-/* ---------- 开关：钉在手机画布正下方居中 ---------- */
-.ann-toggle {
+/* ---------- 工具条：钉在手机画布正下方居中 ----------
+   并排放「注释」「引导」两个按钮。两个都默认关着，
+   点一下才在原型上出现对应的浮层，再点一下收起。
+   ------------------------------------------------------ */
+.dev-dock {
   position: fixed;
   left: 50%;
   bottom: 18px;
   transform: translateX(-50%);
   z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
+}
+
+/* 两个按钮共用外观：默认白底描边，激活后蓝底白字 */
+.dev-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -24,7 +35,7 @@
   background: #fff;
   box-shadow: 0 6px 18px rgba(23, 32, 51, 0.1);
   color: var(--muted, #6b778c);
-  font-family: var(--font-body, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
   line-height: 1;
@@ -32,19 +43,19 @@
   transition: color 0.16s, border-color 0.16s, background 0.16s, box-shadow 0.16s;
 }
 
-.ann-toggle:hover {
+.dev-btn:hover {
   border-color: var(--primary, #2f7cf6);
   color: var(--primary, #2f7cf6);
 }
 
-.ann-toggle.is-on {
+.dev-btn.is-on {
   border-color: var(--primary, #2f7cf6);
   background: var(--primary, #2f7cf6);
   color: #fff;
   box-shadow: 0 6px 20px rgba(47, 124, 246, 0.32);
 }
 
-.ann-toggle__dot {
+.dev-btn__dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -52,11 +63,11 @@
   opacity: 0.45;
 }
 
-.ann-toggle.is-on .ann-toggle__dot {
+.dev-btn.is-on .dev-btn__dot {
   opacity: 1;
 }
 
-.ann-toggle__count {
+.dev-btn__count {
   min-width: 17px;
   padding: 0 5px;
   border-radius: 9px;
@@ -68,7 +79,13 @@
   text-align: center;
 }
 
-.ann-toggle.is-on .ann-toggle__count {
+/* 引导播放中：注释按钮暂时让位（引导按钮本身要留着退出，不禁用） */
+body.gd-on .dev-btn--ann {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.dev-btn.is-on .dev-btn__count {
   background: rgba(255, 255, 255, 0.24);
   color: #fff;
 }
@@ -321,8 +338,11 @@
 
 /* ---------- 窄屏（手机上看原型时）---------- */
 @media (max-width: 720px) {
-  .ann-toggle {
+  .dev-dock {
     bottom: 12px;
+  }
+
+  .dev-btn {
     height: 30px;
     padding: 0 10px;
     font-size: 12px;
