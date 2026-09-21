@@ -29,6 +29,8 @@
      anchor  必填  CSS 选择器，会在该屏内部查找
      loginView 选填 仅登录页用：只在指定视图显示
                     （main = 登录 / bind = 关联手机号 / sms = 验证码登录）
+     auth    选填  只在指定登录态显示（authed = 登录后 / guest = 未登录）。
+                    首页的登录后功能注释都写 authed，未登录时不出现。
      nth     选填  同一选择器匹配到多个时取第几个（0 起，默认 0）
      title   选填  弹层标题，留空则不显示标题行（正文够清楚就别写）
      body    必填  正文，支持 **加粗** 和 `代码`，用 L(...) 手动分行
@@ -43,19 +45,24 @@
     {
       id: "homeRentEntryLogin",
       screen: "home",
+      auth: "guest",
       anchor: ".home-login-card",
       body: L(
         "点击此处跳转登录页。",
         "未登录状态下无法使用各项功能：点击「月租办理」「车辆管理」「订单记录」，均会先跳转至登录页。"
       )
     },
+    /* 以下三条是「登录后」页面上的功能说明，都标 authed ——
+       未登录时这些入口点了会被拦到登录页，讲它们是什么没有意义，
+       所以未登录首页只留上面那条登录说明 */
     {
       id: "homeRentCard",
       screen: "home",
+      auth: "authed",
       anchor: ".rent-card",
       body: L(
-        "当前生效的月租车位：车牌 / 小区、剩余天数、月租截止日期。",
-        "点「**续费**」为该车位续期 —— 进入续费流程，选择续租时长后支付。"
+        "当前生效的月租车位信息：车牌与小区、剩余天数、月租截止日期。",
+        "右上角「**续费**」按钮：为该车位续期。"
       )
     },
     /* 三个入口在同一行。各挂一个圆点的话，三个圆点被迫垂直错开，
@@ -64,20 +71,22 @@
     {
       id: "homeShortcuts",
       screen: "home",
+      auth: "authed",
       anchor: ".shortcut-grid",
       body: L(
-        "· **月租办理** → 办新的月租车位：选小区 → 选车位 → 填车主资料 → 支付",
-        "· **车辆管理** → 新增 / 编辑车牌与行驶证；办月租、续费时选的车来自这里",
-        "· **订单记录** → 查订单状态与账单明细，含开票、退款记录"
+        "· **月租办理** —— 办新的月租车位",
+        "· **车辆管理** —— 维护车辆资料（车牌 / 行驶证），办月租时从这里选车",
+        "· **订单记录** —— 查看全部订单的状态与账单明细"
       )
     },
     {
       id: "homeAdSlot",
       screen: "home",
+      auth: "authed",
       anchor: ".home-ad-slot",
       body: L(
-        "广告位预留。",
-        "后续用于运营位（活动 / 合作方），当前为空白占位，不承载功能。"
+        "页面预留的广告位。",
+        "后续用于投放运营内容（活动 / 合作方），当前为空白占位，不承载功能。"
       )
     },
 
@@ -135,8 +144,12 @@
   function screenItems() {
     const screen = activeScreen();
     const loginView = document.body.dataset.loginView;
+    const auth = document.body.dataset.auth;
     return ANNOTATIONS.filter(
-      (item) => item.screen === screen && (!item.loginView || item.loginView === loginView)
+      (item) =>
+        item.screen === screen &&
+        (!item.loginView || item.loginView === loginView) &&
+        (!item.auth || item.auth === auth)
     );
   }
 
@@ -608,10 +621,13 @@
   window.__annReport = () => {
     const screenEl = document.querySelector(".phone-block.is-active");
     const screen = activeScreen();
+    const auth = document.body.dataset.auth;
     return ANNOTATIONS.map((item) => {
       const onScreen = item.screen === screen;
       let status = "不在本屏";
-      if (onScreen) {
+      if (item.auth && item.auth !== auth) {
+        status = `当前登录态（${auth}）不显示`;
+      } else if (onScreen) {
         if (!screenEl) status = "找不到当前屏容器";
         else if (screenEl.querySelectorAll(item.anchor)[item.nth || 0]) {
           status = isVisible(screenEl.querySelectorAll(item.anchor)[item.nth || 0])
