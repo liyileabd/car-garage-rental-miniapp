@@ -1,14 +1,15 @@
 /* ==========================================================================
-   首页新手引导层 · guide.js
+   办理流程引导层 · guide.js
    --------------------------------------------------------------------------
-   用「新手引导」的形式逐块讲首页：一步高亮一个模块，配一段用户视角的说明，
-   点「下一步」挨着往下走。开发走一遍就知道每个模块是什么功能、要做什么。
+   用「新手引导」的形式带人走一遍完整业务流：一步一屏，跨页面往下走。
+   高亮当前该操作的地方，配一段用户视角的说明，点「下一步」继续；
+   关键跳转步骤支持「点了目标元素就自动前进」，不用再点按钮。
 
-   和原型完全解耦：不改 DOM 结构、不碰 app.js、不改任何原型内容。
-   引导内容全部集中在下面「一、引导步骤配置」里，改文案只动那一段。
+   和原型完全解耦：不改 DOM 结构、不碰 app.js 内容、不改任何原型样式。
+   引导内容全部集中在下面「一、流程步骤配置」里，改文案只动那一段。
 
    怎么用：
-     · 打开原型 → 点手机画布正下方的「引导」按钮才开始（默认不自动播）
+     · 点手机右侧的「引导」按钮才开始（默认不自动播）
      · 「下一步」推进，「上一步」回退，右上角「跳过」直接结束
      · 播放中按钮变成「结束引导」，再点一次就收起
      · 想重看：控制台执行 __guideStart()
@@ -20,11 +21,19 @@
   window.__guideLoaded = true;
 
   /* ========================================================================
-     一、引导步骤配置  —— 改文案只动这一段
+     一、流程步骤配置  —— 改文案只动这一段
      ------------------------------------------------------------------------
-     screen  必填  在哪一屏播放，值 = .phone-block 上的 data-screen
-     anchor  必填  CSS 选择器，在该屏内部查找；找不到会自动跳过这一步
-     body    必填  说明文字，支持 **加粗**，用 L(...) 手动分行
+     screen   必填  这一步在哪一屏，值 = .phone-block 上的 data-screen。
+                    和当前屏不一致时会自动切过去，所以流程可以跨页面。
+     anchor   必填  CSS 选择器（在该屏内部查找），这一步就是高亮它。
+     body     必填  说明文字，支持 **加粗**，用 L(...) 手动分行。
+     waitFor  选填  CSS 选择器。用户点了它（通常就是"继续下一步"的那个按钮）
+                    就自动前进，不用再去点气泡上的「下一步」。
+
+     注 1：一步一屏，screen 和当前屏不一致时会自动切过去，所以流程能跨页面。
+     注 2：某一步的锚点在当前屏找不到时，这一步会自动跳过。
+     注 3：只在特定条件下才出现的屏（比如"补全办理资料"）不单独列成一步，
+           写进相邻步骤的说明里，免得把人带到一屏本来不会经过的页面。
      ======================================================================== */
 
   const L = (...lines) => lines.join("\n");
@@ -32,54 +41,65 @@
   const STEPS = [
     {
       screen: "home",
-      anchor: ".hero-banner",
+      anchor: ".shortcut[data-rent-flow-action]",
+      waitFor: "[data-rent-flow-action]",
       body: L(
-        "这是**湖里国投月租车位**的服务入口 ——",
-        "安商房小区的车位月租，都在这上面线上办理。"
+        "办月租从这儿进 —— 点「**月租办理**」。",
+        "",
+        "（没登录会先让你登录，登录完再回来。）"
       )
     },
     {
-      screen: "home",
-      anchor: ".home-login-card",
+      screen: "rentFlow",
+      anchor: ".rent-flow-summary",
       body: L(
-        "**还没登录**时看到的是这个 —— 点「**授权登录**」，",
-        "登录之后才能办月租、看订单。"
+        "**第 1 步 · 选小区**",
+        "",
+        "顶上这条是进度：选小区 → 车辆与租期 → 确认支付。",
+        "在下面列表里挑一个小区，点卡片上的「选择」。",
+        "",
+        "（第一次办理会让你先补姓名、手机号、身份证号；",
+        "资料齐全的话这一步直接跳过。）"
+      )
+    },
+    {
+      screen: "rentVehicle",
+      anchor: ".rent-form-card",
+      body: L(
+        "**第 2 步 · 车辆与租期**",
+        "",
+        "点「请选择车辆」挑车牌（最多 2 辆），",
+        "再选开始日期和租几个月，费用会实时算出来。"
+      )
+    },
+    {
+      screen: "rentNotice",
+      anchor: ".notice-footer",
+      body: L(
+        "**签办理告知书**",
+        "",
+        "3 份（月租办理 / 物业管理 / 服务告知书）左右翻页看完，",
+        "勾选「我已阅读并同意」，等 5 秒倒计时结束才能继续。"
+      )
+    },
+    {
+      screen: "rentConfirm",
+      anchor: ".rent-flow-bottom",
+      body: L(
+        "**第 3 步 · 确认支付**",
+        "",
+        "核对小区、车辆、起止日期和金额 ——",
+        "没问题点「确认支付」，走微信支付。"
       )
     },
     {
       screen: "home",
       anchor: ".rent-card",
       body: L(
-        "**我的月租**：你当前在租的车位 ——",
-        "车牌、小区、还剩多少天、什么时候到期，都在这儿。",
+        "**支付成功回到首页**，月租卡就更新了",
         "",
-        "快到期时点右边的「**续费**」，直接接着租。"
-      )
-    },
-    {
-      screen: "home",
-      anchor: ".service-card",
-      body: L(
-        "三个常用入口：",
-        "· **月租办理** —— 新办或续租车位",
-        "· **车辆管理** —— 添加 / 删除车牌",
-        "· **订单记录** —— 查每次缴费记录"
-      )
-    },
-    {
-      screen: "home",
-      anchor: ".home-ad-slot",
-      body: L(
-        "广告位，现在空着 ——",
-        "之后可以放运营活动或者通知。"
-      )
-    },
-    {
-      screen: "home",
-      anchor: ".tabbar",
-      body: L(
-        "底部两个主页面：**首页**（当前）和**个人中心** ——",
-        "资料、发票这些都在个人中心里。"
+        "车牌、小区、还剩多少天、什么时候到期都在这。",
+        "这时还会问你「要不要开启续费提醒」。"
       )
     }
   ];
@@ -93,9 +113,9 @@
   const EDGE = 12;     // 距视口边缘的留白
   const PAD = 6;       // 高亮圈比目标元素外扩的像素
 
-  const state = { on: false, index: 0, steps: [] };
+  const state = { on: false, index: 0, steps: [], navigating: false };
 
-  let layer, ring, tip, btn, labelEl;
+  let layer, ring, tip, btn, labelEl, waitHandler;
 
   /* ---------- 小工具 ---------- */
 
@@ -110,22 +130,23 @@
 
   const screenEl = () => document.querySelector(".phone-block.is-active");
 
-  // 当前屏「看得见」的步骤：未登录就没有「我的月租」，登录后就没有「授权登录」卡
-  const collect = () =>
-    STEPS.filter((step) => step.screen === activeScreen() && findTarget(step));
-
   /* ---------- 找锚点 ---------- */
 
+  // 同一个选择器在一屏里可能命中多个（比如首页有两个办理入口），
+  // 取第一个「真正看得见」的，别被隐藏的那份带偏。
   function findTarget(step) {
     const root = screenEl();
     if (!root) return null;
-    let el;
+    let list;
     try {
-      el = root.querySelector(step.anchor);
+      list = root.querySelectorAll(step.anchor);
     } catch (error) {
       return null;
     }
-    return el && el.getClientRects().length ? el : null;
+    for (const el of list) {
+      if (el.getClientRects().length) return el;
+    }
+    return null;
   }
 
   /* ---------- 建 UI ---------- */
@@ -147,11 +168,11 @@
 
     // 事件委托：上一步 / 下一步 / 跳过
     tip.addEventListener("click", (event) => {
-      const btn = event.target.closest("button");
-      if (!btn) return;
-      if (btn.dataset.gdPrev !== undefined) go(-1);
-      else if (btn.dataset.gdNext !== undefined) go(1);
-      else if (btn.dataset.gdSkip !== undefined) stop();
+      const button = event.target.closest("button");
+      if (!button) return;
+      if (button.dataset.gdPrev !== undefined) go(-1);
+      else if (button.dataset.gdNext !== undefined) go(1);
+      else if (button.dataset.gdSkip !== undefined) stop();
     });
 
     document.addEventListener("keydown", (event) => {
@@ -164,7 +185,7 @@
 
   /* ---------- 触发按钮 ---------- */
 
-  // 挂到手机画布正下方的工具条里，和「注释」按钮并排
+  // 挂到手机右侧的工具条里，和「注释」按钮上下排
   function mountButton() {
     let dock = document.querySelector(".dev-dock");
     if (!dock) {
@@ -177,7 +198,7 @@
     btn = document.createElement("button");
     btn.type = "button";
     btn.className = "dev-btn dev-btn--guide";
-    btn.title = "播放首页新手引导";
+    btn.title = "播放办理流程引导";
     btn.innerHTML =
       '<span class="dev-btn__play"></span><span class="dev-btn__label">引导</span>';
     btn.addEventListener("click", () => (state.on ? stop() : play()));
@@ -189,7 +210,7 @@
   function syncBtn() {
     if (!btn) return;
     btn.classList.toggle("is-on", state.on);
-    btn.title = state.on ? "退出引导" : "播放首页新手引导";
+    btn.title = state.on ? "退出引导" : "播放办理流程引导";
     if (labelEl) labelEl.textContent = state.on ? "结束引导" : "引导";
   }
 
@@ -197,10 +218,10 @@
 
   // 目标不在视口里就先滚过去（已经看得见就不动，避免页面乱跳）
   function ensureVisible(el) {
-    const r = el.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
     const top = 70;
     const bottom = window.innerHeight - 70;
-    if (r.top < top || r.bottom > bottom) {
+    if (rect.top < top || rect.bottom > bottom) {
       el.scrollIntoView({ block: "center" });
       return true;
     }
@@ -208,12 +229,12 @@
   }
 
   function paint(el, step) {
-    const r = el.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
 
-    ring.style.left = `${Math.round(r.left - PAD)}px`;
-    ring.style.top = `${Math.round(r.top - PAD)}px`;
-    ring.style.width = `${Math.round(r.width + PAD * 2)}px`;
-    ring.style.height = `${Math.round(r.height + PAD * 2)}px`;
+    ring.style.left = `${Math.round(rect.left - PAD)}px`;
+    ring.style.top = `${Math.round(rect.top - PAD)}px`;
+    ring.style.width = `${Math.round(rect.width + PAD * 2)}px`;
+    ring.style.height = `${Math.round(rect.height + PAD * 2)}px`;
 
     const last = state.index === state.steps.length - 1;
     tip.innerHTML =
@@ -237,29 +258,77 @@
     const tipW = Math.min(TIP_W, window.innerWidth - EDGE * 2);
 
     // 优先放目标下方，放不下就翻到上方
-    let y = r.bottom + PAD + GAP;
-    if (y + tipH > window.innerHeight - EDGE) y = r.top - PAD - GAP - tipH;
+    let y = rect.bottom + PAD + GAP;
+    if (y + tipH > window.innerHeight - EDGE) y = rect.top - PAD - GAP - tipH;
     y = Math.max(EDGE, Math.min(y, window.innerHeight - tipH - EDGE));
 
-    let x = r.left;
+    let x = rect.left;
     x = Math.max(EDGE, Math.min(x, window.innerWidth - tipW - EDGE));
 
     tip.style.left = `${Math.round(x)}px`;
     tip.style.top = `${Math.round(y)}px`;
   }
 
+  /* ---------- 跨屏 ---------- */
+
+  // 切到指定屏。切不过去返回 false（这一步就会跳过）
+  function showScreen(name) {
+    if (activeScreen() === name) return true;
+    if (typeof window.showTab !== "function") return false;
+    state.navigating = true; // 告诉切屏钩子：这次是引导自己切的，别打断
+    window.showTab(name);
+    state.navigating = false;
+    return activeScreen() === name;
+  }
+
+  /* ---------- 点了高亮处就自动前进 ---------- */
+
+  function unbindWaitFor() {
+    if (!waitHandler) return;
+    document.removeEventListener("click", waitHandler, true);
+    waitHandler = null;
+  }
+
+  function bindWaitFor(step) {
+    unbindWaitFor();
+    if (!step.waitFor) return;
+    waitHandler = (event) => {
+      if (!event.target.closest || !event.target.closest(step.waitFor)) return;
+      unbindWaitFor();
+      const from = state.index;
+      // 先让原型自己的点击处理跑完（切屏、写状态），再推进。
+      // 如果切屏钩子已经把进度带到下一步了（state.index 变了），就不再重复推。
+      setTimeout(() => {
+        if (state.on && state.index === from) go(1);
+      }, 260);
+    };
+    document.addEventListener("click", waitHandler, true);
+  }
+
   /* ---------- 流程 ---------- */
+
+  // 这一步在当前屏看不到（比如资料已全，不用补录）—— 跳过去
+  function skip() {
+    state.index += 1;
+    if (state.index >= state.steps.length) return stop();
+    render();
+  }
 
   function render() {
     const step = state.steps[state.index];
     if (!step) return stop();
 
-    const el = findTarget(step);
-    if (!el) {
-      // 这一步在当前页面状态下看不到（未登录 / 元素被隐藏），直接跳过
-      state.index += 1;
-      return render();
+    // 这一步在别的屏 —— 先把屏切过去
+    if (step.screen !== activeScreen()) {
+      if (!showScreen(step.screen)) return skip();
+      requestAnimationFrame(() => render());
+      return;
     }
+
+    const el = findTarget(step);
+    if (!el) return skip();
+
+    bindWaitFor(step);
 
     if (ensureVisible(el)) {
       // 滚动需要时间，等布局稳定再量
@@ -270,28 +339,24 @@
   }
 
   function go(delta) {
-    const nextIndex = state.index + delta;
     if (!state.on) return;
-    if (nextIndex < 0) return;
-    if (nextIndex >= state.steps.length) return stop();
-    state.index = nextIndex;
+    const next = state.index + delta;
+    if (next < 0) return;
+    if (next >= state.steps.length) return stop();
+    state.index = next;
     render();
   }
 
-  // 点按钮才开始；当前屏没有可讲的模块就提示一句
   function play() {
     if (state.on) return stop();
-    if (!start() && typeof window.__devToast === "function") {
-      window.__devToast("引导只覆盖首页，先切回首页再点");
-    }
+    start();
   }
 
   function start() {
     if (state.on) return false;
-    const steps = collect();
-    if (!steps.length) return false;
+    if (!STEPS.length) return false;
 
-    state.steps = steps;
+    state.steps = STEPS.slice();
     state.index = 0;
     state.on = true;
     layer.hidden = false;
@@ -305,6 +370,7 @@
 
   function stop() {
     state.on = false;
+    unbindWaitFor();
     if (layer) layer.hidden = true;
     document.body.classList.remove("gd-on");
     syncBtn();
@@ -313,20 +379,19 @@
   /* ---------- 重定位触发 ---------- */
 
   function bind() {
-    // 切屏：切走就收起，切回首页重新播放
+    // 用户自己切屏：切到流程里的某一步就跟着跳过去，切到流程外就结束引导
     ["showTab", "showLoginView"].forEach((name) => {
       const original = window[name];
       if (typeof original !== "function") return;
       window[name] = function wrapped(...args) {
         const result = original.apply(this, args);
-        if (state.on) {
-          const visible = collect();
-          if (!visible.length) stop();
-          else {
-            state.steps = visible;
-            state.index = Math.min(state.index, visible.length - 1);
-            render();
-          }
+        if (!state.on || state.navigating) return result; // 引导自己切的屏，交给 render
+        const index = state.steps.findIndex((step) => step.screen === activeScreen());
+        if (index < 0) {
+          stop();
+        } else {
+          state.index = index;
+          render();
         }
         return result;
       };
@@ -351,7 +416,7 @@
     build();
     mountButton();
     bind();
-    // 默认不自动播放：点手机画布正下方的「引导」按钮才开始
+    // 默认不自动播放：点手机右侧工具条里的「引导」按钮才开始
   }
 
   (function whenReady() {

@@ -8,10 +8,9 @@
    ========================================================================== */
 
 /* ---------- 工具条 ----------
-   宽屏时贴在手机画布右侧、垂直居中（.is-side，坐标由 JS 算）；
-   窄屏放不下就回落到手机画布正下方居中。
-   并排放「注释」「引导」两个按钮，都默认关着，
-   点一下才在原型上出现对应的浮层，再点一下收起。
+   宽屏时贴在手机画布右侧、垂直居中（.is-side，坐标由 JS 算），
+   两个按钮上下竖排；窄屏放不下就回落到手机画布正下方居中（横排）。
+   「注释」「引导」都默认关着，点一下出现对应的浮层，再点一下收起。
    ------------------------------------------------------ */
 .dev-dock {
   position: fixed;
@@ -25,9 +24,16 @@
   font-family: var(--font-body, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
 }
 
+/* 贴在手机右侧时改成竖排，两个按钮等宽 */
 .dev-dock.is-side {
   bottom: auto;
   transform: translateY(-50%);
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.dev-dock.is-side .dev-btn {
+  justify-content: center;
 }
 
 /* 两个按钮共用外观：默认白底描边，激活后蓝底白字 */
