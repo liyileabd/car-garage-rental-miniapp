@@ -1,0 +1,163 @@
+/* ==========================================================================
+   首页新手引导层 · guide.css
+   --------------------------------------------------------------------------
+   逐块高亮首页各模块，配一段「用户看得懂的话」说明这块是什么、要做什么。
+   与原型完全解耦：不改 DOM 结构、不碰 app.js、不改任何原型样式。
+   宿主 DOM 由 guide.js 动态创建，类名统一以 .gd- 开头。
+   ========================================================================== */
+
+.gd-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482400;
+  pointer-events: none;
+  font-family: var(--font-body, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
+}
+
+/* ---------- 高亮圈：超大 box-shadow 把四周压暗，圈内保持通透 ---------- */
+.gd-ring {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.5);
+  transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease,
+    border-radius 0.3s ease;
+}
+
+.gd-ring::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- 说明气泡 ---------- */
+.gd-tip {
+  position: fixed;
+  width: 272px;
+  padding: 13px 14px 11px;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.24);
+  pointer-events: auto;
+  transition: left 0.3s ease, top 0.3s ease;
+}
+
+.gd-tip__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.gd-tip__no {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary, #2f7cf6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gd-tip__skip {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted, #6b778c);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gd-tip__skip:hover {
+  color: var(--fg, #172033);
+}
+
+.gd-tip__body {
+  color: #43536b;
+  font-size: 12.5px;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.gd-tip__body b {
+  color: var(--fg, #172033);
+}
+
+.gd-tip__foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eef2f8;
+}
+
+.gd-tip__count {
+  color: #97a3b6;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.gd-tip__btns {
+  display: flex;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.gd-btn {
+  height: 29px;
+  padding: 0 13px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.16s, border-color 0.16s, color 0.16s;
+}
+
+.gd-btn--ghost {
+  border: 1px solid var(--border, #e3ecf8);
+  background: #fff;
+  color: var(--muted, #6b778c);
+}
+
+.gd-btn--ghost:hover {
+  border-color: #c9d6e8;
+  color: var(--fg, #172033);
+}
+
+.gd-btn--primary {
+  border: 1px solid var(--primary, #2f7cf6);
+  background: var(--primary, #2f7cf6);
+  color: #fff;
+}
+
+.gd-btn--primary:hover {
+  background: #2468d8;
+  border-color: #2468d8;
+}
+
+/* 引导播放期间把标注开关收起来，避免两个浮层打架 */
+body.gd-on .ann-toggle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 720px) {
+  .gd-tip {
+    width: auto;
+    left: 12px !important;
+    right: 12px;
+  }
+}
