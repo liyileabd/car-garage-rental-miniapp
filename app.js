@@ -4356,7 +4356,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
 
     renewMonthsInput?.addEventListener("input", () => {
       const parsedMonths = Number.parseInt(renewMonthsInput.value || "1", 10);
-      orderState.renewMonths = Math.min(12, Math.max(1, Number.isFinite(parsedMonths) ? parsedMonths : 1));
+      orderState.renewMonths = Math.max(1, Number.isFinite(parsedMonths) ? parsedMonths : 1);
       renderRenewal();
     });
 
