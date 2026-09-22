@@ -16,8 +16,9 @@
      · 点手机右上角的「流程引导」→ 选一个流程才开始（默认不自动播）
      · 「下一步」推进，「上一步」回退，右上角「跳过」直接结束
      · 播放中按钮变成「结束引导」，再点一次就收起
-     · 想重看：控制台执行 __guideStart("rent") / ("vehicle") / ("refund") / ("invoice")
-     · 现有四条：月租办理、绑定车辆、申请退款、申请开票（后两条都从「我的订单」起步）
+     · 想重看：控制台执行 __guideStart("rent") / ("vehicle") / ("renew") / ("refund") / ("invoice")
+     · 现有五条：月租办理、绑定车辆、月租续费、申请退款、申请开票
+       （后三条都从「我的订单」起步，从订单卡片上对应的按钮进去）
    ========================================================================== */
 (() => {
   "use strict";
@@ -181,6 +182,61 @@
       ]
     },
 
+    /* ---------------- 月租续费 ----------------
+       起点在「我的订单」，从订单卡片上的「续费」进去。
+       续的是当前这条月租，付完新租期接在当前租期后面，不改原订单。  */
+    {
+      id: "renew",
+      name: "月租续费引导",
+      steps: [
+        {
+          screen: "orderList",
+          // 只有还在生效、且没在退款流程里的月租才有这个按钮
+          anchor: '[data-order-inline-action="renew"]',
+          waitFor: '[data-order-inline-action="renew"]',
+          body: L(
+            "续费从订单卡片上的「**续费**」进。",
+            "只有还在有效期内的月租才有这个入口。"
+          )
+        },
+        {
+          screen: "orderRenew",
+          anchor: "section.order-workflow-section:has([data-renew-months])",
+          body: L(
+            "**第 1 步 · 选续费期限**",
+            "1 个月 / 3 个月 / 半年 / 1 年 是快捷选项，",
+            "也能直接在输入框里填月数，填多少都行，没有上限。"
+          )
+        },
+        {
+          screen: "orderRenew",
+          anchor: "section.order-workflow-section:has([data-renew-amount])",
+          body: L(
+            "**第 2 步 · 看续费明细**",
+            "开始日期接在当前到期日的第二天，截止日期和应付金额跟着月数一起变。",
+            "金额 = 小区月租单价 × 续费月数，跟车辆台数无关。"
+          )
+        },
+        {
+          screen: "orderRenew",
+          anchor: "[data-renew-submit]",
+          body: L(
+            "**第 3 步 · 提交并支付**",
+            "走微信支付，付完新租期就续在当前租期后面，原订单不动。"
+          )
+        },
+        {
+          screen: "home",
+          anchor: ".rent-card",
+          body: L(
+            "**续费成功回首页**，月租卡的有效期往后延了。",
+            "这条新租期在「我的订单」里是一条**待生效**的续费单，",
+            "当前租期结束后自动接上，中间不用再操作。"
+          )
+        }
+      ]
+    },
+
     /* ---------------- 申请退款 ----------------
        起点在「我的订单」，从订单卡片底部的「退款」进去。
        中途会拐到「退款收款信息」屏填账户，再回到申请退款屏提交。  */
@@ -266,12 +322,15 @@
       steps: [
         {
           screen: "orderList",
-          // 必须精确匹配 invoice —— 前缀匹配会先命中已申请过的「开票进度」(invoiceProgress)
-          anchor: '[data-order-inline-action="invoice"]',
-          waitFor: '[data-order-inline-action="invoice"]',
+          // 必须精确匹配 invoice —— 前缀匹配会先命中已申请过的「开票进度」(invoiceProgress)。
+          // 已经开好票的订单，按钮换成「查看发票」(viewInvoice)，一并认下，
+          // 这样从「申请开票」和「查看发票」两个入口都能起播。
+          anchor: '[data-order-inline-action="invoice"], [data-order-inline-action="viewInvoice"]',
+          waitFor: '[data-order-inline-action="invoice"], [data-order-inline-action="viewInvoice"]',
           body: L(
             "开票从订单卡片上的「**申请开票**」进。",
-            "已支付、还没开过票、且没在退款中的订单才有这个入口。"
+            "已支付、还没开过票、且没在退款中的订单才有这个入口；",
+            "已经开好票的，这里显示「查看发票」，点进去就是发票详情。"
           )
         },
         {
@@ -318,6 +377,16 @@
           body: L(
             "**申请已提交。**",
             "全部票据在「个人中心 · 开票记录」里查，一张订单可以对应多张票据。"
+          )
+        },
+        {
+          screen: "invoiceResult",
+          // 票据开好（invoiceStatus=已完成）才有这一条；还在申请中的订单找不到 → 自动跳过
+          anchor: "[data-invoice-file-action]",
+          body: L(
+            "**查看发票**",
+            "票据开好后，这里会多出凭证这一条，点「查看」打开电子发票。",
+            "一张订单可能开出多张票据，每张都要单独查看。"
           )
         }
       ]
