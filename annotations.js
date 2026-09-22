@@ -180,6 +180,21 @@
       )
     },
 
+    /* ---------------- 通用弹窗 ---------------- */
+    /* screen: "*" = 哪一屏都可能弹（办理成功 / 续费成功 / 个人中心开关都调它），
+       所以不能绑定单一屏；锚点找不到时不算错，只是「还没触发」。 */
+    {
+      id: "rentReminderPrompt",
+      screen: "*",
+      auth: "authed",
+      anchor: ".rent-reminder-panel",
+      body: L(
+        "到期提醒通过微信「**小程序订阅消息**」下发，需用户在此授权订阅。",
+        "订阅只能由用户点击触发，后台无法代为授权；一次性订阅授权一次只可下发一条。",
+        "提醒时间（到期前 7 天）由 **PC 端管理后台**配置。"
+      )
+    },
+
     /* ---------------- 登录 ---------------- */
     /* 只在「登录」这个视图（main）出现 —— 讲的就是这两个登录入口。
        关联手机号（bind）、验证码登录（sms）两个视图不挂任何注释 */
@@ -237,7 +252,7 @@
     const auth = document.body.dataset.auth;
     return ANNOTATIONS.filter(
       (item) =>
-        item.screen === screen &&
+        (!item.screen || item.screen === "*" || item.screen === screen) &&
         (!item.loginView || item.loginView === loginView) &&
         (!item.auth || item.auth === auth)
     );
@@ -269,10 +284,13 @@
     }
     const el = matches[item.nth || 0];
     if (!el) {
-      state.missed.push({
-        id: item.id,
-        reason: `没找到锚点 ${item.anchor}${item.nth ? `（第 ${item.nth + 1} 个）` : ""}`
-      });
+      // screen:"*" 的锚点是"触发后才存在"的（如各类弹窗），没找到属正常，不算错
+      if (item.screen !== "*") {
+        state.missed.push({
+          id: item.id,
+          reason: `没找到锚点 ${item.anchor}${item.nth ? `（第 ${item.nth + 1} 个）` : ""}`
+        });
+      }
       return null;
     }
     // 不可见（含"视图叠着但没激活"的情况）不算写错，多半是当前状态看不到它，
@@ -701,7 +719,7 @@
     const screen = activeScreen();
     const auth = document.body.dataset.auth;
     return ANNOTATIONS.map((item) => {
-      const onScreen = item.screen === screen;
+      const onScreen = item.screen === "*" || item.screen === screen;
       let status = "不在本屏";
       if (item.auth && item.auth !== auth) {
         status = `当前登录态（${auth}）不显示`;
@@ -711,7 +729,7 @@
           status = isVisible(screenEl.querySelectorAll(item.anchor)[item.nth || 0])
             ? "✓ 已挂上"
             : "锚点存在但当前状态不可见";
-        } else status = "✗ 锚点未找到";
+        } else status = item.screen === "*" ? "当前未出现（触发后才显示）" : "✗ 锚点未找到";
       }
       return { id: item.id, screen: item.screen, anchor: item.anchor, status };
     });
