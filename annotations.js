@@ -328,7 +328,7 @@
       auth: "authed",
       anchor: "[data-support-action]",
       body: L(
-        "客服联系方式，办理、退款、票据等问题可在此咨询。"
+        "展示客服联系方式。"
       )
     },
     {
