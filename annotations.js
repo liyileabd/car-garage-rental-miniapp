@@ -239,6 +239,27 @@
       )
     },
 
+    /* ---------------- 变更月租车辆 ---------------- */
+    {
+      id: "vehicleSwapSourceList",
+      screen: "vehicleSwapSource",
+      auth: "authed",
+      anchor: "[data-vehicle-swap-source-options]",
+      body: L(
+        "本订单当前办理的车辆，同一订单最多 2 辆、至少保留 1 辆。",
+        "未满 2 辆时，列表底部出现「新增办理车辆」入口。"
+      )
+    },
+    {
+      id: "vehicleSwapUnbindLimit",
+      screen: "vehicleSwap",
+      auth: "authed",
+      anchor: "[data-vehicle-swap-footer]",
+      body: L(
+        "订单内的车辆至少保留 1 辆，仅剩 1 辆时「移除该车辆」不出现。"
+      )
+    },
+
     /* ---------------- 通用弹窗 ---------------- */
     /* screen: "*" = 哪一屏都可能弹（办理成功 / 续费成功 / 个人中心开关都调它），
        所以不能绑定单一屏；锚点找不到时不算错，只是「还没触发」。 */
