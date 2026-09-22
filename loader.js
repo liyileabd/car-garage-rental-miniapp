@@ -1,5 +1,5 @@
 (() => {
-  const version = "prototype-v51";
+  const version = "prototype-v52";
   const pageFiles = [
     "pages/login/index.html",
     "pages/home/index.html",

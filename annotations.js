@@ -160,16 +160,6 @@
 
     /* ---------------- 办理月租 · 告知书 ---------------- */
     {
-      id: "rentNoticePager",
-      screen: "rentNotice",
-      auth: "authed",
-      anchor: ".notice-pager",
-      body: L(
-        "三份告知书分页展示，点两侧箭头或下方圆点翻页。",
-        "需翻阅至最后一份，才满足继续条件之一。"
-      )
-    },
-    {
       id: "rentNoticeNext",
       screen: "rentNotice",
       auth: "authed",
