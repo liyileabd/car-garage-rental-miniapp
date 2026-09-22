@@ -236,6 +236,16 @@
 
   const activeScreen = () => document.body.dataset.currentTab;
 
+  // 屏内模态弹层：它一开就盖住整页，后面那些区块已经看不清了，
+  // 这时候只标弹层自己 —— 否则弹窗上会同时飘出首页的 3 个圆点。
+  // 以后原型再加同类弹层，把选择器补进来即可。
+  const MODAL_SELECTORS = [
+    ".rent-reminder-modal",
+    ".rent-overlap-dialog",
+    ".vehicle-claim-dialog",
+    ".account-delete-dialog"
+  ];
+
   function screenItems() {
     const screen = activeScreen();
     const loginView = document.body.dataset.loginView;
@@ -262,6 +272,16 @@
       if (parseFloat(style.opacity) < 0.05) return false;
     }
     return true;
+  }
+
+  // 当前屏里有没有开着的模态弹层？返回那个元素（没有就 null）
+  function activeModal(screenEl) {
+    if (!screenEl) return null;
+    for (const selector of MODAL_SELECTORS) {
+      const el = screenEl.querySelector(selector);
+      if (el && isVisible(el)) return el;
+    }
+    return null;
   }
 
   function resolveAnchor(screenEl, item) {
@@ -459,6 +479,10 @@
     state.missed = [];
     state.hidden = 0;
 
+    // 有模态弹层开着（到期提醒、租期重叠确认等）→ 只标弹层里的锚点。
+    // 弹层盖住整页时，后面那些区块既看不清也点不到，标了只会更乱
+    const modal = activeModal(screenEl);
+
     // 1) 收集能显示的锚点
     const blobs = [];
     screenItems().forEach((item) => {
@@ -469,6 +493,7 @@
         return;
       }
       const el = found.el;
+      if (modal && !modal.contains(el)) return;
       const rect = el.getBoundingClientRect();
 
       // 裁剪范围要分开看：
@@ -499,6 +524,7 @@
     // 2) 签名比对，没变化就不重建 DOM（让 700ms 的兜底巡检几乎零成本）
     const sig = [
       activeScreen(),
+      modal ? modal.className : "-",
       Math.round(phoneRect.width),
       blobs.map((blob) => `${blob.item.id}@${Math.round(blob.cy)}`).join(",")
     ].join("|");
@@ -708,18 +734,18 @@
     const screenEl = document.querySelector(".phone-block.is-active");
     const screen = activeScreen();
     const auth = document.body.dataset.auth;
+    const modal = activeModal(screenEl);
     return ANNOTATIONS.map((item) => {
       const onScreen = item.screen === "*" || item.screen === screen;
       let status = "不在本屏";
       if (item.auth && item.auth !== auth) {
         status = `当前登录态（${auth}）不显示`;
       } else if (onScreen) {
+        const el = screenEl && screenEl.querySelectorAll(item.anchor)[item.nth || 0];
         if (!screenEl) status = "找不到当前屏容器";
-        else if (screenEl.querySelectorAll(item.anchor)[item.nth || 0]) {
-          status = isVisible(screenEl.querySelectorAll(item.anchor)[item.nth || 0])
-            ? "✓ 已挂上"
-            : "锚点存在但当前状态不可见";
-        } else status = item.screen === "*" ? "当前未出现（触发后才显示）" : "✗ 锚点未找到";
+        else if (!el) status = item.screen === "*" ? "当前未出现（触发后才显示）" : "✗ 锚点未找到";
+        else if (modal && !modal.contains(el)) status = "被弹层遮挡，未显示";
+        else status = isVisible(el) ? "✓ 已挂上" : "锚点存在但当前状态不可见";
       }
       return { id: item.id, screen: item.screen, anchor: item.anchor, status };
     });
