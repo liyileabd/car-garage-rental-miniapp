@@ -1714,7 +1714,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
 
     function updateRentTermState() {
       const parsedMonths = Number.parseInt(rentMonthsInput?.value || "1", 10);
-      rentTermState.months = Math.min(12, Math.max(1, Number.isFinite(parsedMonths) ? parsedMonths : 1));
+      // 租赁月数不设上限，只保底 1
+      // （2026-09-22 人类：「租赁月数先没有时间限制」）
+      rentTermState.months = Math.max(1, Number.isFinite(parsedMonths) ? parsedMonths : 1);
       if (rentMonthsInput && rentMonthsInput.value !== String(rentTermState.months)) {
         rentMonthsInput.value = String(rentTermState.months);
       }
