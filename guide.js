@@ -16,7 +16,8 @@
      · 点手机右上角的「流程引导」→ 选一个流程才开始（默认不自动播）
      · 「下一步」推进，「上一步」回退，右上角「跳过」直接结束
      · 播放中按钮变成「结束引导」，再点一次就收起
-     · 想重看：控制台执行 __guideStart("rent") / __guideStart("vehicle")
+     · 想重看：控制台执行 __guideStart("rent") / ("vehicle") / ("refund") / ("invoice")
+     · 现有四条：月租办理、绑定车辆、申请退款、申请开票（后两条都从「我的订单」起步）
    ========================================================================== */
 (() => {
   "use strict";
@@ -175,6 +176,148 @@
           body: L(
             "**绑定完成**，新车已经在列表里了。",
             "这辆车一旦关联了月租且在生效期内，就不能再修改或解绑。"
+          )
+        }
+      ]
+    },
+
+    /* ---------------- 申请退款 ----------------
+       起点在「我的订单」，从订单卡片底部的「退款」进去。
+       中途会拐到「退款收款信息」屏填账户，再回到申请退款屏提交。  */
+    {
+      id: "refund",
+      name: "申请退款引导",
+      steps: [
+        {
+          screen: "orderList",
+          // 注意：只有还在生效的月租才有这个按钮，所以要认准 action=refund
+          anchor: '[data-order-inline-action="refund"]',
+          waitFor: '[data-order-inline-action="refund"]',
+          body: L(
+            "退款从订单卡片上的「**退款**」进。",
+            "只有还在生效的月租才提供这个入口。"
+          )
+        },
+        {
+          screen: "orderRefund",
+          anchor: "section.order-workflow-section:has([data-refund-estimate])",
+          body: L(
+            "**第 1 步 · 看退款明细**",
+            "原支付金额、剩余租期、预计退款金额由系统按当前日期测算。",
+            "这里只是预估，实际金额以后台审批为准。"
+          )
+        },
+        {
+          screen: "orderRefund",
+          anchor: ".refund-reason-grid",
+          body: L(
+            "**第 2 步 · 选退款原因**",
+            "四个原因里选一个；选「其他原因」时，",
+            "下面的补充说明就变成必填，要写清具体原因。"
+          )
+        },
+        {
+          screen: "orderRefund",
+          anchor: "[data-refund-account-open]",
+          waitFor: "[data-refund-account-open]",
+          body: L(
+            "**第 3 步 · 填退款账户**",
+            "没填过账户就提交，会被拦回到这一项。",
+            "填过的会默认带出上次保存的信息，可以改。"
+          )
+        },
+        {
+          screen: "refundAccount",
+          anchor: ".personal-info-section",
+          body: L(
+            "开户行、银行卡号、联系电话都要填。",
+            "收款人按订单付款人锁定，不能改。"
+          )
+        },
+        {
+          screen: "orderRefund",
+          anchor: "[data-refund-submit]",
+          body: L(
+            "**第 4 步 · 提交退款申请**",
+            "提交后回到订单详情，状态变「退款审批中」，",
+            "这辆车在这个小区的月租通行同步暂停。"
+          )
+        },
+        {
+          screen: "orderDetail",
+          // 圈订单详情最下面的「服务状态」那节，别圈整块内容（高度会超出视口）
+          anchor: "[data-order-detail-content] .order-detail-section:last-child",
+          body: L(
+            "**提交完成。**",
+            "审核和打款都在 PC 后台线下处理，小程序只展示审批结果。"
+          )
+        }
+      ]
+    },
+
+    /* ---------------- 申请开票 ----------------
+       起点同样在「我的订单」，从「申请开票」进去。
+       凭证类型不同的订单，页面上的栏目不一样：
+       增值税发票才有「发票类型」和开票信息，非税票据按缴款人直接开 ——
+       所以中间那两步在非税订单上会被自动跳过。  */
+    {
+      id: "invoice",
+      name: "申请开票引导",
+      steps: [
+        {
+          screen: "orderList",
+          // 必须精确匹配 invoice —— 前缀匹配会先命中已申请过的「开票进度」(invoiceProgress)
+          anchor: '[data-order-inline-action="invoice"]',
+          waitFor: '[data-order-inline-action="invoice"]',
+          body: L(
+            "开票从订单卡片上的「**申请开票**」进。",
+            "已支付、还没开过票、且没在退款中的订单才有这个入口。"
+          )
+        },
+        {
+          screen: "orderInvoice",
+          anchor: "section.order-workflow-section:has([data-invoice-voucher-type])",
+          body: L(
+            "**第 1 步 · 核对开票内容**",
+            "凭证类型由系统按所属项目和收费项目自动判定，不用自己选。",
+            "开票金额就是这笔订单的实付金额，也不能改。"
+          )
+        },
+        {
+          screen: "orderInvoice",
+          // 非税票据没有这一段，会被跳过
+          anchor: "[data-invoice-vat-section]",
+          body: L(
+            "**第 2 步 · 选发票类型**",
+            "个人普票和企业专票两种，按需切换，",
+            "下面的填写内容会跟着变。"
+          )
+        },
+        {
+          screen: "orderInvoice",
+          // 三个候选按文档顺序取第一个看得见的：个人普票 / 企业专票 / 非税缴款人
+          anchor: ".invoice-personal-fields, .invoice-company-fields, [data-invoice-nontax-section]",
+          body: L(
+            "**第 3 步 · 填开票信息**",
+            "带 * 的是必填项，手机号用来接收电子发票。",
+            "非税票据没有这一项，按当前缴款人信息直接开具。"
+          )
+        },
+        {
+          screen: "orderInvoice",
+          anchor: "[data-invoice-submit]",
+          body: L(
+            "**第 4 步 · 提交申请**",
+            "提交后进开票申请详情，财务在后台处理。",
+            "票据开好后可以在这里查看。"
+          )
+        },
+        {
+          screen: "invoiceResult",
+          anchor: "[data-invoice-result-detail]",
+          body: L(
+            "**申请已提交。**",
+            "全部票据在「个人中心 · 开票记录」里查，一张订单可以对应多张票据。"
           )
         }
       ]
@@ -529,6 +672,19 @@
 
   /* ---------- 重定位触发 ---------- */
 
+  // 一个屏可能在流程里出现多次：退款流程里「申请退款」屏出现 4 次
+  // （明细 → 原因 → 账户入口 → 提交），首页也同时是月租办理的起点和终点。
+  // 所以切屏时不能一律 findIndex（会退回第一次出现的那步），分两种情形：
+  //   ① 切到的屏正好是「当前步的下一步」→ 顺着流程被带过去的，前进
+  //      （退款流程填完账户保存回申请退款屏，要接着去提交，不能退回明细）
+  //   ② 其余情况 → 当作往回退，回到这个屏最早出现的那一步
+  //      （月租办理走到"车辆与租期"又退回首页，该回起点而不是跳到"支付成功"）
+  function stepIndexForScreen(screen) {
+    const nextIndex = state.index + 1;
+    if (state.steps[nextIndex] && state.steps[nextIndex].screen === screen) return nextIndex;
+    return state.steps.findIndex((step) => step.screen === screen);
+  }
+
   function bind() {
     // 用户自己切屏：切到流程里的某一步就跟着跳过去，切到流程外就结束引导
     ["showTab", "showLoginView"].forEach((name) => {
@@ -537,7 +693,7 @@
       window[name] = function wrapped(...args) {
         const result = original.apply(this, args);
         if (!state.on || state.navigating) return result; // 引导自己切的屏，交给 render
-        const index = state.steps.findIndex((step) => step.screen === activeScreen());
+        const index = stepIndexForScreen(activeScreen());
         if (index < 0) {
           stop();
         } else {
