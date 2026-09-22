@@ -541,7 +541,11 @@
     if (!phone) return;
 
     const rect = phone.getBoundingClientRect();
-    const gap = 12;
+    // 圆点列占的是手机右边缘外 2.5 ~ 27.5px（中心在 +15、直径 25）。
+    // 工具条要是只离 12px，最上面那颗圆点会被按钮压住 —— 退款记录那屏就是
+    // （圆点挂在顶部筛选条上，和工具条同一行）。所以让到 32px 起，整颗露出来
+    const gap = 32;
+    const pad = 12;
     const width = dock.offsetWidth || 80;
     const left = Math.round(rect.right + gap);
 
@@ -552,7 +556,7 @@
       dock.classList.remove("is-inside");
     } else {
       // 窄屏：手机铺满视口，没地方放外面了，贴到手机内部的右上角
-      dock.style.top = Math.round(rect.top + gap) + "px";
+      dock.style.top = Math.round(rect.top + pad) + "px";
       dock.style.left = Math.round(rect.right - width - gap) + "px";
       dock.classList.add("is-inside");
     }
@@ -616,10 +620,22 @@
     placePopup(badgeX, badgeY);
   }
 
+  // 工具条钉在手机右上角外侧，正好压在弹层往右展开的路上 —— 弹层要躲开它
+  function dockBox() {
+    if (!dock) return null;
+    const rect = dock.getBoundingClientRect();
+    return rect.width && rect.height ? rect : null;
+  }
+
   function placePopup(badgeX, badgeY) {
     const pad = 12;
     const width = popup.offsetWidth || 296;
     const height = popup.offsetHeight || 220;
+
+    const box = (x, y) => ({ left: x, top: y, right: x + width, bottom: y + height });
+    const fits = (x, y) =>
+      x >= pad && y >= pad && x + width <= window.innerWidth - pad && y + height <= window.innerHeight - pad;
+    const hits = (a, b) => !!b && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
     let x = badgeX + 20;
     if (x + width > window.innerWidth - pad) x = badgeX - 20 - width;   // 右侧不够就翻到左侧
@@ -627,6 +643,26 @@
 
     let y = badgeY - 18;
     y = Math.max(pad + 8, Math.min(y, window.innerHeight - height - pad));
+
+    const bar = dockBox();
+    if (hits(box(x, y), bar)) {
+      // 圆点离手机顶边近时（如退款记录的筛选条），弹层会被顶到工具条那一行。
+      // 依次试：贴工具条下沿 → 贴工具条上沿 → 翻到圆点左边（同样两种高度），
+      // 哪个放得下又不压工具条就用哪个
+      const altX = badgeX - 20 - width;
+      const cands = [
+        { x, y: bar.bottom + 8 },
+        { x, y: bar.top - 8 - height },
+        { x: altX, y },
+        { x: altX, y: bar.bottom + 8 }
+      ];
+      for (const cand of cands) {
+        if (!fits(cand.x, cand.y) || hits(box(cand.x, cand.y), bar)) continue;
+        x = cand.x;
+        y = cand.y;
+        break;
+      }
+    }
 
     popup.style.left = `${Math.round(x)}px`;
     popup.style.top = `${Math.round(y)}px`;
