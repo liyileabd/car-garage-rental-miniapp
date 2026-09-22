@@ -193,6 +193,16 @@
     },
 
     /* ---------------- 新增 / 编辑车辆 ---------------- */
+    {
+      id: "vehicleSaveCheck",
+      screen: "vehicleForm",
+      auth: "authed",
+      anchor: "[data-save-vehicle]",
+      body: L(
+        "保存车辆时校验车牌是否已被其他账号绑定。",
+        "已被绑定的车牌无法保存，页面将提示用户联系客服处理。"
+      )
+    },
     /* optional: true = 这条锚点只在特定状态下才出现（此处为「车牌已被绑定」弹窗），
        平时找不到属正常，不记 miss。 */
     {
