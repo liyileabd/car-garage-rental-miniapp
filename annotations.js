@@ -282,6 +282,54 @@
       )
     },
 
+    /* ---------------- 个人中心 ---------------- */
+    {
+      id: "personalHeroEntry",
+      screen: "personal",
+      anchor: ".profile-card",
+      body: L(
+        "点击此处进入个人信息页；未登录时为登录/注册入口。"
+      )
+    },
+    {
+      id: "personalInfoEntry",
+      screen: "personal",
+      auth: "authed",
+      anchor: "[data-personal-info-action]",
+      body: L(
+        "账号的实名资料。",
+        "真实姓名会带入订单，作为办理人与付款人；退款收款人亦按此锁定。"
+      )
+    },
+    {
+      id: "refundListEntry",
+      screen: "personal",
+      auth: "authed",
+      anchor: "[data-refund-list-action]",
+      body: L(
+        "退款申请的存档，按登录账号归集。",
+        "与订单各自独立保存，订单删除后仍可查询。"
+      )
+    },
+    {
+      id: "supportEntry",
+      screen: "personal",
+      auth: "authed",
+      anchor: "[data-support-action]",
+      body: L(
+        "客服联系方式，办理、退款、票据等问题可在此咨询。"
+      )
+    },
+    {
+      id: "settingsEntry",
+      screen: "personal",
+      auth: "authed",
+      anchor: "[data-settings-action]",
+      body: L(
+        "账号与订阅相关设置的入口，含账号注销、到期提醒订阅与退出登录。"
+      )
+    },
+
     /* ---------------- 通用弹窗 ---------------- */
     /* screen: "*" = 哪一屏都可能弹（办理成功 / 续费成功 / 个人中心开关都调它），
        所以不能绑定单一屏；锚点找不到时不算错，只是「还没触发」。 */
