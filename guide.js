@@ -5,14 +5,18 @@
    高亮当前该操作的地方，配一段用户视角的说明，点「下一步」继续；
    关键跳转步骤支持「点了目标元素就自动前进」，不用再点按钮。
 
+   现在有多个流程（人类 2026-09-22 要求：不能只叫「引导」，得是「xx引导」）：
+   工具条上的按钮叫「流程引导」，点开是一份菜单，一条一个流程。
+   加流程就往 GUIDES 里加一项，菜单会自动多一条。
+
    和原型完全解耦：不改 DOM 结构、不碰 app.js 内容、不改任何原型样式。
-   引导内容全部集中在下面「一、流程步骤配置」里，改文案只动那一段。
+   引导内容全部集中在下面「一、流程配置」里，改文案只动那一段。
 
    怎么用：
-     · 点手机右侧的「引导」按钮才开始（默认不自动播）
+     · 点手机右上角的「流程引导」→ 选一个流程才开始（默认不自动播）
      · 「下一步」推进，「上一步」回退，右上角「跳过」直接结束
      · 播放中按钮变成「结束引导」，再点一次就收起
-     · 想重看：控制台执行 __guideStart()
+     · 想重看：控制台执行 __guideStart("rent") / __guideStart("vehicle")
    ========================================================================== */
 (() => {
   "use strict";
@@ -21,78 +25,159 @@
   window.__guideLoaded = true;
 
   /* ========================================================================
-     一、流程步骤配置  —— 改文案只动这一段
+     一、流程配置  —— 改文案只动这一段
      ------------------------------------------------------------------------
-     screen   必填  这一步在哪一屏，值 = .phone-block 上的 data-screen。
-                    和当前屏不一致时会自动切过去，所以流程可以跨页面。
-     anchor   必填  CSS 选择器（在该屏内部查找），这一步就是高亮它。
-     body     必填  说明文字，支持 **加粗**，用 L(...) 手动分行。
-     waitFor  选填  CSS 选择器。用户点了它（通常就是"继续下一步"的那个按钮）
-                    就自动前进，不用再去点气泡上的「下一步」。
+     id     给 __guideStart() 用的短名
+     name   菜单和气泡上显示的名字，写成「xx引导」
+     steps  步骤数组，字段如下：
+
+       screen   必填  这一步在哪一屏，值 = .phone-block 上的 data-screen。
+                      和当前屏不一致时会自动切过去，所以流程可以跨页面。
+       anchor   必填  CSS 选择器（在该屏内部查找），这一步就是高亮它。
+       body     必填  说明文字，支持 **加粗**，用 L(...) 手动分行。
+       waitFor  选填  CSS 选择器。用户点了它（通常就是"继续下一步"的那个按钮）
+                      就自动前进，不用再去点气泡上的「下一步」。
 
      注 1：一步一屏，screen 和当前屏不一致时会自动切过去，所以流程能跨页面。
      注 2：某一步的锚点在当前屏找不到时，这一步会自动跳过。
      注 3：只在特定条件下才出现的屏（比如"补全办理资料"）不单独列成一步，
            写进相邻步骤的说明里，免得把人带到一屏本来不会经过的页面。
+     注 4：waitFor 只挂在「点了必然往下走」的元素上（选小区、新增车辆这类）。
+           「保存车辆」要校验，失败时停在原地不动更对，所以那步不挂 waitFor
+           —— 切屏钩子会在真正保存成功后把引导带到下一步。
      ======================================================================== */
 
   const L = (...lines) => lines.join("\n");
 
-  const STEPS = [
+  const GUIDES = [
+    /* ---------------- 月租办理 ---------------- */
     {
-      screen: "home",
-      anchor: ".shortcut[data-rent-flow-action]",
-      waitFor: "[data-rent-flow-action]",
-      body: L("办月租从这儿进 —— 点「**月租办理**」。")
+      id: "rent",
+      name: "月租办理引导",
+      steps: [
+        {
+          screen: "home",
+          anchor: ".shortcut[data-rent-flow-action]",
+          waitFor: "[data-rent-flow-action]",
+          body: L("办月租从这儿进 —— 点「**月租办理**」。")
+        },
+        {
+          screen: "rentFlow",
+          anchor: "[data-rent-garage-list]",
+          body: L(
+            "**第 1 步 · 选小区**",
+            "在下面列表里挑一个小区，点卡片上的「选择」。",
+            "（首次办理会先让你补姓名、手机号、身份证号。）"
+          )
+        },
+        {
+          screen: "rentVehicle",
+          anchor: ".rent-form-card",
+          body: L(
+            "**第 2 步 · 车辆与租期**",
+            "",
+            "点「请选择车辆」挑车牌（最多 2 辆），",
+            "再选开始日期和租几个月，费用会实时算出来。"
+          )
+        },
+        {
+          screen: "rentNotice",
+          anchor: ".notice-footer",
+          body: L(
+            "**签办理告知书**",
+            "",
+            "3 份（月租办理 / 物业管理 / 服务告知书）左右翻页看完，",
+            "勾选「我已阅读并同意」，等 5 秒倒计时结束才能继续。"
+          )
+        },
+        {
+          screen: "rentConfirm",
+          anchor: ".rent-flow-bottom",
+          body: L(
+            "**第 3 步 · 确认支付**",
+            "",
+            "核对小区、车辆、起止日期和金额 ——",
+            "没问题点「确认支付」，走微信支付。"
+          )
+        },
+        {
+          screen: "home",
+          anchor: ".rent-card",
+          body: L(
+            "**支付成功回到首页**，月租卡就更新了",
+            "",
+            "车牌、小区、还剩多少天、什么时候到期都在这。",
+            "这时还会问你「要不要开启续费提醒」。"
+          )
+        }
+      ]
     },
+
+    /* ---------------- 绑定车辆 ---------------- */
     {
-      screen: "rentFlow",
-      anchor: "[data-rent-garage-list]",
-      body: L(
-        "**第 1 步 · 选小区**",
-        "在下面列表里挑一个小区，点卡片上的「选择」。",
-        "（首次办理会先让你补姓名、手机号、身份证号。）"
-      )
-    },
-    {
-      screen: "rentVehicle",
-      anchor: ".rent-form-card",
-      body: L(
-        "**第 2 步 · 车辆与租期**",
-        "",
-        "点「请选择车辆」挑车牌（最多 2 辆），",
-        "再选开始日期和租几个月，费用会实时算出来。"
-      )
-    },
-    {
-      screen: "rentNotice",
-      anchor: ".notice-footer",
-      body: L(
-        "**签办理告知书**",
-        "",
-        "3 份（月租办理 / 物业管理 / 服务告知书）左右翻页看完，",
-        "勾选「我已阅读并同意」，等 5 秒倒计时结束才能继续。"
-      )
-    },
-    {
-      screen: "rentConfirm",
-      anchor: ".rent-flow-bottom",
-      body: L(
-        "**第 3 步 · 确认支付**",
-        "",
-        "核对小区、车辆、起止日期和金额 ——",
-        "没问题点「确认支付」，走微信支付。"
-      )
-    },
-    {
-      screen: "home",
-      anchor: ".rent-card",
-      body: L(
-        "**支付成功回到首页**，月租卡就更新了",
-        "",
-        "车牌、小区、还剩多少天、什么时候到期都在这。",
-        "这时还会问你「要不要开启续费提醒」。"
-      )
+      id: "vehicle",
+      name: "绑定车辆引导",
+      steps: [
+        {
+          screen: "home",
+          anchor: ".shortcut[data-vehicle-manage-action]",
+          waitFor: "[data-vehicle-manage-action]",
+          body: L("绑车从这儿进 —— 点「**车辆管理**」。")
+        },
+        {
+          screen: "vehicleManage",
+          anchor: ".vehicle-add-footer",
+          waitFor: "[data-open-vehicle-form]",
+          body: L(
+            "**第 1 步 · 看已有车辆**",
+            "上面这个列表是本账号登记的全部车辆，每张卡是一辆车。",
+            "点「**新增车辆**」开始绑一辆新的。"
+          )
+        },
+        {
+          screen: "vehicleForm",
+          anchor: ".plate-input-shell",
+          body: L(
+            "**第 2 步 · 填车牌号**",
+            "先点省份简称和地区字母，再用下面的车牌键盘填后续号码；",
+            "普通车牌 5 位、新能源 6 位，填完点键盘上的「完成」。"
+          )
+        },
+        {
+          screen: "vehicleForm",
+          anchor: "[data-open-plate-color-sheet]",
+          body: L(
+            "**选车牌颜色**",
+            "蓝牌 / 黄牌 / 新能源 / 黑牌 / 白牌 ——",
+            "要和车牌本身一致，颜色不对会影响进出场识别。"
+          )
+        },
+        {
+          screen: "vehicleForm",
+          anchor: ".vehicle-choice-grid",
+          body: L(
+            "**车辆大小类型** 按行驶证选（小型车 / 中型车 / 大型车）。",
+            "下面的外观颜色、车辆照片（最多 6 张）都是选填。"
+          )
+        },
+        {
+          screen: "vehicleForm",
+          anchor: "[data-save-vehicle]",
+          body: L(
+            "**第 3 步 · 保存车辆**",
+            "车牌已被其他账号绑定的，这里会拦下来并提示联系客服。",
+            "保存成功回到车辆管理，新车排在列表最前面。"
+          )
+        },
+        {
+          screen: "vehicleManage",
+          anchor: "[data-vehicle-list]",
+          body: L(
+            "**绑定完成**，新车已经在列表里了。",
+            "这辆车一旦关联了月租且在生效期内，就不能再修改或解绑。"
+          )
+        }
+      ]
     }
   ];
 
@@ -105,9 +190,12 @@
   const EDGE = 12;     // 距视口边缘的留白
   const PAD = 6;       // 高亮圈比目标元素外扩的像素
 
-  const state = { on: false, index: 0, steps: [], navigating: false };
+  const state = { on: false, index: 0, steps: [], navigating: false, flowId: GUIDES[0].id };
 
-  let layer, ring, tip, btn, labelEl, waitHandler;
+  let layer, ring, tip, btn, labelEl, waitHandler, menu, dock;
+
+  // 当前正在播 / 上一次播的流程
+  const currentGuide = () => GUIDES.find((guide) => guide.id === state.flowId) || GUIDES[0];
 
   /* ---------- 小工具 ---------- */
 
@@ -175,11 +263,12 @@
     });
   }
 
-  /* ---------- 触发按钮 ---------- */
+  /* ---------- 触发按钮 + 流程菜单 ---------- */
 
-  // 挂到手机右上角外侧的工具条里，和「注释」按钮并排
+  // 挂到手机右上角外侧的工具条里，和「注释」按钮并排。
+  // 按钮本身不开播 —— 点开菜单让用户挑走哪个流程
   function mountButton() {
-    let dock = document.querySelector(".dev-dock");
+    dock = document.querySelector(".dev-dock");
     if (!dock) {
       // 万一标注层没建出工具条，自己补一个，保证按钮一定在
       dock = document.createElement("div");
@@ -190,29 +279,86 @@
     btn = document.createElement("button");
     btn.type = "button";
     btn.className = "dev-btn dev-btn--guide";
-    btn.title = "播放办理流程引导";
+    btn.title = "选择要播放的流程引导";
     btn.innerHTML =
-      '<span class="dev-btn__play"></span><span class="dev-btn__label">引导</span>';
-    btn.addEventListener("click", () => (state.on ? stop() : play()));
+      '<span class="dev-btn__play"></span>' +
+      '<span class="dev-btn__label">流程引导</span>' +
+      '<span class="dev-btn__caret"></span>';
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation(); // 别让下面的关菜单监听顺手关掉
+      if (state.on) {
+        stop();
+        return;
+      }
+      toggleMenu();
+    });
     dock.appendChild(btn);
     labelEl = btn.querySelector(".dev-btn__label");
+
+    menu = document.createElement("div");
+    menu.className = "gd-menu";
+    menu.hidden = true;
+    menu.addEventListener("click", (event) => {
+      const item = event.target.closest("[data-gd-flow]");
+      if (!item) return;
+      closeMenu();
+      start(item.dataset.gdFlow);
+    });
+    renderMenu();
+    dock.appendChild(menu);
+
+    // 点别处关菜单
+    document.addEventListener("click", (event) => {
+      if (menu.hidden) return;
+      if (event.target.closest && event.target.closest(".gd-menu")) return;
+      closeMenu();
+    });
   }
 
-  // 按钮跟着播放状态走：没播叫「引导」，播着叫「结束引导」
-  // 另外：引导演示的是「登录后的办理流程」，未登录（guest）时整个入口不出现 ——
-  // 未登录点办理入口会被 ensureAuthenticated() 拦到登录页，流程走不下去
+  // 一条流程一行：名字 + 步数
+  function renderMenu() {
+    menu.innerHTML = GUIDES.map((guide) => {
+      return (
+        `<button class="gd-menu__item" type="button" data-gd-flow="${esc(guide.id)}">` +
+        `<span class="gd-menu__name">${esc(guide.name)}</span>` +
+        `<span class="gd-menu__count">${guide.steps.length} 步</span>` +
+        "</button>"
+      );
+    }).join("");
+  }
+
+  function toggleMenu() {
+    if (menu.hidden) {
+      menu.hidden = false;
+      btn.classList.add("is-menu");
+    } else {
+      closeMenu();
+    }
+  }
+
+  function closeMenu() {
+    if (menu) menu.hidden = true;
+    if (btn) btn.classList.remove("is-menu");
+  }
+
+  // 按钮跟着播放状态走：没播叫「流程引导」，播着叫「结束引导」
+  // 另外：引导演示的是「登录后的流程」，未登录（guest）时整个入口不出现 ——
+  // 未登录点这些入口会被 ensureAuthenticated() 拦到登录页，流程走不下去
   function syncBtn() {
     if (!btn) return;
     const show = document.body.dataset.auth === "authed";
     if (btn.hidden !== !show) {
       btn.hidden = !show;
-      if (!show && state.on) stop();
+      if (!show) {
+        if (state.on) stop();
+        closeMenu();
+      }
       // 按钮显隐会改变工具条宽度，位置要重算一次
       if (typeof window.__devSyncDock === "function") window.__devSyncDock();
     }
     btn.classList.toggle("is-on", state.on);
-    btn.title = state.on ? "退出引导" : "播放办理流程引导";
-    if (labelEl) labelEl.textContent = state.on ? "结束引导" : "引导";
+    btn.title = state.on ? "结束当前引导" : "选择要播放的流程引导";
+    if (labelEl) labelEl.textContent = state.on ? "结束引导" : "流程引导";
   }
 
   /* ---------- 定位 ---------- */
@@ -241,6 +387,7 @@
     tip.innerHTML =
       '<div class="gd-tip__head">' +
       `<span class="gd-tip__no">${state.index + 1}</span>` +
+      `<span class="gd-tip__flow">${esc(currentGuide().name)}</span>` +
       '<button class="gd-tip__skip" type="button" data-gd-skip>跳过</button>' +
       "</div>" +
       `<div class="gd-tip__body">${fmt(step.body)}</div>` +
@@ -348,18 +495,21 @@
     render();
   }
 
-  function play() {
+  function play(flowId) {
     if (state.on) return stop();
-    start();
+    start(flowId);
   }
 
-  function start() {
+  function start(flowId) {
     if (state.on) return false;
-    if (!STEPS.length) return false;
+    const guide = GUIDES.find((item) => item.id === flowId) || currentGuide();
+    if (!guide || !guide.steps.length) return false;
 
-    state.steps = STEPS.slice();
+    state.flowId = guide.id;
+    state.steps = guide.steps.slice();
     state.index = 0;
     state.on = true;
+    closeMenu();
     layer.hidden = false;
     document.body.classList.add("gd-on"); // 引导期间把「注释」按钮让出来
     // 两个浮层不叠加：开引导时先把注释收起来
@@ -418,7 +568,7 @@
     mountButton();
     syncBtn(); // 按当前登录态决定引导入口出不出现（未登录时不出现）
     bind();
-    // 默认不自动播放：点手机右侧工具条里的「引导」按钮才开始
+    // 默认不自动播放：点右上角工具条里的「流程引导」，再挑一个流程
   }
 
   (function whenReady() {
@@ -430,13 +580,19 @@
 
   /* ---------- 手动重播 ---------- */
 
-  window.__guideStart = () => {
+  // __guideStart("rent") / __guideStart("vehicle")；不传就播上一次那个
+  window.__guideStart = (flowId) => {
     // 未登录不给播：流程第一步就会撞上登录拦截
     if (document.body.dataset.auth !== "authed") return false;
     stop();
-    return start();
+    return start(flowId || state.flowId);
   };
-  window.__guideSteps = () => STEPS;
+  window.__guideList = () => GUIDES.map((guide) => ({
+    id: guide.id,
+    name: guide.name,
+    steps: guide.steps.length
+  }));
+  window.__guideSteps = () => currentGuide().steps;
   // 给注释层用：工具条巡检时顺手同步一次入口显隐（登录态可能变了）
   window.__guideSyncBtn = syncBtn;
 })();

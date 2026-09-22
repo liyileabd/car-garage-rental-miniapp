@@ -1,7 +1,8 @@
 /* ==========================================================================
    办理流程引导层 · guide.css
    --------------------------------------------------------------------------
-   带人走一遍办理月租全流程：一步一屏、跨页面往下走，
+   带人走一遍完整业务流（现在有「月租办理引导」「绑定车辆引导」两个，
+   由工具条上「流程引导」按钮的菜单选）：一步一屏、跨页面往下走，
    高亮当前该操作的地方，配一段「用户看得懂的话」说明这一步做什么。
    与原型完全解耦：不改 DOM 结构、不碰 app.js、不改任何原型样式。
    宿主 DOM 由 guide.js 动态创建，类名统一以 .gd- 开头。
@@ -162,6 +163,94 @@
 
 .dev-btn.is-on .dev-btn__play {
   opacity: 1;
+}
+
+/* 按钮末尾的展开箭头：点它出流程菜单。播放中菜单不可用，箭头收起 */
+.dev-btn__caret {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: currentColor transparent transparent transparent;
+  opacity: 0.45;
+  transition: transform 0.16s;
+}
+
+.dev-btn.is-on .dev-btn__caret {
+  display: none;
+}
+
+.dev-btn.is-menu .dev-btn__caret {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* ---------- 流程菜单 ----------
+   挂在工具条里、按钮正下方（工具条是 fixed，绝对定位以它为参照）。
+   一条一个流程，名字写成「xx引导」+ 步数。
+   ---------------------------------- */
+.gd-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 172px;
+  padding: 5px;
+  border: 1px solid var(--border, #e3ecf8);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(23, 32, 51, 0.16);
+  font-family: var(--font-body, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif);
+}
+
+.gd-menu[hidden] {
+  display: none;
+}
+
+.gd-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg, #172033);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s;
+}
+
+.gd-menu__item + .gd-menu__item {
+  margin-top: 2px;
+}
+
+.gd-menu__item:hover {
+  background: var(--soft, #eaf2ff);
+  color: var(--primary, #2f7cf6);
+}
+
+.gd-menu__count {
+  margin-left: auto;
+  color: #97a3b6;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.gd-menu__item:hover .gd-menu__count {
+  color: inherit;
+}
+
+/* 气泡头上除了步号，还写清这是哪个流程 */
+.gd-tip__flow {
+  flex: none;
+  color: #97a3b6;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 /* ---------- 窄屏 ---------- */
