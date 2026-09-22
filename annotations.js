@@ -170,6 +170,28 @@
       )
     },
 
+    /* ---------------- 车辆管理 ---------------- */
+    {
+      id: "vehicleManageList",
+      screen: "vehicleManage",
+      auth: "authed",
+      anchor: "[data-vehicle-list]",
+      body: L(
+        "本页展示当前账号下已登记的全部车辆。",
+        "已办理月租与未办理月租的车辆，均在此列出。"
+      )
+    },
+    {
+      id: "vehicleBindTag",
+      screen: "vehicleManage",
+      auth: "authed",
+      anchor: ".vehicle-bind-tag.monthly-active",
+      body: L(
+        "车辆月租生效期间不可解绑。",
+        "该标识在车辆存在有效月租订单时显示。"
+      )
+    },
+
     /* ---------------- 通用弹窗 ---------------- */
     /* screen: "*" = 哪一屏都可能弹（办理成功 / 续费成功 / 个人中心开关都调它），
        所以不能绑定单一屏；锚点找不到时不算错，只是「还没触发」。 */
