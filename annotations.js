@@ -192,6 +192,21 @@
       )
     },
 
+    /* ---------------- 新增 / 编辑车辆 ---------------- */
+    /* optional: true = 这条锚点只在特定状态下才出现（此处为「车牌已被绑定」弹窗），
+       平时找不到属正常，不记 miss。 */
+    {
+      id: "vehicleClaimDuplicate",
+      screen: "vehicleForm",
+      auth: "authed",
+      optional: true,
+      anchor: ".vehicle-claim-dialog[data-mode=\"duplicate\"] .vehicle-claim-panel",
+      body: L(
+        "保存车辆时，若该车牌已被其他账号绑定，则绑定失败，弹出此提示。",
+        "本账号重复添加同一车牌时同样提示；用户可返回修改车牌，或联系客服处理。"
+      )
+    },
+
     /* ---------------- 通用弹窗 ---------------- */
     /* screen: "*" = 哪一屏都可能弹（办理成功 / 续费成功 / 个人中心开关都调它），
        所以不能绑定单一屏；锚点找不到时不算错，只是「还没触发」。 */
@@ -316,8 +331,9 @@
     }
     const el = matches[item.nth || 0];
     if (!el) {
-      // screen:"*" 的锚点是"触发后才存在"的（如各类弹窗），没找到属正常，不算错
-      if (item.screen !== "*") {
+      // screen:"*" 或 optional:true 的锚点是"触发后才存在"的（如各类弹窗），
+      // 没找到属正常，不算错
+      if (item.screen !== "*" && !item.optional) {
         state.missed.push({
           id: item.id,
           reason: `没找到锚点 ${item.anchor}${item.nth ? `（第 ${item.nth + 1} 个）` : ""}`
@@ -765,7 +781,7 @@
       } else if (onScreen) {
         const el = screenEl && screenEl.querySelectorAll(item.anchor)[item.nth || 0];
         if (!screenEl) status = "找不到当前屏容器";
-        else if (!el) status = item.screen === "*" ? "当前未出现（触发后才显示）" : "✗ 锚点未找到";
+        else if (!el) status = (item.screen === "*" || item.optional) ? "当前未出现（触发后才显示）" : "✗ 锚点未找到";
         else if (modal && !modal.contains(el)) status = "被弹层遮挡，未显示";
         else status = isVisible(el) ? "✓ 已挂上" : "锚点存在但当前状态不可见";
       }
