@@ -39,6 +39,9 @@
        body     必填  说明文字，支持 **加粗**，用 L(...) 手动分行。
        waitFor  选填  CSS 选择器。用户点了它（通常就是"继续下一步"的那个按钮）
                       就自动前进，不用再去点气泡上的「下一步」。
+      awaitClick 选填  写成 true 时，这一步的气泡上**不出现「下一步」**，
+                      只能点高亮处的元素往下走 —— 给"提交"这类必须真点、
+                      不能靠按钮跳过的地方用（点别的不会走，被校验拦住了也不会走）。
 
      注 1：一步一屏，screen 和当前屏不一致时会自动切过去，所以流程能跨页面。
      注 2：某一步的锚点在当前屏找不到时，这一步会自动跳过。
@@ -293,6 +296,10 @@
         {
           screen: "orderRefund",
           anchor: "[data-refund-submit]",
+          // 提交必须真点：没有「下一步」，只能点这个按钮往下走。
+          // 也不挂 waitFor —— 提交成功由切屏钩子带过去，
+          // 校验没过（比如选了「其他原因」没写说明）就停在原地，不会被冒进带走。
+          awaitClick: true,
           body: L(
             "**第 4 步 · 提交退款申请**",
             "提交后回到订单详情，状态变「退款审批中」，",
@@ -609,9 +616,13 @@
       (state.index > 0
         ? '<button class="gd-btn gd-btn--ghost" type="button" data-gd-prev>上一步</button>'
         : "") +
-      `<button class="gd-btn gd-btn--primary" type="button" data-gd-next>${
-        last ? "完成" : "下一步"
-      }</button>` +
+      // 要真点的那一步：不给「下一步」，只留一句提示；
+      // 末步例外 —— 不然就没法收尾了
+      (step.awaitClick && !last
+        ? '<span class="gd-tip__wait">点高亮处继续</span>'
+        : `<button class="gd-btn gd-btn--primary" type="button" data-gd-next>${
+            last ? "完成" : "下一步"
+          }</button>`) +
       "</div></div>";
 
     const tipH = tip.offsetHeight;

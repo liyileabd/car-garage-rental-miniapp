@@ -115,6 +115,14 @@
   margin-left: auto;
 }
 
+/* 要真点的那一步不摆「下一步」，用这句替位（step.awaitClick） */
+.gd-tip__wait {
+  color: var(--primary, #2f7cf6);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .gd-btn {
   height: 29px;
   padding: 0 13px;
