@@ -132,10 +132,7 @@
       screen: "rentVehicle",
       auth: "authed",
       anchor: "[data-open-rent-date-picker]",
-      body: L(
-        "月租的起租日期，点此处选择。",
-        "它同时是费用与截止日期的计算基准。"
-      )
+      body: L("月租的起租日期，点此处选择。")
     },
     {
       id: "rentMonths",
