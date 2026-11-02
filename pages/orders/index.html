@@ -15,6 +15,20 @@
 </nav>
 <nav class="order-subtabs" data-order-subtabs aria-label="订单状态细分" hidden></nav>
 
+            <div class="order-pay-banner" data-order-pay-banner hidden>
+              <span class="order-pay-banner-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="9.2"></circle>
+                  <path d="M12 11v5.4"></path>
+                  <circle cx="12" cy="7.9" r="0.9" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </span>
+              <div class="order-pay-banner-text">
+                <strong data-order-pay-banner-title>你有 1 笔订单待支付</strong>
+              </div>
+              <button class="order-pay-banner-btn" type="button" data-order-pay-banner-go>去支付</button>
+            </div>
+
             <div class="order-list" data-order-list></div>
             <div class="order-empty" data-order-empty>暂无符合条件的订单</div>
           </div>

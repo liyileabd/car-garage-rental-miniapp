@@ -732,6 +732,19 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     function buildDemoOrderRecords() {
       return [
         {
+          orderNo: "AS202611020006",
+          type: "新办",
+          communityId: "COMMUNITY-001",
+          plate: "闽D 54321",
+          start: "2026-11-03",
+          end: "2026-12-02",
+          months: 1,
+          createdAt: "2026-11-02 16:31",
+          paymentAt: "",
+          rentalStatus: "待支付",
+          passStatus: "未开通",
+        },
+        {
           orderNo: "AS202608170023",
           type: "新办",
           communityId: "COMMUNITY-001",
@@ -1963,8 +1976,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       }
     }
 
+    // 换绑（变更车辆）只在月租尚未起租时开放；月租生效期间不允许变更绑定车辆
     function canSwapOrderVehicle(order) {
-      return order?.rentalStatus === "有效" &&
+      return order?.rentalStatus === "待生效" &&
         !["审批中", "待确认", "已通过"].includes(order.refundStatus) &&
         getOrderVehicles(order).length > 0;
     }
@@ -3096,6 +3110,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function orderStatusMeta(order) {
+      if (order.rentalStatus === "待支付") {
+        return { label: "待支付", className: "pending-pay", panelClass: "is-pending-pay", icon: "i-info", description: "订单已生成，月租尚未开通。请在 15 分钟内完成支付，超时订单将自动关闭。" };
+      }
       if (order.refundStatus === "待确认") {
         return { label: "退款金额待确认", className: "confirming", panelClass: "is-pending", icon: "i-info", description: "工作人员已核定退款金额，确认后才会终止月租并执行退款。" };
       }
@@ -3109,7 +3126,10 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
         return { label: "月租已结束", className: "cancelled", panelClass: "is-cancelled", icon: "i-info", description: "退款申请审核通过，工作人员将联系您确认退款金额及方式。" };
       }
       if (order.rentalStatus === "待生效") {
-        return { label: "待生效", className: "syncing", panelClass: "is-pending", icon: "i-info", description: "续费已支付，将在当前租期结束后自动生效。" };
+        const upcomingDesc = order.type === "续费"
+          ? "续费已支付，将在当前租期结束后自动生效。"
+          : `支付已完成，月租将于 ${order.start} 生效。`;
+        return { label: "待生效", className: "syncing", panelClass: "is-pending", icon: "i-info", description: upcomingDesc };
       }
       if (order.passStatus === "未开通") {
         return { label: "开通中", className: "syncing", panelClass: "", icon: "i-info", description: "支付已完成，正在同步停车平台授权。" };
@@ -3124,8 +3144,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       if (orderState.filter === "active") {
         return [
           { value: "all", label: "全部" },
-          { value: "effective", label: "有效中" },
+          { value: "pendingPayment", label: "未生效" },
           { value: "upcoming", label: "待生效" },
+          { value: "effective", label: "有效中" },
         ];
       }
       if (orderState.filter === "completed") {
@@ -3156,8 +3177,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       if (order.hiddenFromUser === true) return false;
       const isCompleted = ["过期", "终止"].includes(order.rentalStatus) || order.refundStatus === "已通过";
       if (orderState.filter === "active") {
-        const isActive = ["有效", "待生效"].includes(order.rentalStatus) && !["审批中", "待确认", "已通过"].includes(order.refundStatus);
+        const isActive = ["待支付", "有效", "待生效"].includes(order.rentalStatus) && !["审批中", "待确认", "已通过"].includes(order.refundStatus);
         if (!isActive) return false;
+        if (orderState.subFilter === "pendingPayment") return order.rentalStatus === "待支付";
         if (orderState.subFilter === "effective") return order.rentalStatus === "有效";
         if (orderState.subFilter === "upcoming") return order.rentalStatus === "待生效";
         return true;
@@ -3207,10 +3229,17 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
 
       records.forEach((order) => {
         const status = orderStatusMeta(order);
+        const isPendingPay = order.rentalStatus === "待支付";
         const actions = orderMoreItems(order).filter((item) => !item.unavailable);
         const refundApprovedNote = order.refundStatus === "已通过"
           ? '<p class="order-card-refund-note">退款申请审核通过，工作人员将联系您确认退款金额及方式。</p>'
           : "";
+        const payTip = isPendingPay
+          ? '<p class="order-card-paytip">14:52 后自动关闭</p>'
+          : "";
+        const metaMarkup = isPendingPay
+          ? `<span>下单 ${order.createdAt || "--"}</span><strong>应付 ${formatOrderAmount(order.amount)}</strong>`
+          : `<span>${order.start} 至 ${order.end}</span><strong>实付 ${formatOrderAmount(order.amount)}</strong>`;
         const orderVehicles = getOrderVehicles(order);
         const orderVehicleMarkup = orderVehicles.length
           ? `<span class="order-primary-plate">${escapeHtml(orderVehicles[0].plate)}</span>${orderVehicles.slice(1).map((vehicle) => `<span class="order-secondary-plate">${escapeHtml(vehicle.plate)}</span>`).join("")}`
@@ -3225,9 +3254,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
             </div>
             <div class="order-card-plate">${orderVehicleMarkup}</div>
             <div class="order-card-meta">
-              <span>${order.start} 至 ${order.end}</span>
-              <strong>实付 ${formatOrderAmount(order.amount)}</strong>
+              ${metaMarkup}
             </div>
+            ${payTip}
             ${refundApprovedNote}
           </button>
           <div class="order-card-actions"${actions.length ? "" : " hidden"}>
@@ -3237,6 +3266,19 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       });
 
       orderListScreen.dataset.orderEmpty = records.length === 0 ? "true" : "false";
+      renderOrderPayBanner();
+    }
+
+    function renderOrderPayBanner() {
+      const banner = document.querySelector("[data-order-pay-banner]");
+      if (!banner) return;
+      const pendingOrders = orderState.records.filter((order) => !order.hiddenFromUser && order.rentalStatus === "待支付");
+      banner.hidden = pendingOrders.length === 0;
+      if (!pendingOrders.length) return;
+      const title = banner.querySelector("[data-order-pay-banner-title]");
+      const tip = banner.querySelector("[data-order-pay-banner-tip]");
+      if (title) title.textContent = `你有 ${pendingOrders.length} 笔订单待支付`;
+      if (tip) tip.textContent = `剩余 ${pendingOrders[0].payTipText || "14:52"}，超时订单将自动关闭`;
     }
 
     function canRenewOrder(order) {
@@ -3244,6 +3286,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     }
 
     function orderMoreItems(order) {
+      if (order.rentalStatus === "待支付") return [{ action: "pay", label: "去支付" }];
       const hasOpenRefund = ["审批中", "待确认", "已通过"].includes(order.refundStatus);
       const canRenew = canRenewOrder(order);
       const canSwapVehicle = canSwapOrderVehicle(order);
@@ -3312,7 +3355,9 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
         : order.rentalStatus === "过期"
           ? "已过期"
           : order.rentalStatus;
-      const accessExceptionRows = order.passStatus === "未开通"
+      const accessExceptionRows = order.rentalStatus === "待支付"
+        ? '<div class="order-detail-row"><span>通行授权</span><strong>未开通</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">支付完成后同步停车平台授权</strong></div>'
+        : order.passStatus === "未开通"
         ? '<div class="order-detail-row"><span>通行授权</span><strong>处理中</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">停车平台正在同步，请稍候</strong></div>'
         : order.passStatus === "已暂停"
           ? `<div class="order-detail-row"><span>通行状态</span><strong>已暂停</strong></div><div class="order-detail-row"><span>说明</span><strong class="order-detail-location">${order.refundStatus === "待确认" ? "退款金额待确认，当前不可通行" : "退款审批中，当前不可通行"}</strong></div>`
@@ -3341,6 +3386,7 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           <div class="order-detail-row"><span>${vehicleLabel}</span><strong class="order-detail-vehicles">${orderVehicleText(order, { includeColor: true })}</strong></div>
           ${vehicleChangeRow}
           <div class="order-detail-row"><span>租期</span><strong>${order.start} 至 ${order.end}</strong></div>
+          ${order.rentalStatus === "待支付" ? '<div class="order-detail-row"><span>生效时间</span><strong>支付成功后自动生效</strong></div>' : ""}
           <div class="order-detail-row"><span>租赁月数</span><strong>${order.months} 个月</strong></div>
         </section>
         <section class="order-detail-section">
@@ -3348,14 +3394,16 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
           <div class="order-detail-row"><span>订单金额</span><strong class="amount">${formatOrderAmount(order.amount)}</strong></div>
           <div class="order-detail-row"><span>支付方式</span><strong>微信支付</strong></div>
           <div class="order-detail-row"><span>创建时间</span><strong>${order.createdAt || "--"}</strong></div>
-          <div class="order-detail-row"><span>付款时间</span><strong>${order.paymentAt}</strong></div>
+          <div class="order-detail-row"><span>付款时间</span><strong>${order.paymentAt || "待支付"}</strong></div>
         </section>
         ${serviceSection}
         `;
 
-      orderDetailFooter.innerHTML = canDeleteOrder(order)
-        ? `<div class="order-detail-actions"><button class="order-detail-delete" type="button" data-order-action="deleteOrder">删除订单</button></div>`
-        : "";
+      orderDetailFooter.innerHTML = order.rentalStatus === "待支付"
+        ? `<div class="order-detail-actions"><button class="order-detail-pay" type="button" data-order-action="pay">去支付</button></div>`
+        : canDeleteOrder(order)
+          ? `<div class="order-detail-actions"><button class="order-detail-delete" type="button" data-order-action="deleteOrder">删除订单</button></div>`
+          : "";
     }
 
     function openOrderList(returnScreen = document.body.dataset.currentTab || "home") {
@@ -3871,7 +3919,21 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       if (action === "invoice") return openOrderInvoice();
       if (action === "viewInvoice") return openInvoiceResult(order.id, "orderDetail");
       if (action === "invoiceProgress") return openInvoiceResult(order.id, "orderDetail");
+      if (action === "pay") return payPendingOrder();
       if (action === "deleteOrder") return deleteOrderFromUserView();
+    }
+
+    function payPendingOrder() {
+      const order = getOrderById();
+      if (!order || order.rentalStatus !== "待支付") return;
+      const now = new Date();
+      const pad = (value) => String(value).padStart(2, "0");
+      order.paymentAt = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      order.rentalStatus = "待生效";
+      order.passStatus = "未开通";
+      renderOrderList();
+      renderOrderDetail(order.id);
+      showToast(`支付成功，月租将于 ${order.start} 生效`);
     }
 
     function submitRenewal() {
@@ -4331,6 +4393,14 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
       const button = event.target.closest("[data-order-sub-filter]");
       if (!button) return;
       orderState.subFilter = button.dataset.orderSubFilter || "all";
+      syncOrderSubTabs();
+      renderOrderList();
+    });
+
+    document.querySelector("[data-order-pay-banner-go]")?.addEventListener("click", () => {
+      const activeTab = Array.from(orderFilterButtons).find((button) => button.dataset.orderFilter === "active");
+      if (activeTab) activeTab.click();
+      orderState.subFilter = "pendingPayment";
       syncOrderSubTabs();
       renderOrderList();
     });

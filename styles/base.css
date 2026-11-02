@@ -5306,6 +5306,86 @@
       background: #EAF2FF;
     }
 
+    .order-status.pending-pay {
+      color: #2F7CF6;
+      background: #EAF2FF;
+    }
+
+    .order-pay-banner {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border: 0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(47, 124, 246, 0.05);
+    }
+
+    .order-pay-banner[hidden] {
+      display: none !important;
+    }
+
+    .order-pay-banner-icon {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2F7CF6;
+    }
+
+    .order-pay-banner-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .order-pay-banner-text {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .order-pay-banner-text strong {
+      color: #2F7CF6;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .order-pay-banner-text span {
+      color: rgba(47, 124, 246, 0.72);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .order-pay-banner-btn {
+      flex: 0 0 auto;
+      height: 30px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 15px;
+      color: #fff;
+      background: #2F7CF6;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .order-card-paytip {
+      margin: 8px 0 0;
+      padding: 6px 9px;
+      border-radius: 6px;
+      color: rgba(47, 124, 246, 0.78);
+      background: rgba(47, 124, 246, 0.05);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .order-card-plate {
       margin-top: 13px;
       color: #172033;
@@ -5420,6 +5500,12 @@
       color: #596879;
       border-color: #dce3eb;
       background: #f7f9fb;
+    }
+
+    .order-inline-action[data-order-inline-action="pay"] {
+      color: #fff;
+      border-color: #2F7CF6;
+      background: #2F7CF6;
     }
 
     .order-inline-action.is-danger {
@@ -5569,6 +5655,11 @@
       color: #d8654e;
       background: #fff4f1;
       border: 1px solid #f0d4cf !important;
+    }
+
+    .order-detail-pay {
+      color: #fff;
+      background: #2F7CF6;
     }
 
     .order-workflow-page {
