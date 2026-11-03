@@ -3272,6 +3272,10 @@ const homeRentEnd = document.querySelector("[data-home-rent-end]");
     function renderOrderPayBanner() {
       const banner = document.querySelector("[data-order-pay-banner]");
       if (!banner) return;
+      if (orderState.filter !== "all") {
+        banner.hidden = true;
+        return;
+      }
       const pendingOrders = orderState.records.filter((order) => !order.hiddenFromUser && order.rentalStatus === "待支付");
       banner.hidden = pendingOrders.length === 0;
       if (!pendingOrders.length) return;
